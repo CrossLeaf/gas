@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">太平煤氣</string>
+
+    <string name="meterReading">月結抄表</string>
+    <string name="newOrder">新增訂單</string>
+    <string name="barcodeScanning">條碼掃描</string>
+    <string name="routePlanning">路線規劃</string>
+    <string name="gasPricing">瓦斯價格</string>
+    <string name="dataClient">客戶資料</string>
+    <string name="balancing">會計沖帳</string>
+    <string name="accept">承接</string>
+    <string name="payBill">結單</string>
+    <string name="strikeBalance">沖帳</string>
+    <string name="login">登入</string>
+    <string name="account">帳號</string>
+    <string name="password">密碼</string>
+
+    <string name="task">任務</string>
+    <string name="delivery_table">配送表</string>
+    <string name="other">其他</string>
+    <string name="name">姓名</string>
+    <string name="address">地址</string>
+    <string name="remnant">殘氣(kg)</string>
+    <string name="allowance">折讓</string>
+    <string name="should_receive">實收</string>
+    <string name="phone">電話</string>
+    <string name="navigation">導航</string>
+    <string name="gas">瓦斯</string>
+    <string name="maintain">維修</string>
+
+    <string name="title_activity_task">任務清單</string>
+    <string name="title_activity_other">其他功能</string>
+    <string name="title_activity_delivery">配送表清單</string>
+    <string name="title_activity_detailed_task">任務詳細內容</string>
+    <string name="title_activity_delivery_schedule">配送表紀錄</string>
+    <string name="title_activity_history_bottle">寄借桶歷史紀錄</string>
+    <string name="title_activity_history_order">客戶訂單歷史紀錄</string>
+    <string name="title_activity_balancing">會計沖帳清單</string>
+    <string name="title_activity_client_info">客戶資料清單</string>
+    <string name="title_activity_detailed_balancing">會計沖帳詳細內容</string>
+    <string name="title_activity_gas_price">瓦斯價格</string>
+    <string name="title_activity_meter_reading">月結抄表清單</string>
+
+    <string name="navigation_use_gps">使用GP定位</string>
+    <string name="navigation_use_network">使用網路定位</string>
+    <string name="navigation_no_location_available">定位功能未開啟！請開啟GPS或網路定位</string>
+    <string name="navigation_close_navigation">關閉定位功能</string>
+
+    <string name="menu_gas_logout">登出</string>
+    <string name="menu_gas_settings">設定</string>
+
+    <string name="login_failure">登入錯誤</string>
+    <string name="edit_here">請輸入</string>
+</resources>

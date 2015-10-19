@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/WebView_Map"
+        android:layout_weight="0.1"/>
+
+    <Button
+        android:id="@+id/btn_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/navigation"
+        android:onClick="onClick_btn_navigation"
+        android:layout_weight="1"/>
+
+
+</LinearLayout>

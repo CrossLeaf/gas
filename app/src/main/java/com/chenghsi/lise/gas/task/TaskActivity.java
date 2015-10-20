@@ -11,10 +11,12 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.AbstractList;
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
+import com.chenghsi.lise.gas.TestData;
 import com.chenghsi.lise.gas.db.GasDB;
 
 import org.json.JSONArray;

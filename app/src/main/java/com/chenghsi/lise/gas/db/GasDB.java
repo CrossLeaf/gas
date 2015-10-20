@@ -309,7 +309,8 @@ public class GasDB
                     table_inJSONObject_customer = content2;
                     break;
 
-                case DODDLE:
+                case
+                        DODDLE:
                     table_inJSONArray_doddle = content1;
                     table_inJSONObject_doddle = content2;
                     break;

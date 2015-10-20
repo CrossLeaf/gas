@@ -72,6 +72,10 @@
             android:name=".other.MeterReadingActivity"
             android:label="@string/meterReading" >
         </activity>
+        <activity
+            android:name=".other.DetailedClientInfoActivity"
+            android:label="@string/title_activity_client_info" >
+        </activity>
     </application>
 
 </manifest>

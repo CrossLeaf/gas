@@ -35,17 +35,20 @@
                 android:id="@+id/tv_appointment"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ff000000"
-                android:textSize="10dp" />
+                android:textSize="10dp"
+                android:layout_weight="0.4" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_kindOfTask" />
+                android:id="@+id/tv_kindOfTask"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_clientName" />
+                android:id="@+id/tv_clientName"
+                android:layout_weight="0.3" />
         </LinearLayout>
 
         <LinearLayout
@@ -62,17 +65,20 @@
                 android:textColor="#ff000000"
                 android:ellipsize="start"
                 android:singleLine="false"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:layout_weight="0.4" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_contents" />
+                android:id="@+id/tv_contents"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_phones" />
+                android:id="@+id/tv_phones"
+                android:layout_weight="0.3" />
         </LinearLayout>
     </LinearLayout>
 

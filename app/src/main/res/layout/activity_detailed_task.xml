@@ -36,7 +36,8 @@
                     android:id="@+id/text3"
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="30dp"
-                    android:textSize="30dp" />
+                    android:textSize="30dp"
+                    android:onClick="btn_history" />
             </LinearLayout>
 
             <include layout="@layout/general_division_line"/>

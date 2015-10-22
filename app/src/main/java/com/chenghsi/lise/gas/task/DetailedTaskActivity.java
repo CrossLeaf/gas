@@ -1,6 +1,7 @@
 package com.chenghsi.lise.gas.task;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,13 +22,16 @@ public class DetailedTaskActivity extends Activity {
     private View R_allowance;
     private View R_receive;
     private View R_clientPhones;
+    private TextView history;
     private int position;
     private String clientName;
     private String address;
     private String phones;
     private String contents;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_task);
         Bundle bundle = this.getIntent().getExtras();
@@ -52,7 +56,7 @@ public class DetailedTaskActivity extends Activity {
         R_allowance = findViewById(R.id.tvi_allowance);
         R_receive = findViewById(R.id.tvi_receive);
         R_clientPhones = findViewById(R.id.tv_spr_phones);
-
+        history= (TextView) findViewById(R.id.text3);
         // Set title
 
         ((TextView) R_name.findViewById(R.id.text1)).setText(R.string.name);
@@ -61,6 +65,8 @@ public class DetailedTaskActivity extends Activity {
         ((TextView) R_allowance.findViewById(R.id.text)).setText(R.string.allowance);
         ((TextView) R_receive.findViewById(R.id.text)).setText(R.string.should_receive);
         ((TextView) R_clientPhones.findViewById(R.id.title)).setText(R.string.phone);
+        history.setText("歷史紀錄");
+
     }
 
     @Override
@@ -68,8 +74,8 @@ public class DetailedTaskActivity extends Activity {
         super.onResume();
 
         // TODO Test data
-        ((TextView)R_name.findViewById(R.id.text2)).setText(clientName);
-        ((TextView)R_address.findViewById(R.id.text2)).setText(address);
+        ((TextView) R_name.findViewById(R.id.text2)).setText(clientName);
+        ((TextView) R_address.findViewById(R.id.text2)).setText(address);
 //        ((TextView)R_name.findViewById(R.id.text2)).setText(TestData.name[position]);
 //        ((TextView)R_address.findViewById(R.id.text2)).setText(TestData.address[position]);
 
@@ -79,5 +85,11 @@ public class DetailedTaskActivity extends Activity {
         //(Spinner) spr_clientPhones.setAdapter(apt);
         ((Spinner) R_clientPhones.findViewById(R.id.spinner)).setAdapter(apt);
 
+    }
+
+    public void btn_history(View view) {
+        Intent intent = new Intent();
+        intent.setClass(this, HistoryBottleActivity.class);
+        startActivity(intent);
     }
 }

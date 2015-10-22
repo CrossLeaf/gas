@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.chenghsi.lise.gas.AbstractList;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
+import com.chenghsi.lise.gas.delivery.DeliveryScheduleActivity;
 import com.chenghsi.lise.gas.task.DetailedTaskActivity;
 
 import org.json.JSONArray;
@@ -58,9 +59,9 @@ public class MeterReadingActivity extends AbstractList
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                     {
-                        //Intent intent = new Intent();
-                        //intent.setClass(DeliveryListActivity.this, DeliveryScheduleActivity.class);
-                        //startActivity(intent);
+//                        Intent intent = new Intent();
+//                        intent.setClass(DeliveryListActivity.this, DeliveryScheduleActivity.class);
+//                        startActivity(intent);
                     }
                 });
             }

@@ -55,7 +55,6 @@ public class DeliveryActivity extends AbstractList
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                     {
                         Intent intent = new Intent();
-                        //我把註解消掉
                         intent.setClass(DeliveryActivity.this, DeliveryScheduleActivity.class);
                         startActivity(intent);
                     }

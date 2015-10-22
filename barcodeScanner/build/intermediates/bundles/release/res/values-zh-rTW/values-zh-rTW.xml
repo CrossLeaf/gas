@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/Users/MengHan/Desktop/丞希%20data/Gas/barcodeScanner/src/main/res/values-zh-rTW/strings.xml -->
+    <!-- From: file:/Users/MengHan/Desktop/丞希%20data/瓦斯行專案/Gas/barcodeScanner/src/main/res/values-zh-rTW/strings.xml -->
     <eat-comment/>
     <string name="app_name_barcode_scanner">條碼掃描器</string>
     <string name="app_picker_name">應用程式</string>

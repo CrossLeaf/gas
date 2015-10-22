@@ -21,8 +21,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/general_twoline_title_text"
-                     android:id="@+id/tv2_name"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/general_twoline_title_text"
+                         android:id="@+id/tv2_name"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/text3"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="30dp" />
+            </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 

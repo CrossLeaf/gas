@@ -25,4 +25,4 @@
         android:icon="@android:drawable/ic_menu_sort_alphabetically"
         android:orderInCategory="2"
         android:showAsAction="withText|ifRoom"/>
-</menu><!-- From: file:/Users/MengHan/Desktop/丞希%20data/Gas/barcodeScanner/src/main/res/menu/encode.xml -->
+</menu><!-- From: file:/Users/MengHan/Desktop/丞希%20data/瓦斯行專案/Gas/barcodeScanner/src/main/res/menu/encode.xml -->

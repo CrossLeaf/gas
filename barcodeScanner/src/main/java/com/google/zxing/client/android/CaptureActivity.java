@@ -816,7 +816,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 
 
-  //LISE
+  //LISE 有LISE是寶輝寫的
   public AlertDialog.Builder AltDlgBuilder_choice()
   {
 

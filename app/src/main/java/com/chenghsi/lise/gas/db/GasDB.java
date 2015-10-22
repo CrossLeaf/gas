@@ -26,6 +26,7 @@ public class GasDB
     public static final String DODDLE = "doddle";
     public static final String PRICE = "price";
     public static final String BALANCING = "order";
+
     private AsyncTaskFinishListener asyncTaskFinishListenerFromUser = null;
 
     private static JSONObject table_inJSONObject_delivery = null;
@@ -178,7 +179,7 @@ public class GasDB
                 break;
 
             case "Balancing":
-                /*tableName = new String[3];
+                tableName = new String[3];
                 url = new String[3];
                 tableName[0] = "delivery";
                 tableName[1] = "order";
@@ -187,7 +188,7 @@ public class GasDB
                 url[1] = DB_URL + GET + ORDER;
                 url[2] = DB_URL + GET + CUSTOMER;
 
-                new asyncTask().execute(tableName, url);*/
+                new asyncTask().execute(tableName, url);
                 break;
 
             case "ClientInfo":
@@ -238,7 +239,6 @@ public class GasDB
                     String tableName = params[0][j];
                     URL url = new URL(params[1][j]);
                     HttpURLConnection connection;
-
 
                     // Connection
                     Log.d("GasDB.asyncTask", "Start connection: " + url);

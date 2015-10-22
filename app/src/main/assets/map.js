@@ -36,7 +36,7 @@ function markMe(lat,log)
 }
 
 
-
+//丟點就會生成路徑
 function calcRoute(input)
 {
     if (!input) return;

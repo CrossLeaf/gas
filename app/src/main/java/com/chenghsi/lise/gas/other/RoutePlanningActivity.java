@@ -12,13 +12,14 @@ import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
+import com.chenghsi.lise.gas.task.TaskActivity;
 
 
 public class RoutePlanningActivity extends Activity
 {
     private WebView webView;
     private LocationManager locationManager;
-
+    private Location mostRecentLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -94,11 +95,19 @@ public class RoutePlanningActivity extends Activity
     private String getAllAddress()
     {
         String str="";
-
-        for(int i=0; i<10; i++)
+        TaskActivity taskActivity = new TaskActivity();
+        boolean [] state = taskActivity.getState();
+        String [] tempAddress = taskActivity.getTempAddress();
+        Log.i("Router", "state Length:"+ state.length);
+        for(int i=0; i<state.length; i++)
         {
-            //if(TestData.state[i]) str += TestData.address[i] + ",";
-            //TODO
+            if(state[i]) {
+                str += tempAddress[i] + ",";
+                Log.i("Router", str);
+            }else{
+                Toast.makeText(this, "尚未承接任何案子", Toast.LENGTH_SHORT).show();
+            }
+            //TODO 新增任務清單上已承接的地點
         }
 
         if(str.equals("")) return str;
@@ -107,6 +116,7 @@ public class RoutePlanningActivity extends Activity
 
     public void onClick_btn_navigation(View view)
     {
+        getOldLocation();
         String address = getAllAddress();
         webView.loadUrl("javascript:calcRoute(\"" + address + "\")");
     }
@@ -121,8 +131,9 @@ public class RoutePlanningActivity extends Activity
 
             String latLog = Double.toString(latitude) + "," + Double.toString(longitude);
             Log.i("RouterPlanningActivity", "Current location: " + latLog);
-
-            String url = "javascript:mark(" + latLog + ")";
+            String centerURL = "javascript:centerAt(" + latLog + ")";
+            String url = "javascript:markMe(" + latLog + ")";
+            webView.loadUrl(centerURL);
             webView.loadUrl(url);
         }
 

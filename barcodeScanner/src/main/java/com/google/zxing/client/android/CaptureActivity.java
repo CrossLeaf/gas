@@ -147,6 +147,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     beepManager = new BeepManager(this);
     ambientLightManager = new AmbientLightManager(this);
 
+    //menu的介面
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
     //LISE
@@ -596,15 +597,17 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     metaHistoryItem = new HistoryItem(rawResult.getText());
     if( historyManager.isBarcodeExist(metaHistoryItem.barcode) )
     {
+      Log.e("tag", rawResult.getText());
       AlertDialog.Builder altBlgBuilder = AltDlgBuilder_OldItemFound();
       altBlgBuilder.show();
     }
     else
     {
+      Log.e("tag", "Insert new barcode?");
       AlertDialog.Builder altBlgBuilder = AltDlgBuilder_NewItemFound();
       altBlgBuilder.show();
     }
-    //Toast.makeText(this,metaHistoryItem.capacity,Toast.LENGTH_SHORT).show();
+    Toast.makeText(this,metaHistoryItem.capacity,Toast.LENGTH_SHORT).show();
     //historyManager.addItem(metaHistoryItem);
     //</LISE>
   }
@@ -613,6 +616,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private void handleDecodeExternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
 
     if (barcode != null) {
+      Log.e("tag", "掃到barcode");
       viewfinderView.drawResultBitmap(barcode);
     }
 
@@ -645,6 +649,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
       intent.putExtra(Intents.Scan.RESULT, rawResult.toString());
       intent.putExtra(Intents.Scan.RESULT_FORMAT, rawResult.getBarcodeFormat().toString());
       byte[] rawBytes = rawResult.getRawBytes();
+      Log.e("tag", "解析資料");
       if (rawBytes != null && rawBytes.length > 0) {
         intent.putExtra(Intents.Scan.RESULT_BYTES, rawBytes);
       }
@@ -791,6 +796,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   //LISE
   public AlertDialog.Builder AltDlgBuilder_OldItemFound()
   {
+    Log.e("tag", "do AltDlgBuilder_OldItemFound()");
     AlertDialog.Builder altBlgBuilder = new AlertDialog.Builder(CaptureActivity.this);
     altBlgBuilder.setTitle("修改項目");
     altBlgBuilder.setMessage("資料庫已有這筆資料，你要修改嗎？");
@@ -854,10 +860,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
   private void renewListview()
   {
+    Log.e("tag", "do renewListview");
     Iterator<HistoryItem> items = historyManager.getAllItem();
     arrayAdapter_barcode.clear();
-    while(items.hasNext())
+    while(items.hasNext()) {
       arrayAdapter_barcode.add(items.next().barcode);
+      Log.e("tag", "arrayAdapter_barcode:"+items.next().barcode);
+    }
   }
 
 

@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.AbstractList;
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
-import com.chenghsi.lise.gas.TestData;
 import com.chenghsi.lise.gas.db.GasDB;
 
 import org.json.JSONArray;
@@ -26,11 +25,30 @@ import java.util.ArrayList;
 
 
 public class TaskActivity extends AbstractList {
+    private String appointment;
+    private String kindOfTask;
+    private String clientName;
+    private String address;
+    private String contents;
+    private String phones;
+
+    String[] tempAddress;
+    boolean[] state;
+    private int count;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar.setTitle(R.string.title_activity_task);
         gasDB.setTaskListener(asyncTaskFinishListener);
+//        simpleTaskListAdapter = new SimpleTaskListAdapter();
+//        state = new boolean[simpleTaskListAdapter.getCount()];
+//        simpleTaskListAdapter = new SimpleTaskListAdapter();
+//        tempAddress = new String[simpleTaskListAdapter.getCount()];
+//        context = this;
+//        tempAddress = new String[count];
+//        Log.e("simple", "count:"+ count);
+//        state = new boolean[count];
     }
 
     @Override
@@ -39,12 +57,7 @@ public class TaskActivity extends AbstractList {
         gasDB.startAsyncTask("Task");
     }
 
-    private String appointment;
-    private String kindOfTask;
-    private String clientName;
-    private String address;
-    private String contents;
-    private String phones;
+
     private GasDB.AsyncTaskFinishListener asyncTaskFinishListener = new GasDB.AsyncTaskFinishListener() {
         @Override
         public void onAsyncTaskFinish() {
@@ -73,19 +86,23 @@ public class TaskActivity extends AbstractList {
         }
     };
 
+
+
+
     public class SimpleTaskListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
-        final boolean[] state = new boolean[getCount()];
-
-
+        public SimpleTaskListAdapter(){}
         public SimpleTaskListAdapter(Context context)
-
         {
             this.inflater = LayoutInflater.from(context);
         }
+        boolean[] state = new boolean[getCount()];
 
         @Override
         public int getCount() {
+            Log.e("SimpleTaskListAdapter","getCount:"+ gasDB.getTable(GasDB.ORDER).length());
+//            count = gasDB.getTable(GasDB.ORDER).length();
+
             return gasDB.getTable(GasDB.ORDER).length();
         }
 
@@ -120,8 +137,6 @@ public class TaskActivity extends AbstractList {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-//            ViewHolder view = null;
-//            View convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             }
@@ -156,14 +171,20 @@ public class TaskActivity extends AbstractList {
 
                 @Override
                 public void onClick(View view) {
+                    //TODO 之後要改成判斷為該員工id & isMe要改
                     if (btn_accept.getText().equals("承接") && !state[position]) {
                         Toast.makeText(view.getContext(), "任務承接成功", Toast.LENGTH_SHORT).show();
                         btn_accept.setText("李司機");
                         state[position] = true;
+                        Log.e("simple", "position:"+position+"\nstate:"+state[position]);
+//                        tempAddress[position] = address;
+//                        Log.e("SimpleTaskListAdapter", address);
                     } else if (isMe) {
                         Toast.makeText(view.getContext(), "取消承接", Toast.LENGTH_SHORT).show();
                         btn_accept.setText("承接");
                         state[position] = false;
+//                        tempAddress[position] = null;
+//                        Log.e("SimpleTaskListAdapter", address);
                     } else {
                         Toast.makeText(view.getContext(), "已有人接案", Toast.LENGTH_SHORT).show();
                     }
@@ -174,6 +195,7 @@ public class TaskActivity extends AbstractList {
             return convertView;
         }
 
+
         /*public class ViewHolder {
             TextView appointment;
             TextView kindOfTask;
@@ -182,5 +204,18 @@ public class TaskActivity extends AbstractList {
             TextView contents;
             TextView phones;
         }*/
+    }
+
+
+    SimpleTaskListAdapter simpleTaskListAdapter;
+    public boolean[] getState() {
+
+
+        Log.e("simple", "state length:"+state.length);
+        return state;
+    }
+    public String[] getTempAddress() {
+
+        return tempAddress;
     }
 }

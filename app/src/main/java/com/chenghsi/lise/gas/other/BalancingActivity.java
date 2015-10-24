@@ -3,6 +3,7 @@ package com.chenghsi.lise.gas.other;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.AbstractList;
+import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 
 
 public class BalancingActivity extends AbstractList
@@ -82,12 +87,26 @@ public class BalancingActivity extends AbstractList
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return 30;
+            return 5;
         }
 
         @Override
-        public Object getItem(int arg0) {
-            // TODO Auto-generated method stub
+        public Object getItem(int position) {
+            try
+            {
+                JSONArray item_balancing = gasDB.getTableItemByIndex(GasDB.BALANCING, position);
+                JSONArray item_customer = gasDB.getTableItemByIndex(GasDB.CUSTOMER, position);
+                ArrayList<String> result = new ArrayList<>();
+                result.add( item_customer.getString(Constant.CUSTOMER_NAME) );
+                result.add( item_customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS) );
+                result.add( "phone" ); // TODO
+
+                return result.toArray(new String[result.size()]);
+            }
+            catch(JSONException e)
+            {
+                Log.e("SimpleTaskListAdapter", e.toString());
+            }
             return null;
         }
 
@@ -102,7 +121,7 @@ public class BalancingActivity extends AbstractList
         {
             View item = inflater.inflate(R.layout.adapter_item_balancing, parent, false);
 
-            // TODO
+            // TODO 客戶名稱
             ((TextView) item.findViewById(R.id.tv_name)).setText("范先生");
             ((TextView) item.findViewById(R.id.tv_phones)).setText("0932123456");
             ((TextView) item.findViewById(R.id.tv_address)).setText("花蓮縣吉安鄉民治路九巷15號");

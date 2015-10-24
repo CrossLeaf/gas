@@ -17,13 +17,21 @@ function initialize()
     };
     map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
     directionsDisplay.setMap(map);
+    var optionOfMarker =
+    {
+    　　　　　　position: event.latLng,
+    　　　　　　map: map,
+    　　　　　　title: event.latLng.toString()
+    };
+    // Show marker in the place of mouse clicks
+    mapMarker = new google.maps.Marker(optionOfMarker);
 }
 
 
 
 function markMe(lat,log)
 {   
-    if(currentMarker!=null) currentMarker.setMap(null);
+//    if(currentMarker!=null) currentMarker.setMap(null);
 
     currentPosition = new google.maps.LatLng(lat,log);
     currentMarker = new google.maps.Marker({

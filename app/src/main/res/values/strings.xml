@@ -41,7 +41,7 @@
     <string name="title_activity_gas_price">瓦斯價格</string>
     <string name="title_activity_meter_reading">月結抄表清單</string>
 
-    <string name="navigation_use_gps">使用GP定位</string>
+    <string name="navigation_use_gps">使用GPS定位</string>
     <string name="navigation_use_network">使用網路定位</string>
     <string name="navigation_no_location_available">定位功能未開啟！請開啟GPS或網路定位</string>
     <string name="navigation_close_navigation">關閉定位功能</string>

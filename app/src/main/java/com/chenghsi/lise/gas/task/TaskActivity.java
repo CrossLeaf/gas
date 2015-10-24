@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import com.chenghsi.lise.gas.AbstractList;
 import com.chenghsi.lise.gas.Constant;
+import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
 
@@ -34,12 +38,18 @@ public class TaskActivity extends AbstractList {
 
     String[] tempAddress;
     boolean[] state;
-    private int count;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar.setTitle(R.string.title_activity_task);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         gasDB.setTaskListener(asyncTaskFinishListener);
 //        simpleTaskListAdapter = new SimpleTaskListAdapter();
 //        state = new boolean[simpleTaskListAdapter.getCount()];
@@ -87,20 +97,21 @@ public class TaskActivity extends AbstractList {
     };
 
 
-
-
     public class SimpleTaskListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
-        public SimpleTaskListAdapter(){}
-        public SimpleTaskListAdapter(Context context)
-        {
+
+        public SimpleTaskListAdapter() {
+        }
+
+        public SimpleTaskListAdapter(Context context) {
             this.inflater = LayoutInflater.from(context);
         }
+
         boolean[] state = new boolean[getCount()];
 
         @Override
         public int getCount() {
-            Log.e("SimpleTaskListAdapter","getCount:"+ gasDB.getTable(GasDB.ORDER).length());
+            Log.e("SimpleTaskListAdapter", "getCount:" + gasDB.getTable(GasDB.ORDER).length());
 //            count = gasDB.getTable(GasDB.ORDER).length();
 
             return gasDB.getTable(GasDB.ORDER).length();
@@ -137,8 +148,16 @@ public class TaskActivity extends AbstractList {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder = null;
             if (convertView == null) {
+                viewHolder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
+                viewHolder.appointment = (TextView) convertView.findViewById(R.id.tv_appointment);
+                viewHolder.kindOfTask = (TextView) convertView.findViewById(R.id.tv_kindOfTask);
+                viewHolder.clientName = (TextView) convertView.findViewById(R.id.tv_clientName);
+                viewHolder.address = (TextView) convertView.findViewById(R.id.tv_address);
+                viewHolder.contents = (TextView) convertView.findViewById(R.id.tv_contents);
+                viewHolder.phones = (TextView) convertView.findViewById(R.id.tv_phones);
             }
 
             try {
@@ -149,14 +168,15 @@ public class TaskActivity extends AbstractList {
                 address = item[3];
                 contents = item[4];
                 phones = item[5];
-                ((TextView) convertView.findViewById(R.id.tv_appointment)).setText(item[0]);
-                ((TextView) convertView.findViewById(R.id.tv_kindOfTask)).setText(item[1]);
-                ((TextView) convertView.findViewById(R.id.tv_clientName)).setText(item[2]);
-                ((TextView) convertView.findViewById(R.id.tv_address)).setText(item[3]);
-                ((TextView) convertView.findViewById(R.id.tv_contents)).setText(item[4]);
-                ((TextView) convertView.findViewById(R.id.tv_phones)).setText(item[5]);
+                viewHolder.appointment.setText(item[0]);
+                viewHolder.kindOfTask.setText(item[1]);
+                viewHolder.clientName.setText(item[2]);
+                viewHolder.address.setText(item[3]);
+                viewHolder.contents.setText(item[4]);
+                viewHolder.phones.setText(item[5]);
             } catch (Exception e) {
                 Log.e("SimpleTaskListAdapter", e.toString());
+//                viewHolder.appointment.setText("error...");
                 Log.e("SimpleTaskListAdapter", "error");
             }
 
@@ -176,7 +196,7 @@ public class TaskActivity extends AbstractList {
                         Toast.makeText(view.getContext(), "任務承接成功", Toast.LENGTH_SHORT).show();
                         btn_accept.setText("李司機");
                         state[position] = true;
-                        Log.e("simple", "position:"+position+"\nstate:"+state[position]);
+                        Log.e("simple", "position:" + position + "\nstate:" + state[position]);
 //                        tempAddress[position] = address;
 //                        Log.e("SimpleTaskListAdapter", address);
                     } else if (isMe) {
@@ -191,31 +211,63 @@ public class TaskActivity extends AbstractList {
                 }
             });
 
-
             return convertView;
         }
 
 
-        /*public class ViewHolder {
+        public class ViewHolder {
             TextView appointment;
             TextView kindOfTask;
             TextView clientName;
             TextView address;
             TextView contents;
             TextView phones;
-        }*/
+        }
     }
 
 
     SimpleTaskListAdapter simpleTaskListAdapter;
+
     public boolean[] getState() {
 
 
-        Log.e("simple", "state length:"+state.length);
+        Log.e("simple", "state length:" + state.length);
         return state;
     }
+
     public String[] getTempAddress() {
 
         return tempAddress;
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        actionByMenuItem(item);
+        return true;
+    }
+
+    private void actionByMenuItem(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_gas_logout:
+                Log.e("tag", "Logout");
+                Toast.makeText(this, "登出", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setClass(this, LoginActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.menu_gas_quit:
+                Toast.makeText(this, "Quit", Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+        }
+
+    }
+
 }

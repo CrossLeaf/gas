@@ -30,12 +30,12 @@ public class LoginActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        if(isLogin())
+       /* if(isLogin())
         {
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-        }
+        }*/
     }
 
     public void onClick_btn_login(View view)
@@ -48,8 +48,7 @@ public class LoginActivity extends Activity
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-        }
-        else
+        }else
         {
             Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT).show();
         }

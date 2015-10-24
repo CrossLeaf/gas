@@ -2,13 +2,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
-
     <item android:id="@+id/menu_gas_logout"
           android:title="@string/menu_gas_logout"
           android:orderInCategory="100"
           app:showAsAction="never"/>
-    <item android:id="@+id/menu_gas_settings"
-          android:title="@string/menu_gas_settings"
+    <item android:id="@+id/menu_gas_quit"
+          android:title="離開"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 </menu>

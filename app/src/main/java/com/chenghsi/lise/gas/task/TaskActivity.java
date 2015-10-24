@@ -35,6 +35,7 @@ public class TaskActivity extends AbstractList {
     private String address;
     private String contents;
     private String phones;
+    private String userName;
 
     String[] tempAddress;
     boolean[] state;
@@ -51,6 +52,8 @@ public class TaskActivity extends AbstractList {
             }
         });
         gasDB.setTaskListener(asyncTaskFinishListener);
+        Intent intent = new Intent();
+        userName = intent.getStringExtra("userName");
 //        simpleTaskListAdapter = new SimpleTaskListAdapter();
 //        state = new boolean[simpleTaskListAdapter.getCount()];
 //        simpleTaskListAdapter = new SimpleTaskListAdapter();
@@ -99,6 +102,7 @@ public class TaskActivity extends AbstractList {
 
     public class SimpleTaskListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
+
 
         public SimpleTaskListAdapter() {
         }
@@ -223,6 +227,7 @@ public class TaskActivity extends AbstractList {
             TextView contents;
             TextView phones;
         }
+        Button btn_accept;
     }
 
 

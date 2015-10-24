@@ -26,6 +26,7 @@ public class GasDB
     public static final String DODDLE = "doddle";
     public static final String PRICE = "price";
     public static final String BALANCING = "order";
+    public static final String STAFF = "staff";
 
     private AsyncTaskFinishListener asyncTaskFinishListenerFromUser = null;
 
@@ -34,13 +35,14 @@ public class GasDB
     private static JSONObject table_inJSONObject_customer = null;
     private static JSONObject table_inJSONObject_doddle = null;
     private static JSONObject table_inJSONObject_price = null;
+    private static JSONObject table_inJSONObject_staff = null;
 
     private static JSONArray table_inJSONArray_delivery = null;
     private static JSONArray table_inJSONArray_order = null;
     private static JSONArray table_inJSONArray_customer = null;
     private static JSONArray table_inJSONArray_doddle = null;
     private static JSONArray table_inJSONArray_price = null;
-
+    private static JSONArray table_inJSONArray_staff = null;
 
     public interface AsyncTaskFinishListener
     {
@@ -136,6 +138,9 @@ public class GasDB
                 case PRICE:
                     return table_inJSONArray_price.getJSONArray(id);
 
+                case STAFF:
+                    return table_inJSONArray_staff.getJSONArray(id);
+
                 default:
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
                     break;
@@ -217,6 +222,16 @@ public class GasDB
                 url[0] = DB_URL + GET + DODDLE;
                 url[1] = DB_URL + GET + CUSTOMER;
 
+                new asyncTask().execute(tableName, url);
+                break;
+
+            //http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff
+            case "Staff":
+                tableName = new String[1];
+                url = new String[1];
+                tableName[0] = STAFF;
+                url[0] = DB_URL + GET + STAFF;
+                Log.e("tag", "執行staffDB");
                 new asyncTask().execute(tableName, url);
                 break;
 
@@ -319,7 +334,9 @@ public class GasDB
                     table_inJSONArray_price = content1;
                     table_inJSONObject_price = content2;
                     break;
-
+                case STAFF:
+                    table_inJSONArray_staff = content1;
+                    table_inJSONObject_staff = content2;
                 default:
                     Log.e("GasDB.renewTable", "Unknown table name: " + tableName);
                     break;

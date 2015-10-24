@@ -96,6 +96,7 @@ public class RoutePlanningActivity extends Activity
     {
         String str="";
         TaskActivity taskActivity = new TaskActivity();
+        //TODO 需要檢查
         boolean [] state = taskActivity.getState();
         String [] tempAddress = taskActivity.getTempAddress();
         Log.i("Router", "state Length:"+ state.length);

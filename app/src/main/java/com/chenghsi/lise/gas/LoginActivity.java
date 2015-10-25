@@ -29,6 +29,7 @@ public class LoginActivity extends Activity {
     String password;
     String userName;
     String retSrc = "";
+    String usn;
     static final int STAFF_COUNT = 9;
     static final int STAFF_PASSWORD = 10;
 
@@ -44,8 +45,6 @@ public class LoginActivity extends Activity {
 
         //呼叫讀取偏好資料
         readPref();
-//        GasDB db = new GasDB();
-//        db.startAsyncTask("Staff");
     }
 
 
@@ -53,12 +52,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-       /* if(isLogin())
-        {
-            Intent intent = new Intent();
-            intent.setClass(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }*/
+
     }
 
     @Override
@@ -103,11 +97,10 @@ public class LoginActivity extends Activity {
 //        String account = et_account.getText().toString();
 //        String password = et_password.getText().toString();
 //        isAccount(retSrc);
-
         if (isAccount()) {
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userName", userName);
+            intent.putExtra("userName", getUserName());
             startActivity(intent);
         } else {
             Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT).show();
@@ -140,6 +133,7 @@ public class LoginActivity extends Activity {
                 }
         }
     }
+
     public boolean isAccount(){
         try {
             String account = et_account.getText().toString();
@@ -150,7 +144,9 @@ public class LoginActivity extends Activity {
                         password.equals(jsonArray.getJSONArray(i).getString(10)))
                 {
                     userName = jsonArray.getJSONArray(i).getString(3);
-                    Log.e("tag", "true");
+                    Log.e("tag", "比對到第"+i+"筆");
+                    storeName(jsonArray.getJSONArray(i).getString(3));
+                    Log.e("tag", "人名："+userName);
                     return true;
                 }
             }
@@ -159,14 +155,25 @@ public class LoginActivity extends Activity {
         }
         return false;
     }
+
+
+
     private boolean login(String account, String password) {
         // TODO login by DB
-
         sp.edit()
                 .putString("account", account)
                 .putString("password", password)
                 .putBoolean("isLogin", true)
                 .commit();
         return true;
+    }
+
+    public void storeName(String name){
+        this.usn = name;
+    }
+
+    public String getUserName (){
+        Log.e("tag", "user Name:"+usn);
+        return usn;
     }
 }

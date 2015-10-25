@@ -32,6 +32,7 @@ public class RoutePlanningActivity extends Activity
         webView.loadUrl(Constant.MAP_URL);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
     }
 
     @Override
@@ -97,7 +98,7 @@ public class RoutePlanningActivity extends Activity
         String str="";
         TaskActivity taskActivity = new TaskActivity();
         //TODO 需要檢查
-        boolean [] state = taskActivity.getState();
+        boolean [] state = taskActivity.getTempState();
         String [] tempAddress = taskActivity.getTempAddress();
         Log.i("Router", "state Length:"+ state.length);
         for(int i=0; i<state.length; i++)

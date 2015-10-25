@@ -35,10 +35,10 @@ public class TaskActivity extends AbstractList {
     private String address;
     private String contents;
     private String phones;
-    private String userName;
 
+    String userName;
     String[] tempAddress;
-    boolean[] state;
+    boolean[] tempState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,16 +52,16 @@ public class TaskActivity extends AbstractList {
             }
         });
         gasDB.setTaskListener(asyncTaskFinishListener);
-        Intent intent = new Intent();
-        userName = intent.getStringExtra("userName");
 //        simpleTaskListAdapter = new SimpleTaskListAdapter();
-//        state = new boolean[simpleTaskListAdapter.getCount()];
+//        tempState = new boolean[simpleTaskListAdapter.getCount()];
 //        simpleTaskListAdapter = new SimpleTaskListAdapter();
 //        tempAddress = new String[simpleTaskListAdapter.getCount()];
-//        context = this;
 //        tempAddress = new String[count];
 //        Log.e("simple", "count:"+ count);
-//        state = new boolean[count];
+//        tempState = new boolean[count];
+//        Log.e("simple",userName);
+        Intent intent = getIntent();
+        userName = intent.getStringExtra("userName");
         gasDB.startAsyncTask("Task");
     }
 
@@ -69,7 +69,6 @@ public class TaskActivity extends AbstractList {
     protected void onResume() {
         super.onResume();
     }
-
 
     private GasDB.AsyncTaskFinishListener asyncTaskFinishListener = new GasDB.AsyncTaskFinishListener() {
         @Override
@@ -99,23 +98,26 @@ public class TaskActivity extends AbstractList {
         }
     };
 
-
     public class SimpleTaskListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
+        int count = 1;
+        boolean[] state = new boolean[getCount()];
+        //回傳給TaskActivity 用的成員
+        boolean[] returnState = new boolean[getCount()];
+        String[] returnAdd = new String[getCount()];
 
 
-        public SimpleTaskListAdapter() {
+        //----
+        public SimpleTaskListAdapter(){
+
         }
-
         public SimpleTaskListAdapter(Context context) {
             this.inflater = LayoutInflater.from(context);
         }
 
-        boolean[] state = new boolean[getCount()];
-
         @Override
         public int getCount() {
-            Log.e("SimpleTaskListAdapter", "getCount:" + gasDB.getTable(GasDB.ORDER).length());
+//            Log.e("SimpleTaskListAdapter", "getCount:" + gasDB.getTable(GasDB.ORDER).length());
 //            count = gasDB.getTable(GasDB.ORDER).length();
 
             return gasDB.getTable(GasDB.ORDER).length();
@@ -142,6 +144,7 @@ public class TaskActivity extends AbstractList {
             } catch (JSONException e) {
                 Log.e("SimpleTaskListAdapter", e.toString());
             }
+
             return null;
         }
 
@@ -152,9 +155,10 @@ public class TaskActivity extends AbstractList {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder = null;
-            final ViewHolder finalViewHolder;
+
+            ViewHolder viewHolder ;
             if (convertView == null) {
+                count++;
                 viewHolder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
                 viewHolder.appointment = (TextView) convertView.findViewById(R.id.tv_appointment);
@@ -164,39 +168,48 @@ public class TaskActivity extends AbstractList {
                 viewHolder.contents = (TextView) convertView.findViewById(R.id.tv_contents);
                 viewHolder.phones = (TextView) convertView.findViewById(R.id.tv_phones);
                 viewHolder.btn_accept = (Button) convertView.findViewById(R.id.btn_accept);
-                finalViewHolder = viewHolder;
-                viewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-//TODO 之後要改成判斷為該員工id & isMe要改
-                        if (finalViewHolder.btn_accept.getText().equals("承接") && !state[position]) {
-                            Toast.makeText(view.getContext(), "任務承接成功", Toast.LENGTH_SHORT).show();
-                            finalViewHolder.btn_accept.setText("李司機");
-                            state[position] = true;
-                            Log.e("simple", "position:" + position + "\nstate:" + state[position]);
-//                        tempAddress[position] = address;
-//                        Log.e("SimpleTaskListAdapter", address);
-                            //TODO 這裡還需要改
-                        } else if (true) {
-                            Toast.makeText(view.getContext(), "取消承接", Toast.LENGTH_SHORT).show();
-                            finalViewHolder.btn_accept.setText("承接");
-                            state[position] = false;
+                convertView.setTag(viewHolder);
 
-//                        tempAddress[position] = null;
-//                        Log.e("SimpleTaskListAdapter", address);
-                        } else {
-                            Toast.makeText(view.getContext(), "已有人接案", Toast.LENGTH_SHORT).show();
+
+
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            Log.e("simple", "getView:" + count);
+
+                viewHolder.btn_accept.setTag(position);
+                viewHolder.btn_accept.setText("承接");
+            if (state[position]) {
+                Log.e("simple", "被點選");
+                viewHolder.btn_accept.setTag(position);
+                viewHolder.btn_accept.setText(userName);
+            }
+
+            final ViewHolder finalViewHolder1 = viewHolder;
+
+            viewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if ((int) finalViewHolder1.btn_accept.getTag()==position){
+                        if (!state[position]) {
+                            String[] item = (String[]) getItem(position);
+                            state[position] = true;
+                            Log.e("simple", "點選狀態:" + position + "," + state[position]);
+                            finalViewHolder1.btn_accept.setText(userName);
+
+                            returnState[position] = state[position];
+                            returnAdd[position] = item[3];
+                            Log.e("simple", item[3]);
+                        }else {
+                            state[position] = false;
+                            Log.e("simple", "點選狀態:" + position + "," + state[position]);
+                            finalViewHolder1.btn_accept.setText("承接");
+                            returnState[position] = state[position];
                         }
                     }
-                });
-                convertView.setTag(viewHolder);
-                viewHolder.btn_accept.setTag("裡師父");
-            } else {
-
-                viewHolder = (ViewHolder) convertView.getTag();
-//                viewHolder.btn_accept.setTag(position);
-//                finalViewHolder = (ViewHolder) convertView.getTag();
-            }
+                }
+            });
 
             try {
                 String[] item = (String[]) getItem(position);
@@ -212,7 +225,6 @@ public class TaskActivity extends AbstractList {
                 viewHolder.address.setText(item[3]);
                 viewHolder.contents.setText(item[4]);
                 viewHolder.phones.setText(item[5]);
-
             } catch (Exception e) {
 
                 Log.e("SimpleTaskListAdapter", e.toString());
@@ -222,39 +234,6 @@ public class TaskActivity extends AbstractList {
             return convertView;
         }
 
-        /*class Btn implements View.OnClickListener {
-            int position;
-
-            Btn(int position) {
-                this.position = position;
-            }
-
-            ViewHolder viewHolder = new ViewHolder();
-
-            @Override
-            public void onClick(View view) {
-                //TODO 之後要改成判斷為該員工id & isMe要改
-                if (viewHolder.btn_accept.getText().equals("承接") && !state[position]) {
-                    Toast.makeText(view.getContext(), "任務承接成功", Toast.LENGTH_SHORT).show();
-                    viewHolder.btn_accept.setText("李司機");
-                    state[position] = true;
-                    Log.e("simple", "position:" + position + "\nstate:" + state[position]);
-//                        tempAddress[position] = address;
-//                        Log.e("SimpleTaskListAdapter", address);
-                    //TODO 這裡還需要改
-                } else if (true) {
-                    Toast.makeText(view.getContext(), "取消承接", Toast.LENGTH_SHORT).show();
-                    viewHolder.btn_accept.setText("承接");
-                    state[position] = false;
-
-//                        tempAddress[position] = null;
-//                        Log.e("SimpleTaskListAdapter", address);
-                } else {
-                    Toast.makeText(view.getContext(), "已有人接案", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }*/
-
         public class ViewHolder {
             TextView appointment;
             TextView kindOfTask;
@@ -263,22 +242,25 @@ public class TaskActivity extends AbstractList {
             TextView contents;
             TextView phones;
             Button btn_accept;
-
+        }
+        public boolean[] getState(){
+            return returnState;
+        }
+        public String[] getAdd(){
+            return  returnAdd;
         }
     }
-
     //for RoutePlanning
-    SimpleTaskListAdapter simpleTaskListAdapter;
-
-    public boolean[] getState() {
-
-
-        Log.e("simple", "state length:" + state.length);
-        return state;
+    public boolean[] getTempState() {
+        SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
+        tempState = simpleTaskListAdapter.getState();
+        Log.e("simple", "tempState length:" + tempState.length);
+        return tempState;
     }
 
     public String[] getTempAddress() {
-
+        SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
+        tempAddress = simpleTaskListAdapter.getAdd();
         return tempAddress;
     }
 

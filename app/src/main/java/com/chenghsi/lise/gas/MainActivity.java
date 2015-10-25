@@ -23,8 +23,9 @@ public class MainActivity extends TabActivity
         TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
         TabHost.TabSpec tab3 = tabHost.newTabSpec("Third tab");
 
+        Intent intent = getIntent();
         tab1.setIndicator("任務");
-        tab1.setContent(new Intent(this,TaskActivity.class));
+        tab1.setContent(new Intent(this,TaskActivity.class).putExtra("userName",intent.getStringExtra("userName")));
 
         tab2.setIndicator("配送表");
         tab2.setContent(new Intent(this,DeliveryActivity.class));

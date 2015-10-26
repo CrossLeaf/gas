@@ -37,8 +37,8 @@ public class TaskActivity extends AbstractList {
     private String phones;
 
     String userName;
-    String[] tempAddress;
-    boolean[] tempState;
+    static public String[] tempAddress;
+    static public boolean[] tempState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,9 +102,10 @@ public class TaskActivity extends AbstractList {
         private LayoutInflater inflater;
         int count = 1;
         boolean[] state = new boolean[getCount()];
+
         //回傳給TaskActivity 用的成員
-        boolean[] returnState = new boolean[getCount()];
-        String[] returnAdd = new String[getCount()];
+//        boolean[] returnState = new boolean[getCount()];
+//        String[] returnAdd = new String[getCount()];
 
 
         //----
@@ -112,6 +113,8 @@ public class TaskActivity extends AbstractList {
 
         }
         public SimpleTaskListAdapter(Context context) {
+            tempAddress = new String[getCount()];
+            tempState = new boolean[getCount()];
             this.inflater = LayoutInflater.from(context);
         }
 
@@ -198,14 +201,16 @@ public class TaskActivity extends AbstractList {
                             Log.e("simple", "點選狀態:" + position + "," + state[position]);
                             finalViewHolder1.btn_accept.setText(userName);
 
-                            returnState[position] = state[position];
-                            returnAdd[position] = item[3];
+//                            returnState[position] = state[position];
+//                            returnAdd[position] = item[3];
+                            tempState[position] = state[position];
+                            tempAddress[position] = item[3];
                             Log.e("simple", item[3]);
                         }else {
                             state[position] = false;
                             Log.e("simple", "點選狀態:" + position + "," + state[position]);
                             finalViewHolder1.btn_accept.setText("承接");
-                            returnState[position] = state[position];
+                            tempState[position] = state[position];
                         }
                     }
                 }
@@ -243,13 +248,14 @@ public class TaskActivity extends AbstractList {
             TextView phones;
             Button btn_accept;
         }
-        public boolean[] getState(){
-            return returnState;
+        public void initStatic(){
+
         }
-        public String[] getAdd(){
-            return  returnAdd;
-        }
+//        public String[] getAdd(){
+//            return  returnAdd;
+//        }
     }
+
     //for RoutePlanning
     /*public boolean[] getTempState() {
         SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
@@ -258,17 +264,13 @@ public class TaskActivity extends AbstractList {
         return tempState;
     }*/
 
-    public String[] getTempAddress() {
+    /*public String[] getTempAddress() {
         SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
         tempAddress = simpleTaskListAdapter.getAdd();
         return tempAddress;
-    }
-    public class TempData extends SimpleTaskListAdapter{
-        public void getTempState(){
-            tempState = super.state;
-            Log.e("tag", "我成功了");
-        }
-    }
+    }*/
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

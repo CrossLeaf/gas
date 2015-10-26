@@ -60,8 +60,7 @@ public class DeliveryActivity extends AbstractList
                         startActivity(intent);
                     }
                 });
-            }
-            catch (Exception e)
+            }catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -89,7 +88,7 @@ public class DeliveryActivity extends AbstractList
         {
             try
             {
-                JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.ORDER, position);
+                JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.DELIVERY, position);
 
                 String order_id = item_delivery.getString(Constant.DELIVERY_ORDER_ID);
                 Log.e("tag","orderId:"+order_id);
@@ -104,7 +103,7 @@ public class DeliveryActivity extends AbstractList
 
                 ArrayList<String> result = new ArrayList<>();
                 result.add( item_customer.getString(Constant.CUSTOMER_NAME) );
-                result.add(item_customer.getString(Constant.CUSTOMER_EMAIL)); //TODO phone
+                result.add( item_customer.getString(Constant.CUSTOMER_EMAIL) ); //TODO phone
                 result.add( item_customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS) );
 
                 return result.toArray(new String[result.size()]);

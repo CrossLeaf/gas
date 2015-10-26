@@ -31,6 +31,7 @@ public class GasDB
 
     private AsyncTaskFinishListener asyncTaskFinishListenerFromUser = null;
 
+    //-----four 在此新增要被儲存的屬性
     private static JSONObject table_inJSONObject_delivery = null;
     private static JSONObject table_inJSONObject_order = null;
     private static JSONObject table_inJSONObject_customer = null;
@@ -47,11 +48,14 @@ public class GasDB
     private static JSONArray table_inJSONArray_staff = null;
     private static JSONArray table_inJSONArray_barrel = null;
 
+    //各類別所需資料，都將繼承此介面& OVERRIDE
     public interface AsyncTaskFinishListener
     {
         void onAsyncTaskFinish();
     }
 
+    //這就類似做觸發監聽事件的的方法
+    //似乎這一連串做完會呼叫 onAsyncTaskFinish() 代表異步任務加載完成
     public void setTaskListener(AsyncTaskFinishListener asyncTaskFinishListenerFromUser)
     {
         this.asyncTaskFinishListenerFromUser = asyncTaskFinishListenerFromUser;
@@ -161,7 +165,7 @@ public class GasDB
         catch (Exception e){Log.e("GasDB.getTableItemById",e.toString());}
         return null;
     }
-
+    //-----first
     // Renew local database from user's requirement.
     // Different requirement will start single/multiple asyncTask.
     public void startAsyncTask(String kind)
@@ -252,7 +256,7 @@ public class GasDB
                 break;
         }
     }
-
+    //-----second 呼叫異步任務下載資料
     // Renew locale database from remote
     private class asyncTask extends AsyncTask<String[], Void, Boolean>
     {
@@ -279,6 +283,8 @@ public class GasDB
                     Log.d("GasDB.asyncTask", "Start to get data.");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                     String jsonString = reader.readLine();
+                    //Look data
+                    Log.e("GasDB.asyncTask", jsonString);
                     reader.close();
                     Log.d("GasDB.asyncTask", "Data reading successfully");
 
@@ -316,7 +322,7 @@ public class GasDB
                 Log.e("GasDB.asyncTask","asyncTask fails!");
             }
         }
-
+        //-----third 下載的資料會存到這邊
         private void storeTable(String tableName, JSONArray content1, JSONObject content2)
         {
             switch (tableName)

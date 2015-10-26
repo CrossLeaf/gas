@@ -96,12 +96,11 @@ public class RoutePlanningActivity extends Activity
     private String getAllAddress()
     {
         String str="";
-        TaskActivity taskActivity = new TaskActivity();
         //TODO 需要檢查
 //        boolean [] state = taskActivity.getTempState();
 //        String [] tempAddress = taskActivity.getTempAddress();
-        Boolean[] state = new Boolean[10];
-        String[] tempAddress = new String[10];
+        boolean[] state = TaskActivity.tempState;
+        String[] tempAddress = TaskActivity.tempAddress;
         Log.i("Router", "state Length:"+ state.length);
         for(int i=0; i<state.length; i++)
         {
@@ -109,9 +108,10 @@ public class RoutePlanningActivity extends Activity
                 str += tempAddress[i] + ",";
                 Log.i("Router", str);
             }else{
-                Toast.makeText(this, "尚未承接任何案子", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "尚未承接任何案子", Toast.LENGTH_SHORT).show();
             }
             //TODO 新增任務清單上已承接的地點
+
         }
 
         if(str.equals("")) return str;

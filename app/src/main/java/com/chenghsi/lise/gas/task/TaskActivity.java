@@ -251,19 +251,24 @@ public class TaskActivity extends AbstractList {
         }
     }
     //for RoutePlanning
-    public boolean[] getTempState() {
+    /*public boolean[] getTempState() {
         SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
         tempState = simpleTaskListAdapter.getState();
         Log.e("simple", "tempState length:" + tempState.length);
         return tempState;
-    }
+    }*/
 
     public String[] getTempAddress() {
         SimpleTaskListAdapter simpleTaskListAdapter = new SimpleTaskListAdapter();
         tempAddress = simpleTaskListAdapter.getAdd();
         return tempAddress;
     }
-
+    public class TempData extends SimpleTaskListAdapter{
+        public void getTempState(){
+            tempState = super.state;
+            Log.e("tag", "我成功了");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -27,6 +27,7 @@ public class GasDB
     public static final String PRICE = "price";
     public static final String BALANCING = "order";
     public static final String STAFF = "staff";
+    public static final String BARREL = "barrel";
 
     private AsyncTaskFinishListener asyncTaskFinishListenerFromUser = null;
 
@@ -36,6 +37,7 @@ public class GasDB
     private static JSONObject table_inJSONObject_doddle = null;
     private static JSONObject table_inJSONObject_price = null;
     private static JSONObject table_inJSONObject_staff = null;
+    private static JSONObject table_inJSONObject_barrel = null;
 
     private static JSONArray table_inJSONArray_delivery = null;
     private static JSONArray table_inJSONArray_order = null;
@@ -43,6 +45,7 @@ public class GasDB
     private static JSONArray table_inJSONArray_doddle = null;
     private static JSONArray table_inJSONArray_price = null;
     private static JSONArray table_inJSONArray_staff = null;
+    private static JSONArray table_inJSONArray_barrel = null;
 
     public interface AsyncTaskFinishListener
     {
@@ -76,6 +79,9 @@ public class GasDB
                 case PRICE:
                     return table_inJSONArray_price;
 
+                case BARREL:
+                    return table_inJSONArray_barrel;
+
                 default:
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
                     break;
@@ -106,6 +112,9 @@ public class GasDB
 
                 case PRICE:
                     return table_inJSONObject_price.getJSONArray(id);
+
+                case BARREL:
+                    return table_inJSONObject_barrel.getJSONArray(id);
 
                 default:
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
@@ -140,6 +149,9 @@ public class GasDB
 
                 case STAFF:
                     return table_inJSONArray_staff.getJSONArray(id);
+
+                case BARREL:
+                    return table_inJSONArray_barrel.getJSONArray(id);
 
                 default:
                     Log.e("GasDB.get", "Unknown table name: " + tableName);

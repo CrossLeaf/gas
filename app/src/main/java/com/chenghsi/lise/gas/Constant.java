@@ -78,5 +78,12 @@ public class Constant
     public static int DELIVERY_STATUS = 2;
     public static int DELIVERY_RESERVE_TIME = 3;
     public static int DELIVERY_PREDICT_DAY_COUNT = 4;
-    public static int DELIVERY_ORDER_ID = 5;
+    public static int DELIVERY_ORDER_ID = 6;
+
+    // The corresponding index for database table: "phone"
+    public static int PHONE_ID = 0;
+    public static int PHONE_BUILT_TIME = 1;
+    public static int PHONE_NUMBER = 2;
+    public static int PHONE_CUSTOMER_ID = 3;
+
 }

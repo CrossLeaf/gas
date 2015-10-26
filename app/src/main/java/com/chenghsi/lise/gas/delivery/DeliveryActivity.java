@@ -56,6 +56,7 @@ public class DeliveryActivity extends AbstractList
                     {
                         Intent intent = new Intent();
                         intent.setClass(DeliveryActivity.this, DeliveryScheduleActivity.class);
+                        intent.putExtra("position", position);
                         startActivity(intent);
                     }
                 });
@@ -88,21 +89,26 @@ public class DeliveryActivity extends AbstractList
         {
             try
             {
-                JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.DELIVERY, position);
+                JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.ORDER, position);
 
                 String order_id = item_delivery.getString(Constant.DELIVERY_ORDER_ID);
+                Log.e("tag","orderId:"+order_id);
                 JSONArray item_order = gasDB.getTableItemById(GasDB.ORDER, order_id);
 
                 String customer_id = item_order.getString(Constant.ORDER_CUSTOMER_ID);
+                Log.e("tag","customerId:"+customer_id);
                 JSONArray item_customer = gasDB.getTableItemById(GasDB.CUSTOMER, customer_id);
 
+//                String phone_number =;
+//                JSONArray phone_number = gasDB.getTableItemById(GasDB.PHONE,phone_number);
 
                 ArrayList<String> result = new ArrayList<>();
                 result.add( item_customer.getString(Constant.CUSTOMER_NAME) );
-                result.add( item_customer.getString(Constant.CUSTOMER_EMAIL) ); //TODO phone
+                result.add(item_customer.getString(Constant.CUSTOMER_EMAIL)); //TODO phone
                 result.add( item_customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS) );
 
                 return result.toArray(new String[result.size()]);
+
             }
             catch(JSONException e) {Log.e("DeliveryListAdapter",e.toString());}
             return null;
@@ -124,8 +130,9 @@ public class DeliveryActivity extends AbstractList
             {
                 String[] item = (String[]) getItem(position);
                 ((TextView) view.findViewById(R.id.tv_clientName)).setText(item[0]);
-                //((TextView) view.findViewById(R.id.tv_phones)).setText(item[1]);
+                ((TextView) view.findViewById(R.id.tv_phones)).setText(item[1]);
                 ((TextView) view.findViewById(R.id.tv_address)).setText(item[2]);
+                Log.e("tag", item[0]+","+item[1]+","+item[2]);
             }
             catch (Exception e)
             {

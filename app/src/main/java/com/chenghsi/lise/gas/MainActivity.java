@@ -25,16 +25,17 @@ public class MainActivity extends TabActivity
 
         Intent intent = getIntent();
         tab1.setIndicator("任務");
-        tab1.setContent(new Intent(this,TaskActivity.class).putExtra("userName",intent.getStringExtra("userName")));
+        tab1.setContent(new Intent(this, TaskActivity.class).putExtra("userName", intent.getStringExtra("userName")));
 
         tab2.setIndicator("配送表");
-        tab2.setContent(new Intent(this,DeliveryActivity.class));
+        tab2.setContent(new Intent(this, DeliveryActivity.class));
 
         tab3.setIndicator("其他");
-        tab3.setContent(new Intent(this,OtherActivity.class));
+        tab3.setContent(new Intent(this, OtherActivity.class));
 
         tabHost.addTab(tab1);
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
+
     }
 }

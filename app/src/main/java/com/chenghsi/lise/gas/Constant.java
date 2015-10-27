@@ -67,10 +67,12 @@ public class Constant
     // The corresponding index for database table: "price"
     public static int PRICE_ID = 0;
     public static int PRICE_CAPACITY = 1;
-    public static int PRICE_UNIVALENT = 2;
-    public static int PRICE_BUILT_TIME = 3;
-    public static int PRICE_ADJUST_TIME = 4;
-    public static int PRICE_REMARK = 5;
+    public static int PRICE_20 = 2;
+    public static int PRICE_16 = 3;
+    public static int PRICE_BULID_DATE = 5;
+    public static int PRICE_CHANGE_DATE = 6;
+    public static int PRICE_REMARK = 8;
+
 
     // The corresponding index for database table: "delivery"
     public static int DELIVERY_ID = 0;

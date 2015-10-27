@@ -16,6 +16,7 @@ import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
 import com.chenghsi.lise.gas.task.DetailedTaskActivity;
+import com.chenghsi.lise.gas.task.TaskActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,13 +32,13 @@ public class DeliveryActivity extends AbstractList
         super.onCreate(savedInstanceState);
         toolbar.setTitle(R.string.title_activity_delivery);
         gasDB.setTaskListener(asyncTaskFinishListener);
+        gasDB.startAsyncTask("Delivery");
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        gasDB.startAsyncTask("Delivery");
     }
 
     private GasDB.AsyncTaskFinishListener asyncTaskFinishListener = new GasDB.AsyncTaskFinishListener()
@@ -86,7 +87,9 @@ public class DeliveryActivity extends AbstractList
         @Override
         public Object getItem(int position)
         {
-            try
+            boolean[] state = TaskActivity.tempState;
+            String[] tempAddress = TaskActivity.tempAddress;
+            /*try
             {
                 JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.DELIVERY, position);
 
@@ -109,7 +112,7 @@ public class DeliveryActivity extends AbstractList
                 return result.toArray(new String[result.size()]);
 
             }
-            catch(JSONException e) {Log.e("DeliveryListAdapter",e.toString());}
+            catch(JSONException e) {Log.e("DeliveryListAdapter",e.toString());}*/
             return null;
         }
 

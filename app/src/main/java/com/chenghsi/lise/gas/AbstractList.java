@@ -23,7 +23,7 @@ public abstract class AbstractList extends Activity
     protected ListView listView;
     protected Toolbar toolbar;
     protected SwipeRefreshLayout swipeRefreshLayout;
-    protected GasDB gasDB;
+    static protected GasDB gasDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

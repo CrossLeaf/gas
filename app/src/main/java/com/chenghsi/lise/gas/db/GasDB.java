@@ -48,6 +48,7 @@ public class GasDB
     private static JSONArray table_inJSONArray_staff = null;
     private static JSONArray table_inJSONArray_barrel = null;
 
+    static String jsonString;
     //各類別所需資料，都將繼承此介面& OVERRIDE
     public interface AsyncTaskFinishListener
     {
@@ -282,7 +283,7 @@ public class GasDB
                     // Read Data
                     Log.d("GasDB.asyncTask", "Start to get data.");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                    String jsonString = reader.readLine();
+                    jsonString = reader.readLine();
                     //Look data
                     Log.e("GasDB.asyncTask", jsonString);
                     reader.close();

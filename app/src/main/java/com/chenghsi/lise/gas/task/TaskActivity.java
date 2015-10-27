@@ -109,9 +109,10 @@ public class TaskActivity extends AbstractList {
 
 
         //----
-        public SimpleTaskListAdapter(){
+        public SimpleTaskListAdapter() {
 
         }
+
         public SimpleTaskListAdapter(Context context) {
             tempAddress = new String[getCount()];
             tempState = new boolean[getCount()];
@@ -158,8 +159,11 @@ public class TaskActivity extends AbstractList {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-
-            ViewHolder viewHolder ;
+            /*String[] item = (String[]) getItem(position);
+            if (item ==null ) {
+                return null;
+            } else {*/
+            ViewHolder viewHolder;
             if (convertView == null) {
                 count++;
                 viewHolder = new ViewHolder();
@@ -174,39 +178,29 @@ public class TaskActivity extends AbstractList {
                 convertView.setTag(viewHolder);
 
 
-
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
             Log.e("simple", "getView:" + count);
 
-                viewHolder.btn_accept.setTag(position);
-                viewHolder.btn_accept.setText("承接");
-            if (state[position]) {
-                Log.e("simple", "被點選");
-                viewHolder.btn_accept.setTag(position);
-                viewHolder.btn_accept.setText(userName);
-            }
 
             final ViewHolder finalViewHolder1 = viewHolder;
 
             viewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if ((int) finalViewHolder1.btn_accept.getTag()==position){
+                    if ((int) finalViewHolder1.btn_accept.getTag() == position) {
                         if (!state[position]) {
                             String[] item = (String[]) getItem(position);
                             state[position] = true;
                             Log.e("simple", "點選狀態:" + position + "," + state[position]);
                             finalViewHolder1.btn_accept.setText(userName);
 
-//                            returnState[position] = state[position];
-//                            returnAdd[position] = item[3];
                             tempState[position] = state[position];
                             tempAddress[position] = item[3];
                             Log.e("simple", item[3]);
-                        }else {
+                        } else {
                             state[position] = false;
                             Log.e("simple", "點選狀態:" + position + "," + state[position]);
                             finalViewHolder1.btn_accept.setText("承接");
@@ -218,18 +212,32 @@ public class TaskActivity extends AbstractList {
 
             try {
                 String[] item = (String[]) getItem(position);
-                appointment = item[0];
-                kindOfTask = item[1];
-                clientName = item[2];
-                address = item[3];
-                contents = item[4];
-                phones = item[5];
-                viewHolder.appointment.setText(item[0]);
-                viewHolder.kindOfTask.setText(item[1]);
-                viewHolder.clientName.setText(item[2]);
-                viewHolder.address.setText(item[3]);
-                viewHolder.contents.setText(item[4]);
-                viewHolder.phones.setText(item[5]);
+                if (item == null) {
+                    return null;
+                } else {
+                    appointment = item[0];
+                    kindOfTask = item[1];
+                    clientName = item[2];
+                    address = item[3];
+                    contents = item[4];
+                    phones = item[5];
+
+                    viewHolder.appointment.setText(item[0]);
+                    viewHolder.kindOfTask.setText(item[1]);
+                    viewHolder.clientName.setText(item[2]);
+                    viewHolder.address.setText(item[3]);
+                    viewHolder.contents.setText(item[4]);
+                    viewHolder.phones.setText(item[5]);
+
+                    viewHolder.btn_accept.setTag(position);
+                    viewHolder.btn_accept.setText("承接");
+
+                    if (state[position]) {
+                        Log.e("simple", "被點選");
+                        viewHolder.btn_accept.setTag(position);
+                        viewHolder.btn_accept.setText(userName);
+                    }
+                }
             } catch (Exception e) {
 
                 Log.e("SimpleTaskListAdapter", e.toString());
@@ -237,6 +245,7 @@ public class TaskActivity extends AbstractList {
                 Log.e("SimpleTaskListAdapter", "error");
             }
             return convertView;
+//        }
         }
 
         public class ViewHolder {
@@ -248,7 +257,8 @@ public class TaskActivity extends AbstractList {
             TextView phones;
             Button btn_accept;
         }
-        public void initStatic(){
+
+        public void initStatic() {
 
         }
 //        public String[] getAdd(){
@@ -269,7 +279,6 @@ public class TaskActivity extends AbstractList {
         tempAddress = simpleTaskListAdapter.getAdd();
         return tempAddress;
     }*/
-
 
 
     @Override

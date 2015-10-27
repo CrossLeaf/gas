@@ -57,7 +57,7 @@
                    android:adjustViewBounds="true"
                    android:scaleType="centerInside"
                    tools:ignore="ContentDescription"/>
-
+          <!-- "格式"呈現的地方-->
         <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                     android:textColor="@color/result_minor_text"/>
 
         </LinearLayout>
-
+          <!-- "類型"呈現的地方-->
         <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"
@@ -95,7 +95,7 @@
                     android:textColor="@color/result_minor_text"/>
 
         </LinearLayout>
-
+          <!-- "時間"呈現的地方-->
         <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"

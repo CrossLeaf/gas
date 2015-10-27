@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -91,6 +92,7 @@ public class HistoryManager
             cursor.moveToFirst();
             for(int i=0; i<cursor.getCount(); i++)
             {
+                Log.e("scanner", "where is cursor:"+cursor);
                 item = new HistoryItem( cursor.getString(1) );
                 item.location = cursor.getString(2);
                 item.capacity = cursor.getString(3);

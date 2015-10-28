@@ -32,6 +32,7 @@ public class LoginActivity extends Activity {
     String usn;
     static final int STAFF_COUNT = 9;
     static final int STAFF_PASSWORD = 10;
+    private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class LoginActivity extends Activity {
 
         //呼叫讀取偏好資料
         readPref();
+
+        new AsynDownLoad().execute(url);
     }
 
 

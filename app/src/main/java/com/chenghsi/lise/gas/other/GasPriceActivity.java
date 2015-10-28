@@ -7,10 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.AbstractList;
+import com.chenghsi.lise.gas.AsynDownLoad;
 import com.chenghsi.lise.gas.Constant;
+import com.chenghsi.lise.gas.GasPriceAdapter;
+import com.chenghsi.lise.gas.GasPriceList;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
 
@@ -21,6 +25,9 @@ import java.util.ArrayList;
 
 
 public class GasPriceActivity extends AbstractList {
+    private ArrayList<GasPriceList> list;
+    private ListAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,14 +39,28 @@ public class GasPriceActivity extends AbstractList {
                 onBackPressed();
             }
         });
-        gasDB.setTaskListener(asyncTaskFinishListener);
+//        gasDB.setTaskListener(asyncTaskFinishListener);
+
         Log.e("tag", "--onCreate--");
+        adapter = new GasPriceAdapter(GasPriceActivity.this, gasLists());
+
+        //去找一下listView
+        listView.setAdapter(adapter);
+        listView.setTextFilterEnabled(true);
+
+    }
+    public ArrayList<GasPriceList> gasLists(){
+        AsynDownLoad asynDownLoad = new AsynDownLoad();
+        list = new ArrayList<>();
+        list = asynDownLoad.getList();
+        return list;
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        gasDB.startAsyncTask("GasPricing");
+//        gasDB.startAsyncTask("GasPricing");
     }
 
     private GasDB.AsyncTaskFinishListener asyncTaskFinishListener = new GasDB.AsyncTaskFinishListener() {

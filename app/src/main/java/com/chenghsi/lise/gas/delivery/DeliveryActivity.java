@@ -12,16 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.AbstractList;
-import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
-import com.chenghsi.lise.gas.task.DetailedTaskActivity;
 import com.chenghsi.lise.gas.task.TaskActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.util.ArrayList;
 
 
 public class DeliveryActivity extends AbstractList

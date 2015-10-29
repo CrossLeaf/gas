@@ -4,74 +4,74 @@ package com.chenghsi.lise.gas;
  * Created by MengHan on 2015/10/26.
  */
 public class GasPriceList {
-    public String PRICE_ID;
-    public String PRICE_CAPACITY;
-    public String PRICE_20;
-    public String PRICE_16;
-    public String PRICE_BULID_DATE;
-    public String PRICE_CHANGE_DATE;
-    public String PRICE_REMARK;
+    public String priceId;
+    public String priceCapacity;
+    public String price20;
+    public String price16;
+    public String priceBulidDate;
+    public String priceChangeDate;
+    public String priceRemark;
 
     GasPriceList(String p20, String p16, String bulidDate, String remark) {
-        setPRICE_20(p20);
-        setPRICE_16(p16);
-        setPRICE_BULID_DATE(bulidDate);
-        setPRICE_REMARK(remark);
+        setPrice20(p20);
+        setPrice16(p16);
+        setPriceBulidDate(bulidDate);
+        setPriceRemark(remark);
     }
 
-    public String getPRICE_ID() {
-        return PRICE_ID;
+    public String getPriceId() {
+        return priceId;
     }
 
-    public void setPRICE_ID(String PRICE_ID) {
-        this.PRICE_ID = PRICE_ID;
+    public void setPriceId(String priceId) {
+        this.priceId = priceId;
     }
 
-    public String getPRICE_CAPACITY() {
-        return PRICE_CAPACITY;
+    public String getPriceCapacity() {
+        return priceCapacity;
     }
 
-    public void setPRICE_CAPACITY(String PRICE_CAPACITY) {
-        this.PRICE_CAPACITY = PRICE_CAPACITY;
+    public void setPriceCapacity(String priceCapacity) {
+        this.priceCapacity = priceCapacity;
     }
 
-    public String getPRICE_20() {
-        return PRICE_20;
+    public String getPrice20() {
+        return price20;
     }
 
-    public void setPRICE_20(String PRICE_20) {
-        this.PRICE_20 = PRICE_20;
+    public void setPrice20(String price20) {
+        this.price20 = price20;
     }
 
-    public String getPRICE_16() {
-        return PRICE_16;
+    public String getPrice16() {
+        return price16;
     }
 
-    public void setPRICE_16(String PRICE_16) {
-        this.PRICE_16 = PRICE_16;
+    public void setPrice16(String price16) {
+        this.price16 = price16;
     }
 
-    public String getPRICE_BULID_DATE() {
-        return PRICE_BULID_DATE;
+    public String getPriceBulidDate() {
+        return priceBulidDate;
     }
 
-    public void setPRICE_BULID_DATE(String PRICE_BULID_DATE) {
-        this.PRICE_BULID_DATE = PRICE_BULID_DATE;
+    public void setPriceBulidDate(String priceBulidDate) {
+        this.priceBulidDate = priceBulidDate;
     }
 
-    public String getPRICE_CHANGE_DATE() {
-        return PRICE_CHANGE_DATE;
+    public String getPriceChangeDate() {
+        return priceChangeDate;
     }
 
-    public void setPRICE_CHANGE_DATE(String PRICE_CHANGE_DATE) {
-        this.PRICE_CHANGE_DATE = PRICE_CHANGE_DATE;
+    public void setPriceChangeDate(String priceChangeDate) {
+        this.priceChangeDate = priceChangeDate;
     }
 
-    public String getPRICE_REMARK() {
-        return PRICE_REMARK;
+    public String getPriceRemark() {
+        return priceRemark;
     }
 
-    public void setPRICE_REMARK(String PRICE_REMARK) {
-        this.PRICE_REMARK = PRICE_REMARK;
+    public void setPriceRemark(String priceRemark) {
+        this.priceRemark = priceRemark;
     }
 }

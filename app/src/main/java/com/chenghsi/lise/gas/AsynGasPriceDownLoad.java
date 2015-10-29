@@ -17,7 +17,7 @@ import java.util.HashMap;
 /**
  * Created by MengHan on 2015/10/26.
  */
-public class AsynDownLoad extends AsyncTask<String, ArrayList<GasPriceList>, ArrayList<GasPriceList>> {
+public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceList>, ArrayList<GasPriceList>> {
 
     private ArrayList<GasPriceList> gasPriceLists;
     private String price_20;

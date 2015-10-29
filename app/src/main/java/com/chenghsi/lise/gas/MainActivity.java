@@ -7,6 +7,7 @@ import android.widget.TabHost;
 
 import com.chenghsi.lise.gas.delivery.DeliveryActivity;
 import com.chenghsi.lise.gas.other.OtherActivity;
+import com.chenghsi.lise.gas.task.NewTaskActivity;
 import com.chenghsi.lise.gas.task.TaskActivity;
 
 
@@ -24,8 +25,10 @@ public class MainActivity extends TabActivity
         TabHost.TabSpec tab3 = tabHost.newTabSpec("Third tab");
 
         Intent intent = getIntent();
+
         tab1.setIndicator("任務");
-        tab1.setContent(new Intent(this, TaskActivity.class).putExtra("userName", intent.getStringExtra("userName")));
+        tab1.setContent(new Intent(this, NewTaskActivity.class));
+//        .putExtra("userName", intent.getStringExtra("userName"))
 
         tab2.setIndicator("配送表");
         tab2.setContent(new Intent(this, DeliveryActivity.class));

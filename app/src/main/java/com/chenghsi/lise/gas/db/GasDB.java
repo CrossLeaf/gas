@@ -16,8 +16,7 @@ import java.util.HashMap;
  * This class open the connection to synchronize between app and remote database.
  */
 
-public class GasDB
-{
+public class GasDB {
     public static final String DB_URL = "http://198.245.55.221:8089/ProjectGAPP/php/show.php";
     public static final String GET = "?tbname=";
     public static final String ORDER = "order";
@@ -49,26 +48,22 @@ public class GasDB
     private static JSONArray table_inJSONArray_barrel = null;
 
     static String jsonString;
+
     //各類別所需資料，都將繼承此介面& OVERRIDE
-    public interface AsyncTaskFinishListener
-    {
+    public interface AsyncTaskFinishListener {
         void onAsyncTaskFinish();
     }
 
     //這就類似做觸發監聽事件的的方法
     //似乎這一連串做完會呼叫 onAsyncTaskFinish() 代表異步任務加載完成
-    public void setTaskListener(AsyncTaskFinishListener asyncTaskFinishListenerFromUser)
-    {
+    public void setTaskListener(AsyncTaskFinishListener asyncTaskFinishListenerFromUser) {
         this.asyncTaskFinishListenerFromUser = asyncTaskFinishListenerFromUser;
     }
 
     // Capture whole table
-    public JSONArray getTable(String tableName)
-    {
-        try
-        {
-            switch (tableName)
-            {
+    public JSONArray getTable(String tableName) {
+        try {
+            switch (tableName) {
                 case ORDER:
                     return table_inJSONArray_order;
 
@@ -91,18 +86,16 @@ public class GasDB
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
                     break;
             }
+        } catch (Exception e) {
+            Log.e("GasDB.getTable", e.toString());
         }
-        catch (Exception e){Log.e("GasDB.getTable",e.toString());}
         return null;
     }
 
     // Capture table item by primary key (ID).
-    public JSONArray getTableItemById(String tableName, String id)
-    {
-        try
-        {
-            switch (tableName)
-            {
+    public JSONArray getTableItemById(String tableName, String id) {
+        try {
+            switch (tableName) {
                 case ORDER:
                     return table_inJSONObject_order.getJSONArray(id);
 
@@ -125,18 +118,16 @@ public class GasDB
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
                     break;
             }
+        } catch (Exception e) {
+            Log.e("GasDB.getTableItemById", e.toString());
         }
-        catch (Exception e){Log.e("GasDB.getTableItemById",e.toString());}
         return null;
     }
 
     // Capture table item by index.
-    public JSONArray getTableItemByIndex(String tableName, int id)
-    {
-        try
-        {
-            switch (tableName)
-            {
+    public JSONArray getTableItemByIndex(String tableName, int id) {
+        try {
+            switch (tableName) {
                 case ORDER:
                     return table_inJSONArray_order.getJSONArray(id);
 
@@ -162,20 +153,20 @@ public class GasDB
                     Log.e("GasDB.get", "Unknown table name: " + tableName);
                     break;
             }
+        } catch (Exception e) {
+            Log.e("GasDB.getTableItemById", e.toString());
         }
-        catch (Exception e){Log.e("GasDB.getTableItemById",e.toString());}
         return null;
     }
+
     //-----first
     // Renew local database from user's requirement.
     // Different requirement will start single/multiple asyncTask.
-    public void startAsyncTask(String kind)
-    {
+    public void startAsyncTask(String kind) {
         String[] tableName;
         String[] url;
 
-        switch (kind)
-        {
+        switch (kind) {
             case "Task":
                 tableName = new String[2];
                 url = new String[2];
@@ -253,23 +244,20 @@ public class GasDB
                 break;
 
             default:
-                Log.e("GasDB.startAsyncTask","Unknown user task: " + kind);
+                Log.e("GasDB.startAsyncTask", "Unknown user task: " + kind);
                 break;
         }
     }
+
     //-----second 呼叫異步任務下載資料
     // Renew locale database from remote
-    private class asyncTask extends AsyncTask<String[], Void, Boolean>
-    {
+    private class asyncTask extends AsyncTask<String[], Void, Boolean> {
         @Override
-        protected Boolean doInBackground(String[]... params)
-        {
-            try
-            {
-                for(int j=0; j<params[0].length; j++)
-                {
-                    String tableName = params[0][j];
-                    URL url = new URL(params[1][j]);
+        protected Boolean doInBackground(String[]... params) {
+            try {
+                for (int j = 0; j < params[0].length; j++) {
+                    String tableName = params[0][j];    //第一個0是tableName的陣列,j為[order,customer]
+                    URL url = new URL(params[1][j]);    //params[1]:url, params[j]:0是拿到order的表,1是拿到customer的表
                     HttpURLConnection connection;
 
                     // Connection
@@ -292,9 +280,8 @@ public class GasDB
 
                     // JSONArray to JSONObject
                     JSONArray table_ArrayForm = new JSONArray(jsonString);
-                    HashMap<String,JSONArray> map = new HashMap<>();
-                    for(int i=0; i<table_ArrayForm.length(); i++)
-                    {
+                    HashMap<String, JSONArray> map = new HashMap<>();
+                    for (int i = 0; i < table_ArrayForm.length(); i++) {
                         JSONArray content = table_ArrayForm.getJSONArray(i);
                         String id = content.getString(0);
                         map.put(id, content);
@@ -305,29 +292,25 @@ public class GasDB
                     storeTable(tableName, table_ArrayForm, table_mapForm);
                 }
                 return true;
+            } catch (Exception e) {
+                Log.e("GasDB.asyncTask", e.toString());
             }
-            catch(Exception e) {Log.e("GasDB.asyncTask", e.toString());}
             return false;
         }
 
         @Override
-        protected void onPostExecute(Boolean status)
-        {
-            Log.d("GasDB.asyncTask","Start onAsyncTaskFinish()");
-            if(asyncTaskFinishListenerFromUser != null && status)
-            {
+        protected void onPostExecute(Boolean status) {
+            Log.d("GasDB.asyncTask", "Start onAsyncTaskFinish()");
+            if (asyncTaskFinishListenerFromUser != null && status) {
                 asyncTaskFinishListenerFromUser.onAsyncTaskFinish();
-            }
-            else
-            {
-                Log.e("GasDB.asyncTask","asyncTask fails!");
+            } else {
+                Log.e("GasDB.asyncTask", "asyncTask fails!");
             }
         }
+
         //-----third 下載的資料會存到這邊
-        private void storeTable(String tableName, JSONArray content1, JSONObject content2)
-        {
-            switch (tableName)
-            {
+        private void storeTable(String tableName, JSONArray content1, JSONObject content2) {
+            switch (tableName) {
                 case DELIVERY:
                     table_inJSONArray_delivery = content1;
                     table_inJSONObject_delivery = content2;
@@ -343,8 +326,7 @@ public class GasDB
                     table_inJSONObject_customer = content2;
                     break;
 
-                case
-                        DODDLE:
+                case DODDLE:
                     table_inJSONArray_doddle = content1;
                     table_inJSONObject_doddle = content2;
                     break;

@@ -25,7 +25,7 @@ public class GasPriceAdapter extends BaseAdapter {
         //預先取得 LayoutInflater 物件實體
         myInflater = LayoutInflater.from(context);
         this.list = list;
-//        Log.e("listView", list.get(0).getPRICE_BULID_DATE());
+//        Log.e("listView", list.get(0).getPriceBulidDate());
     }
     @Override
     public int getCount() {
@@ -33,7 +33,7 @@ public class GasPriceAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public GasPriceList getItem(int i) {
         return list.get(i);
     }
 
@@ -64,13 +64,13 @@ public class GasPriceAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        // 4:取得retVal物件資料
+        // 4:取得gasList物件資料
         GasPriceList gasList = list.get(position);
 
         // 5:設定顯示資料
-        holder.date.setText(gasList.getPRICE_BULID_DATE());
-        holder.price.setText(gasList.getPRICE_20() + "/" + gasList.getPRICE_16());
-        double doubleRate = Double.parseDouble(gasList.getPRICE_REMARK());
+        holder.date.setText(gasList.getPriceBulidDate());
+        holder.price.setText(gasList.getPrice20() + "/" + gasList.getPrice16());
+        double doubleRate = Double.parseDouble(gasList.getPriceRemark());
         if (doubleRate == 0.0) {
             holder.rate.setText("---");
         } else {

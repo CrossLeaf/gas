@@ -1,18 +1,12 @@
 package com.chenghsi.lise.gas;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.chenghsi.lise.gas.db.GasDB;
 import com.chenghsi.lise.gas.task.TaskActivity;

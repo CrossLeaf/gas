@@ -11,7 +11,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.AbstractList;
-import com.chenghsi.lise.gas.AsynDownLoad;
+import com.chenghsi.lise.gas.AsynGasPriceDownLoad;
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.GasPriceAdapter;
 import com.chenghsi.lise.gas.GasPriceList;
@@ -50,7 +50,7 @@ public class GasPriceActivity extends AbstractList {
 
     }
     public ArrayList<GasPriceList> gasLists(){
-        AsynDownLoad asynDownLoad = new AsynDownLoad();
+        AsynGasPriceDownLoad asynDownLoad = new AsynGasPriceDownLoad();
         list = new ArrayList<>();
         list = asynDownLoad.getList();
         return list;

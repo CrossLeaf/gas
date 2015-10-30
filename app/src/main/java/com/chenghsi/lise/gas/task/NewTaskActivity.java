@@ -44,24 +44,11 @@ public class NewTaskActivity extends Activity {
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
         new AsyncTaskDownLoad().execute(url1, url2);
-
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
 
 //        list_Task.setAdapter(new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList));
 //        list_Task.setOnGroupExpandListener(new OnListItemExpandListener(list_Task));
     }
-
-    private class OnListItemExpandListener implements ExpandableListView.OnGroupExpandListener {
-        public OnListItemExpandListener(ExpandableListView list_task) {
-        }
-
-        @Override
-        public void onGroupExpand(int i) {
-
-        }
-    }
-
-
 
 
     public class AsyncTaskDownLoad extends AsyncTask<String, Integer, ArrayList<TaskLists>> {
@@ -127,9 +114,9 @@ public class NewTaskActivity extends Activity {
             listses = taskListses;
             getData();
             list_Task.setAdapter(new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList));
+            ExTaskListAdapter adapter = new ExTaskListAdapter();
+            if (ExTaskListAdapter.counter%2==0)
             list_Task.setOnGroupExpandListener(new OnListItemExpandListener(list_Task));
-
-
         }
 
         @Override
@@ -165,7 +152,6 @@ public class NewTaskActivity extends Activity {
             return retSrc;
         }
 
-
         public void getData() {
             groupList = new ArrayList<>();
             groupList.add(listses);
@@ -179,6 +165,21 @@ public class NewTaskActivity extends Activity {
             childList.add(childMap);
             Log.e("task", "getData 做完");
         }
+    }
 
+
+    private class OnListItemExpandListener implements ExpandableListView.OnGroupExpandListener {
+        public OnListItemExpandListener(ExpandableListView list_task) {
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return super.equals(o);
+        }
+
+        @Override
+        public void onGroupExpand(int i) {
+
+        }
     }
 }

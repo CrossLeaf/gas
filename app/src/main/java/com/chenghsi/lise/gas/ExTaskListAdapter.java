@@ -1,6 +1,8 @@
 package com.chenghsi.lise.gas;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.chenghsi.lise.gas.task.DetailedTaskActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
 
 import java.util.ArrayList;
@@ -27,6 +30,12 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     private List<Map<String, String>> childList;
 
     private LayoutInflater inflater;
+
+    public static int counter;
+
+    public ExTaskListAdapter() {
+
+    }
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -100,6 +109,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
+        counter = groupPosition;
         return groupPosition;
     }
 
@@ -129,28 +139,31 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
-        //// TODO: 2015/10/28 取得資料後更改文字
+
         Log.e("task", "group size:" + groupList.size());
 
         ArrayList<TaskLists> list = groupList.get(0);
         Log.e("task", "getView call 次數：" + count);
         count++;
         Log.e("task", "list size:" + list.size());
-            TaskLists taskLists = list.get(groupPosition);
-            Log.e("task", taskLists.getCustomer_addreess());
-            groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
-            groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
-            groupViewHolder.clientName.setText(taskLists.getCustomer_name());
-            groupViewHolder.address.setText(taskLists.getCustomer_addreess());
-            groupViewHolder.contents.setText(taskLists.getOrder_cylinders_list());
-            groupViewHolder.phones.setText(taskLists.getOrder_phone());
+        TaskLists taskLists = list.get(groupPosition);
+        Log.e("task", taskLists.getCustomer_addreess());
+
+        String add = _toAddress(taskLists.getCustomer_addreess());
+        String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
+        groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
+        groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
+        groupViewHolder.clientName.setText(taskLists.getCustomer_name());
+        groupViewHolder.address.setText(add);
+        groupViewHolder.contents.setText(cylinders);
+        groupViewHolder.phones.setText(taskLists.getOrder_phone());
 
 
         return convertView;
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final ChildViewHolder childViewHolder;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.adapter_item_child_task, null);
@@ -160,22 +173,64 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             childViewHolder = (ChildViewHolder) convertView.getTag();
 
         }
+        final ChildViewHolder finalChildViewHolder = childViewHolder;
         //TODO 三個按鈕動作
         childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
         childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
         childViewHolder.btn_setting.setText(childList.get(childPosition).get("setting"));
         childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
+
+        childViewHolder.btn_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                ArrayList<TaskLists> list = groupList.get(0);
+                TaskLists taskLists = list.get(groupPosition);
+
+                //轉換字串
+                String add = _toAddress(taskLists.getCustomer_addreess());
+                String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
+
+                //傳值到細項Intent
+                intent.setClass(taskActivity, DetailedTaskActivity.class);
+                bundle.putString("appointment", taskLists.getOrder_prefer_time());
+                bundle.putString("kindOfTask", taskLists.getOrder_task());
+                bundle.putString("clientName", taskLists.getCustomer_name());
+                bundle.putString("address", add);
+                bundle.putString("contents", cylinders);
+                bundle.putString("phones", taskLists.getOrder_phone());
+                intent.putExtras(bundle);
+                taskActivity.startActivity(intent);
+
+            }
+        });
         return convertView;
     }
-    /*function data_in_show(address){
-        var address_arr = address.split("_");
-        var temp = "";
-        var addr_name = ["","","巷","弄","號","樓","室"];
-        for(var i=0;i<8;i++){
-            if(address_arr[i] != "" && address_arr[i] != null)temp+=address_arr[i]+addr_name[i];
+
+    public String _toAddress(String address) {
+        String[] addr_name = new String[]{"", "", "巷", "弄", "號", "樓", "室"};
+        String temp = "";
+        String[] address_arr = address.split("_");
+        Log.e("add", "addLength : " + address_arr.length);
+        for (int i = 0; i < address_arr.length; i++) {
+            if (!address_arr[i].equals("") && address_arr[i] != null) {
+                temp += address_arr[i] + addr_name[i];
+            }
         }
         return temp;
-    }*/
+    }
 
+    public String convertCylinders(String cylinders){
+        String[] cylinders_list = new String[]{"50KG", "20KG", "16KG", "4KG"};
+        String temp = "";
+        String[] cylinder = cylinders.split(",");
+        for (int i =0; i<cylinder.length; i++){
+            if(!cylinder[i].equals("0")){
+                temp+= cylinders_list[i]+"x"+cylinder[i]+" ";
+            }
+        }
+        return temp;
+    }
 
 }

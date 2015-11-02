@@ -26,7 +26,7 @@ public class LoginActivity extends Activity {
     String password;
     String userName;
     String retSrc = "";
-    String usn;
+    public static String usn;
     static final int STAFF_COUNT = 9;
     static final int STAFF_PASSWORD = 10;
     private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
@@ -154,18 +154,6 @@ public class LoginActivity extends Activity {
             Log.e("tag", "false");
         }
         return false;
-    }
-
-
-
-    private boolean login(String account, String password) {
-        // TODO login by DB
-        sp.edit()
-                .putString("account", account)
-                .putString("password", password)
-                .putBoolean("isLogin", true)
-                .commit();
-        return true;
     }
 
     public void storeName(String name){

@@ -58,6 +58,17 @@
 
             <include layout="@layout/general_division_line"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="沖帳"
+                android:id="@+id/btn_strikeBalance"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spi_payMethod"/>
+
             <include layout="@layout/general_twoline_title_input"
                      android:id="@+id/tvi_remnant"/>
 
@@ -66,6 +77,26 @@
 
             <include layout="@layout/general_twoline_title_input"
                      android:id="@+id/tvi_receive"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/tv_pay"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Button"
+                    android:id="@+id/btn_credit"
+                    android:gravity="right"
+                    android:paddingStart="100dp"/>
+            </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 

@@ -8,6 +8,7 @@ import android.widget.ExpandableListView;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.ExTaskListAdapter;
+import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.TaskLists;
 
@@ -50,7 +51,6 @@ public class NewTaskActivity extends Activity {
 //        list_Task.setOnGroupExpandListener(new OnListItemExpandListener(list_Task));
     }
 
-
     public class AsyncTaskDownLoad extends AsyncTask<String, Integer, ArrayList<TaskLists>> {
 
         private ArrayList<TaskLists> taskListses;
@@ -63,6 +63,9 @@ public class NewTaskActivity extends Activity {
         private String order_customer_id;
         private String customer_name;
         private String customer_address;
+
+        private String order_status;
+        private String order_accept;
         //可能還要新增承接者姓名
 
         @Override
@@ -80,7 +83,8 @@ public class NewTaskActivity extends Activity {
                     order_phone = order.getString(Constant.ORDER_PHONE);
                     order_cylinders_list = order.getString(Constant.ORDER_CYLINDERS_LIST);
                     order_customer_id = order.getString(Constant.ORDER_CUSTOMER_ID);
-
+                    order_status = order.getString(Constant.ORDER_STATUS);
+                    order_accept = order.getString(Constant.ORDER_ACCEPT);
                     Log.e("task", "order_customer_id:" + order_customer_id);
                     Log.e("task", urls[1] + order_customer_id);
                     //如果直接用urls[1]+字串會出錯
@@ -88,14 +92,15 @@ public class NewTaskActivity extends Activity {
 
                     //判斷是否有此客戶id
                     if (jsonArrayCustomer.length() == 0) {
-                        TaskLists list = new TaskLists(order_prefer_time, order_task, order_phone, order_cylinders_list, null, null);
+                        TaskLists list = new TaskLists(order_prefer_time, order_task, order_phone, order_cylinders_list, null, null, order_status, order_accept);
                         taskListses.add(list);
                     } else {
                         JSONArray customer = jsonArrayCustomer.getJSONArray(0);
                         customer_name = customer.getString(Constant.CUSTOMER_NAME);
                         customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
 
-                        TaskLists list = new TaskLists(order_prefer_time, order_task, order_phone, order_cylinders_list, customer_name, customer_address);
+
+                        TaskLists list = new TaskLists(order_prefer_time, order_task, order_phone, order_cylinders_list, customer_name, customer_address, order_status, order_accept);
                         taskListses.add(list);
                         Log.e("task", "name:" + customer_name);
                     }
@@ -113,10 +118,9 @@ public class NewTaskActivity extends Activity {
             super.onPostExecute(taskListses);
             listses = taskListses;
             getData();
-            list_Task.setAdapter(new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList));
             ExTaskListAdapter adapter = new ExTaskListAdapter();
-            if (ExTaskListAdapter.counter%2==0)
-            list_Task.setOnGroupExpandListener(new OnListItemExpandListener(list_Task));
+            list_Task.setAdapter(new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList));
+            list_Task.setOnGroupExpandListener(new OnListItemExpandListener());
         }
 
         @Override
@@ -169,8 +173,7 @@ public class NewTaskActivity extends Activity {
 
 
     private class OnListItemExpandListener implements ExpandableListView.OnGroupExpandListener {
-        public OnListItemExpandListener(ExpandableListView list_task) {
-        }
+        private String userName = LoginActivity.usn;
 
         @Override
         public boolean equals(Object o) {
@@ -178,8 +181,16 @@ public class NewTaskActivity extends Activity {
         }
 
         @Override
-        public void onGroupExpand(int i) {
+        public void onGroupExpand(int groupPosition) {
+            //點開listView 的權限
+            ArrayList<TaskLists> list = groupList.get(0);
+            final TaskLists taskLists = list.get(groupPosition);
 
+            if (!(taskLists.getOrder_status().equals("true")) || !taskLists.getOrder_accept().equals(userName)) {
+                list_Task.collapseGroup(groupPosition);
+            } else {
+
+            }
         }
     }
 }

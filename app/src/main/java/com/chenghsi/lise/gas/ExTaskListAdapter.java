@@ -26,15 +26,15 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     private NewTaskActivity taskActivity;
     private ExpandableListView expListView;
-    private List<ArrayList<TaskLists>> groupList;
+    public static List<ArrayList<TaskLists>> groupList;
     private List<Map<String, String>> childList;
 
     private LayoutInflater inflater;
 
     public static int counter;
+    private String userName = LoginActivity.usn;
 
     public ExTaskListAdapter() {
-
     }
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
@@ -133,21 +133,20 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                              View convertView, ViewGroup parent) {
         final GroupViewHolder groupViewHolder;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.adapter_item_task, null);
+            convertView = inflater.inflate(R.layout.adapter_item_task, parent,false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
-
         Log.e("task", "group size:" + groupList.size());
 
         ArrayList<TaskLists> list = groupList.get(0);
         Log.e("task", "getView call 次數：" + count);
         count++;
         Log.e("task", "list size:" + list.size());
-        TaskLists taskLists = list.get(groupPosition);
-        Log.e("task", taskLists.getCustomer_addreess());
+        final TaskLists taskLists = list.get(groupPosition);
+//        Log.e("task", taskLists.getCustomer_addreess());
 
         String add = _toAddress(taskLists.getCustomer_addreess());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
@@ -157,7 +156,32 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.address.setText(add);
         groupViewHolder.contents.setText(cylinders);
         groupViewHolder.phones.setText(taskLists.getOrder_phone());
+        if (taskLists.getOrder_status().equals("") || taskLists.getOrder_status().equals("false")) {
+            taskLists.setOrder_status("false");
+            Log.e("task", taskLists.getOrder_status());
+            groupViewHolder.btn_accept.setText("承接");
+        } else {
+            taskLists.setOrder_status("true");
+            groupViewHolder.btn_accept.setText(taskLists.getOrder_accept());
+        }
+        //承接動作
+        final GroupViewHolder finalGroupView = groupViewHolder;
+        groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (taskLists.getOrder_status().equals("false")) {
+                    finalGroupView.btn_accept.setText(userName);
+                    taskLists.setOrder_accept(userName);
+                    taskLists.setOrder_status("true");
+                }else if (taskLists.getOrder_status().equals("true")&&taskLists.getOrder_accept().equals(userName)){
+                    finalGroupView.btn_accept.setText("承接");
+                    taskLists.setOrder_accept("");
+                    taskLists.setOrder_status("false");
+                }else {
 
+                }
+            }
+        });
 
         return convertView;
     }
@@ -171,8 +195,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             convertView.setTag(childViewHolder);
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
-
         }
+
         final ChildViewHolder finalChildViewHolder = childViewHolder;
         //TODO 三個按鈕動作
         childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
@@ -181,6 +205,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
 
         childViewHolder.btn_setting.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
@@ -190,7 +215,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
                 //轉換字串
                 String add = _toAddress(taskLists.getCustomer_addreess());
-                String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
+//                String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
 
                 //傳值到細項Intent
                 intent.setClass(taskActivity, DetailedTaskActivity.class);
@@ -198,11 +223,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 bundle.putString("kindOfTask", taskLists.getOrder_task());
                 bundle.putString("clientName", taskLists.getCustomer_name());
                 bundle.putString("address", add);
-                bundle.putString("contents", cylinders);
+                bundle.putString("contents", taskLists.getOrder_cylinders_list());
                 bundle.putString("phones", taskLists.getOrder_phone());
                 intent.putExtras(bundle);
                 taskActivity.startActivity(intent);
-
             }
         });
         return convertView;
@@ -221,13 +245,13 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         return temp;
     }
 
-    public String convertCylinders(String cylinders){
+    public String convertCylinders(String cylinders) {
         String[] cylinders_list = new String[]{"50KG", "20KG", "16KG", "4KG"};
         String temp = "";
         String[] cylinder = cylinders.split(",");
-        for (int i =0; i<cylinder.length; i++){
-            if(!cylinder[i].equals("0")){
-                temp+= cylinders_list[i]+"x"+cylinder[i]+" ";
+        for (int i = 0; i < cylinder.length; i++) {
+            if (!cylinder[i].equals("0")) {
+                temp += cylinders_list[i] + "x" + cylinder[i] + " ";
             }
         }
         return temp;

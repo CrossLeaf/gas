@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.chenghsi.lise.gas.task.NewTaskActivity;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,6 +33,7 @@ public class LoginActivity extends Activity {
     static final int STAFF_PASSWORD = 10;
     private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +43,9 @@ public class LoginActivity extends Activity {
         et_account = (EditText) findViewById(R.id.account);
         et_password = (EditText) findViewById(R.id.password);
         new LoginThread().start();
-
         //呼叫讀取偏好資料
         readPref();
 
-        new AsynGasPriceDownLoad().execute(url);
     }
 
 

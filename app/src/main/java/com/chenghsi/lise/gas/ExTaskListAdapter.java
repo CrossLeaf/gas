@@ -34,8 +34,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     public static int counter;
     private String userName = LoginActivity.usn;
 
-    public ExTaskListAdapter() {
-    }
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -57,6 +55,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         TextView address;
         TextView contents;
         TextView phones;
+        TextView money;
         Button btn_accept;
 
         public GroupViewHolder(View convertView) {
@@ -67,7 +66,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             contents = (TextView) convertView.findViewById(R.id.tv_contents);
             phones = (TextView) convertView.findViewById(R.id.tv_phones);
             btn_accept = (Button) convertView.findViewById(R.id.btn_accept);
-
+            money = (TextView) convertView.findViewById(R.id.tv_money);
         }
     }
 
@@ -89,7 +88,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return groupList.get(0).size();
+        return 50;
+//        return groupList.get(0).size();
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         final GroupViewHolder groupViewHolder;
         if (convertView == null) {
@@ -146,7 +146,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         count++;
         Log.e("task", "list size:" + list.size());
         final TaskLists taskLists = list.get(groupPosition);
-//        Log.e("task", taskLists.getCustomer_addreess());
 
         String add = _toAddress(taskLists.getCustomer_addreess());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
@@ -156,13 +155,23 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.address.setText(add);
         groupViewHolder.contents.setText(cylinders);
         groupViewHolder.phones.setText(taskLists.getOrder_phone());
+        groupViewHolder.money.setText("應付金額："+taskLists.getOrder_should_money());
+        //TODO 做按鈕點擊跳出子項目
         if (taskLists.getOrder_status().equals("") || taskLists.getOrder_status().equals("false")) {
             taskLists.setOrder_status("false");
-            Log.e("task", taskLists.getOrder_status());
             groupViewHolder.btn_accept.setText("承接");
+            expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+                @Override
+                public void onGroupCollapse(int i) {
+                    expListView.collapseGroup(groupPosition);
+
+                }
+            });
+
         } else {
             taskLists.setOrder_status("true");
             groupViewHolder.btn_accept.setText(taskLists.getOrder_accept());
+            onGroupExpanded(groupPosition);
         }
         //承接動作
         final GroupViewHolder finalGroupView = groupViewHolder;
@@ -225,6 +234,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 bundle.putString("address", add);
                 bundle.putString("contents", taskLists.getOrder_cylinders_list());
                 bundle.putString("phones", taskLists.getOrder_phone());
+                bundle.putString("customerId", taskLists.getCustomer_id());
                 intent.putExtras(bundle);
                 taskActivity.startActivity(intent);
             }
@@ -233,28 +243,37 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     }
 
     public String _toAddress(String address) {
-        String[] addr_name = new String[]{"", "", "巷", "弄", "號", "樓", "室"};
-        String temp = "";
-        String[] address_arr = address.split("_");
-        Log.e("add", "addLength : " + address_arr.length);
-        for (int i = 0; i < address_arr.length; i++) {
-            if (!address_arr[i].equals("") && address_arr[i] != null) {
-                temp += address_arr[i] + addr_name[i];
+        try {
+            String[] addr_name = new String[]{"", "", "巷", "弄", "號", "樓", "室"};
+            String temp = "";
+            String[] address_arr = address.split("_");
+            Log.e("add", "addLength : " + address_arr.length);
+            for (int i = 0; i < address_arr.length; i++) {
+                if (!address_arr[i].equals("") && address_arr[i] != null) {
+                    temp += address_arr[i] + addr_name[i];
+                }
             }
+            return temp;
+        }catch (Exception e){
+            return null;
         }
-        return temp;
+
     }
 
     public String convertCylinders(String cylinders) {
-        String[] cylinders_list = new String[]{"50KG", "20KG", "16KG", "4KG"};
-        String temp = "";
-        String[] cylinder = cylinders.split(",");
-        for (int i = 0; i < cylinder.length; i++) {
-            if (!cylinder[i].equals("0")) {
-                temp += cylinders_list[i] + "x" + cylinder[i] + " ";
+        try {
+            String[] cylinders_list = new String[]{"50KG", "20KG", "16KG", "4KG"};
+            String temp = "";
+            String[] cylinder = cylinders.split(",");
+            for (int i = 0; i < cylinder.length; i++) {
+                if (!cylinder[i].equals("0")) {
+                    temp += cylinders_list[i] + "x" + cylinder[i] + " ";
+                }
             }
+            return temp;
+        }catch (Exception e){
+            return null;
         }
-        return temp;
     }
 
 }

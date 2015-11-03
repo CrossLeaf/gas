@@ -1,20 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary">
     </android.support.v7.widget.Toolbar>
 
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,90 +22,111 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <include layout="@layout/general_twoline_title_text"
-                         android:id="@+id/tv2_name"/>
+                <include
+                    android:id="@+id/tv2_name"
+                    layout="@layout/general_twoline_title_text"/>
 
                 <TextView
+                    android:id="@+id/text3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text"
-                    android:id="@+id/text3"
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="30dp"
-                    android:textSize="30dp"
-                    android:onClick="btn_history" />
+                    android:onClick="btn_history"
+                    android:text="New Text"
+                    android:textSize="30dp"/>
             </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 
 
-            <include layout="@layout/general_twoline_title_text"
-                     android:id="@+id/tv2_address"/>
+            <include
+                android:id="@+id/tv2_address"
+                layout="@layout/general_twoline_title_text"/>
 
             <include layout="@layout/general_division_line"/>
 
-            <include layout="@layout/general_title_spinner"
-                     android:id="@+id/tv_spr_phones"/>
+            <include
+                android:id="@+id/tv_spr_phones"
+                layout="@layout/general_title_spinner"/>
 
             <include layout="@layout/general_division_line"/>
 
-            <include layout="@layout/general_category_task"
-                     android:id="@+id/indexed_task"/>
+            <include
+                android:id="@+id/indexed_task"
+                layout="@layout/general_category_task"
+                />
 
             <include layout="@layout/general_division_line"/>
 
             <Button
+                android:id="@+id/btn_strikeBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="沖帳"
-                android:id="@+id/btn_strikeBalance"/>
+                android:text="沖帳"/>
 
-            <Spinner
+            <include layout="@layout/general_division_line"/>
+
+            <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spi_payMethod"/>
+                android:layout_marginBottom="6dp"
+                android:text="付費方式"
+                android:textStyle="bold"/>
 
-            <include layout="@layout/general_twoline_title_input"
-                     android:id="@+id/tvi_remnant"/>
+            <Spinner
+                android:id="@+id/spi_payMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <include layout="@layout/general_twoline_title_input"
-                     android:id="@+id/tvi_allowance"/>
+            <include layout="@layout/general_division_line"/>
 
-            <include layout="@layout/general_twoline_title_input"
-                     android:id="@+id/tvi_receive"/>
+            <include
+                android:id="@+id/tvi_remnant"
+                layout="@layout/general_twoline_title_input"/>
+
+            <include
+                android:id="@+id/tvi_allowance"
+                layout="@layout/general_twoline_title_input"/>
+
+            <include
+                android:id="@+id/tvi_receive"
+                layout="@layout/general_twoline_title_input"/>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_pay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text"
-                    android:id="@+id/tv_pay"/>
+                    android:padding="10dp"
+                    android:textStyle="bold"
+                    android:text="選擇賒帳或結帳："/>
 
                 <Button
+                    android:id="@+id/btn_credit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Button"
-                    android:id="@+id/btn_credit"
                     android:gravity="right"
-                    android:paddingStart="100dp"/>
+                    android:text="Change"/>
             </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 
             <Button
+                android:id="@+id/finish"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:text="@string/payBill"
-                android:textSize="50dp"
-                android:id="@+id/finish"/>
+                android:textSize="50dp"/>
 
 
         </LinearLayout>

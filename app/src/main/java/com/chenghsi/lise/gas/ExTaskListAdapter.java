@@ -1,6 +1,7 @@
 package com.chenghsi.lise.gas;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,10 +11,12 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.task.DetailedTaskActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
+import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +29,15 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     private NewTaskActivity taskActivity;
     private ExpandableListView expListView;
-    public static List<ArrayList<TaskLists>> groupList;
     private List<Map<String, String>> childList;
+    private String userName = LoginActivity.usn;
+    private String action = Intent.ACTION_CALL;
 
     private LayoutInflater inflater;
 
     public static int counter;
-    private String userName = LoginActivity.usn;
-
+    public static List<ArrayList<TaskLists>> groupList;
+    public static boolean isCollapse;
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -57,6 +61,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         TextView phones;
         TextView money;
         Button btn_accept;
+        ImageButton img_btn_call;
 
         public GroupViewHolder(View convertView) {
             appointment = (TextView) convertView.findViewById(R.id.tv_appointment);
@@ -67,20 +72,21 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             phones = (TextView) convertView.findViewById(R.id.tv_phones);
             btn_accept = (Button) convertView.findViewById(R.id.btn_accept);
             money = (TextView) convertView.findViewById(R.id.tv_money);
+            img_btn_call = (ImageButton) convertView.findViewById(R.id.img_btn_call);
         }
     }
 
     private class ChildViewHolder {
         Button btn_scanIn;
         Button btn_scanOut;
-        Button btn_setting;
+//        Button btn_setting;
         Button btn_finish;
 
         public ChildViewHolder(View convertView) {
             btn_scanIn = (Button) convertView.findViewById(R.id.btn_scanIn);
             btn_scanOut = (Button) convertView.findViewById(R.id.btn_scanOut);
             btn_finish = (Button) convertView.findViewById(R.id.btn_finish);
-            btn_setting = (Button) convertView.findViewById(R.id.btn_setting);
+//            btn_setting = (Button) convertView.findViewById(R.id.btn_setting);
         }
     }
 
@@ -88,8 +94,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return 50;
-//        return groupList.get(0).size();
+//        return 50;
+        return groupList.get(0).size();
     }
 
     @Override
@@ -128,12 +134,13 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+
     @Override
     public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         final GroupViewHolder groupViewHolder;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.adapter_item_task, parent,false);
+            convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
         } else {
@@ -149,31 +156,25 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         String add = _toAddress(taskLists.getCustomer_addreess());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
+        final String callPhone = taskLists.getOrder_phone();
         groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
         groupViewHolder.address.setText(add);
         groupViewHolder.contents.setText(cylinders);
-        groupViewHolder.phones.setText(taskLists.getOrder_phone());
-        groupViewHolder.money.setText("應付金額："+taskLists.getOrder_should_money());
+        groupViewHolder.phones.setText(callPhone);
+        groupViewHolder.money.setText("應付金額：" + taskLists.getOrder_should_money());
+        groupViewHolder.btn_accept.setFocusable(false);
         //TODO 做按鈕點擊跳出子項目
         if (taskLists.getOrder_status().equals("") || taskLists.getOrder_status().equals("false")) {
             taskLists.setOrder_status("false");
             groupViewHolder.btn_accept.setText("承接");
-            expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-                @Override
-                public void onGroupCollapse(int i) {
-                    expListView.collapseGroup(groupPosition);
-
-                }
-            });
-
         } else {
             taskLists.setOrder_status("true");
             groupViewHolder.btn_accept.setText(taskLists.getOrder_accept());
-            onGroupExpanded(groupPosition);
         }
-        //承接動作
+
+        //承接按鈕動作
         final GroupViewHolder finalGroupView = groupViewHolder;
         groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,12 +183,31 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     finalGroupView.btn_accept.setText(userName);
                     taskLists.setOrder_accept(userName);
                     taskLists.setOrder_status("true");
-                }else if (taskLists.getOrder_status().equals("true")&&taskLists.getOrder_accept().equals(userName)){
+                    //展開expandable listView
+                    isCollapse = expListView.expandGroup(groupPosition);
+                    Log.e("task", "button");
+                } else if (taskLists.getOrder_status().equals("true") && taskLists.getOrder_accept().equals(userName)) {
                     finalGroupView.btn_accept.setText("承接");
                     taskLists.setOrder_accept("");
                     taskLists.setOrder_status("false");
-                }else {
+                    isCollapse = expListView.collapseGroup(groupPosition);
 
+                } else {
+
+                }
+            }
+        });
+
+        //call
+        groupViewHolder.img_btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (callPhone == null || callPhone.equals("")){
+
+                }else {
+                    Uri uri = Uri.parse("tel:" + callPhone);
+                    Intent intent = new Intent(action, uri);
+                    taskActivity.startActivity(intent);
                 }
             }
         });
@@ -207,12 +227,34 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
 
         final ChildViewHolder finalChildViewHolder = childViewHolder;
-        //TODO 三個按鈕動作
+
+        // 三個按鈕動作
         childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
         childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
-        childViewHolder.btn_setting.setText(childList.get(childPosition).get("setting"));
+//        childViewHolder.btn_setting.setText(childList.get(childPosition).get("setting"));
         childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
 
+        //掃入
+        childViewHolder.btn_scanIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(taskActivity, CaptureActivity.class);
+                taskActivity.startActivity(intent);
+            }
+        });
+
+        //掃出
+        childViewHolder.btn_scanOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(taskActivity, CaptureActivity.class);
+                taskActivity.startActivity(intent);
+            }
+        });
+
+        /*原本的設定按鈕
         childViewHolder.btn_setting.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -238,7 +280,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 intent.putExtras(bundle);
                 taskActivity.startActivity(intent);
             }
-        });
+        });*/
         return convertView;
     }
 
@@ -254,7 +296,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 }
             }
             return temp;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
@@ -270,8 +312,9 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     temp += cylinders_list[i] + "x" + cylinder[i] + " ";
                 }
             }
+
             return temp;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

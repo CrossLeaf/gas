@@ -32,14 +32,113 @@
             android:text="@string/other"/>
     </LinearLayout>
 
-    <ListView
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:inputType="number"
+            android:id="@+id/cylinder_input"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="@android:drawable/edit_text"
+            android:gravity="fill_horizontal"
+            android:layout_marginBottom="23dp"
+            android:layout_alignBottom="@+id/cylinders_down"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KG"
+            android:id="@+id/textView4"
+            android:textSize="20dp"
+            android:layout_below="@+id/cylinders_up"
+            android:layout_toRightOf="@+id/cylinder_input"
+            android:layout_toEndOf="@+id/cylinder_input"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cylinders_down"
+            android:src="@drawable/expand"
+            android:layout_weight="1"
+            android:layout_below="@+id/cylinders_up"
+            android:layout_alignLeft="@+id/cylinders_up"
+            android:layout_alignStart="@+id/cylinders_up"
+            android:onClick="btn_gasAdjust"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cylinders_up"
+            android:src="@drawable/collapse"
+            android:layout_weight="1"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/textView4"
+            android:layout_toEndOf="@+id/textView4"
+            android:onClick="btn_gasAdjust"/>
+
+        <EditText
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:inputType="number"
+            android:id="@+id/cylinder_num"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="@android:drawable/edit_text"
+            android:gravity="fill_horizontal"
+            android:layout_alignTop="@+id/textView3"
+            android:layout_toRightOf="@+id/textView3"
+            android:layout_toEndOf="@+id/textView3"
+            android:layout_marginLeft="22dp"
+            android:layout_marginStart="22dp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cylinder_num_down"
+            android:src="@drawable/expand"
+            android:layout_weight="1"
+            android:layout_alignTop="@+id/cylinders_down"
+            android:layout_alignLeft="@+id/cylinder_num_up"
+            android:layout_alignStart="@+id/cylinder_num_up"
+            android:onClick="btn_gasAdjust"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cylinder_num_up"
+            android:src="@drawable/collapse"
+            android:layout_weight="1"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/cylinder_num"
+            android:layout_toEndOf="@+id/cylinder_num"
+            android:onClick="btn_gasAdjust"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:id="@+id/textView3"
+            android:textSize="45dp"
+            android:layout_marginLeft="19dp"
+            android:layout_marginStart="19dp"
+            android:layout_alignTop="@+id/cylinder_input"
+            android:layout_toRightOf="@+id/cylinders_down"
+            android:layout_toEndOf="@+id/cylinders_down"/>
+
+    </RelativeLayout>
+
+    <!--<ListView
         android:id="@+id/cylinder_listView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:dividerHeight="0.0dip"
         android:fadingEdge="none"
         android:visibility="visible"/>
-    <!--android:nestedScrollingEnabled="false"-->
-    <!--android:outlineProvider="bounds"-->
+    &lt;!&ndash;android:nestedScrollingEnabled="false"&ndash;&gt;
+    &lt;!&ndash;android:outlineProvider="bounds"&ndash;&gt;-->
 
 </LinearLayout>

@@ -9,7 +9,7 @@
     <string name="dataClient">客戶資料</string>
     <string name="balancing">會計沖帳</string>
     <string name="accept">承接</string>
-    <string name="payBill">結單</string>
+    <string name="payBill">現銷</string>
     <string name="strikeBalance">沖帳</string>
     <string name="login">登入</string>
     <string name="account">帳號</string>

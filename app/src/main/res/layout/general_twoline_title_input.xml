@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:id="@+id/input"
+        android:id="@+id/cylinder_input"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:hint="@string/edit_here"
         android:background="@android:drawable/edit_text"/>

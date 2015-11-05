@@ -5,21 +5,27 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
 import com.chenghsi.lise.gas.R;
@@ -33,27 +39,32 @@ public class DetailedTaskActivity extends Activity {
     private View R_allowance;
     private View R_receive;
     private View R_clientPhones;
-    private View gas;
     private View cylinders;
 
-    private TextView history;
+//    private TextView history;
 
     private ListView lv_cylinder;
     private Button btn_strikeBalance;
     private Spinner spi_payMethod;
-    private TextView tv_pay;
-    private Button btn_credit;
+    private Spinner clientPhones;
     private Button btn_finish;
+    private EditText cylinder_input;
+    private EditText cylinder_num;
+    private ImageButton cylinders_down;
+    private ImageButton cylinders_up;
+    private ImageButton cylinder_num_down;
+    private ImageButton cylinder_num_up;
 
     private int position;
 
     private String clientName;
     private String address;
-    private String phones;
+    private String phonesNum;
     private String contents;
     private String customerId;
-
+    private String action;
     String[] cylinders_list = {};
+    String[] gasKg = {"50", "20", "16", "4"};
 
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order&where=customer_id~";
 
@@ -65,9 +76,10 @@ public class DetailedTaskActivity extends Activity {
         Bundle bundle = this.getIntent().getExtras();
         clientName = bundle.getString("clientName");
         address = bundle.getString("address");
-        phones = bundle.getString("phones");
+        phonesNum = bundle.getString("phones");
         contents = bundle.getString("contents");
         customerId = bundle.getString("customerId");
+        action = Intent.ACTION_CALL;
         //下載沖帳的時間和金錢
         url += customerId;
         new DetailTaskDownLoad().execute(url);
@@ -76,7 +88,7 @@ public class DetailedTaskActivity extends Activity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_detailed_task);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -90,15 +102,13 @@ public class DetailedTaskActivity extends Activity {
         R_receive = findViewById(R.id.tvi_receive);
         R_clientPhones = findViewById(R.id.tv_spr_phones);
         //MengHan
-        gas = findViewById(R.id.indexed_task);
         cylinders = findViewById(R.id.indexed_task);
-        history = (TextView) findViewById(R.id.text3);
+//        history = (TextView) findViewById(R.id.text3);
         btn_strikeBalance = (Button) findViewById(R.id.btn_strikeBalance);
-        btn_credit = (Button) findViewById(R.id.btn_credit);
         spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
-        tv_pay = (TextView) findViewById(R.id.tv_pay);
         btn_finish = (Button) findViewById(R.id.btn_finish);
 
+        
         // Set title
         ((TextView) R_name.findViewById(R.id.text1)).setText(R.string.name);
         ((TextView) R_address.findViewById(R.id.text1)).setText(R.string.address);
@@ -106,9 +116,19 @@ public class DetailedTaskActivity extends Activity {
         ((TextView) R_allowance.findViewById(R.id.text)).setText(R.string.allowance);
         ((TextView) R_receive.findViewById(R.id.text)).setText(R.string.should_receive);
         ((TextView) R_clientPhones.findViewById(R.id.title)).setText(R.string.phone);
-        history.setText("歷史紀錄");
+//        history.setText("歷史紀錄");
 
+        clientPhones = ((Spinner) R_clientPhones.findViewById(R.id.spinner));
+
+        cylinder_input = (EditText) cylinders.findViewById(R.id.cylinder_input);
+        cylinder_num = (EditText) cylinders.findViewById(R.id.cylinder_num);
+        cylinders_down = (ImageButton) cylinders.findViewById(R.id.cylinders_down);
+        cylinders_up = (ImageButton) cylinders.findViewById(R.id.cylinders_up);
+        cylinder_num_down = (ImageButton) cylinders.findViewById(R.id.cylinder_num_down);
+        cylinder_num_up = (ImageButton) cylinders.findViewById(R.id.cylinder_num_up);
     }
+    //紀錄 spinner touch 事件發生次數
+    int i = 1;
 
     @Override
     protected void onResume() {
@@ -119,16 +139,36 @@ public class DetailedTaskActivity extends Activity {
 //        ((TextView)R_name.findViewById(R.id.text2)).setText(TestData.name[position]);
 //        ((TextView)R_address.findViewById(R.id.text2)).setText(TestData.address[position]);
 
-        String phones[] = {this.phones};
+        String phones[] = {"請選擇其他號碼", this.phonesNum};
         ArrayAdapter apt = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, phones);
         apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ((Spinner) R_clientPhones.findViewById(R.id.spinner)).setAdapter(apt);
+        clientPhones.setAdapter(apt);
+
+        //電話撥號
+        clientPhones.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.e("tag", "touch" + i);
+                i++;
+                clientPhones.setOnItemSelectedListener(spnListener);
+                return false;
+            }
+        });
+
+        //訂單瓦斯數量
+        cylinders_list = contents.split(",");
+        Log.e("tag", "----cylinder----");
+        cylinder_input.setText(gasKg[0]);
+        cylinder_num.setText(cylinders_list[0]);
+        cylinder_input.clearFocus();
+        cylinder_input.setInputType(InputType.TYPE_NULL);
+        cylinder_num.setInputType(InputType.TYPE_NULL);
 
         //MengHan另外新增的  瓦斯種類
-        lv_cylinder = (ListView) cylinders.findViewById(R.id.cylinder_listView);
+        /*lv_cylinder = (ListView) cylinders.findViewById(R.id.cylinder_listView);
         cylinders_list = contents.split(",");   //儲存著瓦斯種類的陣列
 
-        (gas.findViewById(R.id.btn_gas)).setOnClickListener(new View.OnClickListener() {
+        (lv_cylinder.findViewById(R.id.btn_gas)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -137,10 +177,11 @@ public class DetailedTaskActivity extends Activity {
                 setListViewHeightBasedOnChildren(lv_cylinder);
             }
 
-        });
+        });*/
+
 
         //TODO 沖帳
-        btn_strikeBalance.setOnClickListener(new View.OnClickListener() {
+        btn_strikeBalance.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 strikeBalance();
@@ -163,26 +204,9 @@ public class DetailedTaskActivity extends Activity {
 
             }
         });
-        btn_credit.setText("改為結帳");
-        tv_pay.setText("賒帳");
         final boolean[] credit = {false};
 
-        //TODO 賒帳or結帳
-        btn_credit.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
-                if (!credit[0]) {
-                    tv_pay.setText("賒帳");
-                    btn_credit.setText("改為結帳");
-                    credit[0] = true;
-                } else {
-                    tv_pay.setText("結帳");
-                    btn_credit.setText("改為賒帳");
-                    credit[0] = false;
-                }
-            }
-        });
 
        /* btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,11 +216,81 @@ public class DetailedTaskActivity extends Activity {
         });*/
     }
 
-    public void btn_history(View view) {
+    private Spinner.OnItemSelectedListener spnListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            //取得選項內容
+            String tel = parent.getSelectedItem().toString();
+            if (tel == null || tel.equals("")) {
+                Log.e("callphone", "電話欄位為空");
+            } else if (tel.equals("請選擇其他號碼")) {
+                Log.e("callphone", "點到號碼");
+//                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("callphone", "打電話出去");
+                Uri uri = Uri.parse("tel:" + tel);
+                Intent intent = new Intent(action, uri);
+                startActivity(intent);
+
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            //Todo
+        }
+    };
+
+    /*public void btn_history(View view) {
         Intent intent = new Intent();
         intent.setClass(this, HistoryBottleActivity.class);
         startActivity(intent);
+    }*/
+
+
+    //計算點擊上or下
+    int j=0;
+    int cylinder_temp = 0;
+    //計算目前為陣列的哪個
+    int which ;
+    //瓦斯種類調整
+    public void btn_gasAdjust (View view) {
+        switch (view.getId()){
+            case R.id.cylinders_up:
+                Log.e("tag", "cy up被點選");
+                j--;
+                if (j==-1){
+                    j=3;
+                }
+                which = j%gasKg.length;
+                cylinder_input.setText(gasKg[which]);
+                cylinder_num.setText(cylinders_list[which]);
+                break;
+            case R.id.cylinders_down:
+                j++;
+                which = j%gasKg.length;
+                cylinder_input.setText(gasKg[which]);
+                cylinder_num.setText(cylinders_list[which]);
+                break;
+            case R.id.cylinder_num_up:
+                which = j%gasKg.length;
+                cylinder_temp = Integer.parseInt(cylinders_list[which]);
+                cylinders_list[which] = String.valueOf(cylinder_temp + 1);
+                cylinder_num.setText(cylinders_list[which]);
+                break;
+            case R.id.cylinder_num_down:
+                which = j%gasKg.length;
+                cylinder_temp = Integer.parseInt(cylinders_list[which]);
+                if (cylinder_temp==0){
+                    break;
+                }else {
+                    cylinders_list[which] = String.valueOf(cylinder_temp - 1);
+                    cylinder_num.setText(cylinders_list[which]);
+                    break;
+                }
+        }
     }
+
 
     //瓦斯種類的adapter
     private class DetailBaseAdapter extends BaseAdapter {

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
@@ -7,20 +7,40 @@
         android:id="@+id/toolbar"
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary">
+        android:background="?attr/colorPrimary"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp">
     </android.support.v7.widget.Toolbar>
 
     <CalendarView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/calendarView"
-        android:layout_weight="2"/>
+        android:layout_weight="1"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"/>
 
-    <include
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab"
+        android:src="@drawable/plus"
+        android:background="@drawable/ripple"
+        android:layout_marginBottom="39dp"
+        android:elevation="4dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <!--<include
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/general_category_task"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="3"/>
+        android:layout_weight="3"/>-->
 
-</LinearLayout>
+</RelativeLayout>

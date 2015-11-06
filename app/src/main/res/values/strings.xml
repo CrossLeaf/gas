@@ -51,4 +51,8 @@
 
     <string name="login_failure">登入錯誤</string>
     <string name="edit_here">請輸入</string>
+    <string name="title_activity_delivery_schedule_detail">新增配送</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

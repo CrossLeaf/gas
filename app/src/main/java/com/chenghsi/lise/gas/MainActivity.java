@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TabHost;
 
 import com.chenghsi.lise.gas.delivery.DeliveryActivity;
+import com.chenghsi.lise.gas.delivery.DeliveryScheduleActivity;
 import com.chenghsi.lise.gas.other.OtherActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
 import com.chenghsi.lise.gas.task.TaskActivity;
@@ -31,7 +32,7 @@ public class MainActivity extends TabActivity
         tab1.setContent(new Intent(this, NewTaskActivity.class).putExtra("userName", intent.getStringExtra("userName")));
 
         tab2.setIndicator("配送表");
-        tab2.setContent(new Intent(this, DeliveryActivity.class));
+        tab2.setContent(new Intent(this, DeliveryScheduleActivity.class));
 
         tab3.setIndicator("其他");
         tab3.setContent(new Intent(this, OtherActivity.class));

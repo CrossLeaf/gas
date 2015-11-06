@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chenghsi.lise.gas" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -12,12 +12,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -39,9 +39,9 @@
         </activity>
         <activity
             android:name=".task.DetailedTaskActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_detailed_task"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:configChanges="orientation|keyboardHidden">
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
         <activity
             android:name=".delivery.DeliveryScheduleActivity"
@@ -78,6 +78,10 @@
         <activity
             android:name=".other.DetailedClientInfoActivity"
             android:label="@string/title_activity_client_info" >
+        </activity>
+        <activity
+            android:name=".delivery.DeliveryScheduleDetailActivity"
+            android:label="@string/title_activity_delivery_schedule_detail" >
         </activity>
     </application>
 

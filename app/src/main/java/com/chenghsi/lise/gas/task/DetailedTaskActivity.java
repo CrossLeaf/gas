@@ -164,6 +164,7 @@ public class DetailedTaskActivity extends Activity {
         cylinder_input.setInputType(InputType.TYPE_NULL);
         cylinder_num.setInputType(InputType.TYPE_NULL);
 
+
         //MengHan另外新增的  瓦斯種類
         /*lv_cylinder = (ListView) cylinders.findViewById(R.id.cylinder_listView);
         cylinders_list = contents.split(",");   //儲存著瓦斯種類的陣列

@@ -66,15 +66,15 @@ public class DeliveryScheduleActivity extends Activity {
                     String date = Myear + "/" + Mmonth + "/" + Mday;
                     Toast.makeText(DeliveryScheduleActivity.this, date, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putInt("year", Myear);
+                bundle.putInt("month", Mmonth);
+                bundle.putInt("day", Mday);
                 intent.setClass(DeliveryScheduleActivity.this, DeliveryScheduleDetailActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
     }
-    private boolean changeUpdate(int curYear, int curMonth, int curDay) {
-        if (curDay != prevDay || curMonth != prevMonth || curYear != prevYear) {
-             return true;
-        }
-        return false;
-    }
+
 }

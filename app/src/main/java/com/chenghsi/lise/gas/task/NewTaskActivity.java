@@ -41,6 +41,8 @@ public class NewTaskActivity extends Activity {
 
     String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order";
     String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
+    //今日抄表與訂單 url
+    String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

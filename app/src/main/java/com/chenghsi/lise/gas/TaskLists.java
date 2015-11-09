@@ -9,19 +9,19 @@ public class TaskLists {
     private String order_phone;
     private String order_cylinders_list;
     private String customer_name;
-    private String customer_addreess;
+    private String customer_address;
     private String order_accept;
     private String order_status;
     private String customer_id;
     private String order_should_money;
 
-    public TaskLists(String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_addreess, String order_should_money, String order_status, String order_accept, String customer_id) {
+    public TaskLists(String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_status, String order_accept, String customer_id) {
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
         setOrder_prefer_time(order_prefer_time);
         setOrder_task(order_task);
         setCustomer_name(customer_name);
-        setCustomer_addreess(customer_addreess);
+        setCustomer_address(customer_address);
         setOrder_accept(order_accept);
         setOrder_status(order_status);
         setCustomer_id(customer_id);
@@ -45,6 +45,7 @@ public class TaskLists {
     }
 
     public String getOrder_phone() {
+
         return order_phone;
     }
 
@@ -69,12 +70,12 @@ public class TaskLists {
         this.customer_name = customer_name;
     }
 
-    public String getCustomer_addreess() {
-        return customer_addreess;
+    public String getCustomer_address() {
+        return customer_address;
     }
 
-    public void setCustomer_addreess(String customer_addreess) {
-        this.customer_addreess = customer_addreess;
+    public void setCustomer_address(String customer_address) {
+        this.customer_address = customer_address;
     }
 
     public String getOrder_accept() {

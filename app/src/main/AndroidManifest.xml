@@ -56,7 +56,7 @@
             android:label="@string/title_activity_history_order" >
         </activity>
         <activity
-            android:name=".other.BalancingActivity"
+            android:name=".other.NewBalancingActivity"
             android:label="@string/balancing" >
         </activity>
         <activity
@@ -82,6 +82,10 @@
         <activity
             android:name=".delivery.DeliveryScheduleDetailActivity"
             android:label="@string/title_activity_delivery_schedule_detail" >
+        </activity>
+        <activity
+            android:name=".task.DoddleActivity"
+            android:label="@string/title_activity_doddle" >
         </activity>
     </application>
 

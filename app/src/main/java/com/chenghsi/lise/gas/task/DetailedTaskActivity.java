@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -76,9 +77,11 @@ public class DetailedTaskActivity extends Activity {
         Bundle bundle = this.getIntent().getExtras();
         clientName = bundle.getString("clientName");
         address = bundle.getString("address");
-        phonesNum = bundle.getString("phones");
+        phonesNum = bundle.getString("phones"); //會影響
         contents = bundle.getString("contents");
         customerId = bundle.getString("customerId");
+
+
         action = Intent.ACTION_CALL;
         //下載沖帳的時間和金錢
         url += customerId;
@@ -134,6 +137,7 @@ public class DetailedTaskActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+
         ((TextView) R_name.findViewById(R.id.text2)).setText(clientName);
         ((TextView) R_address.findViewById(R.id.text2)).setText(address);
 //        ((TextView)R_name.findViewById(R.id.text2)).setText(TestData.name[position]);
@@ -163,23 +167,6 @@ public class DetailedTaskActivity extends Activity {
         cylinder_input.clearFocus();
         cylinder_input.setInputType(InputType.TYPE_NULL);
         cylinder_num.setInputType(InputType.TYPE_NULL);
-
-
-        //MengHan另外新增的  瓦斯種類
-        /*lv_cylinder = (ListView) cylinders.findViewById(R.id.cylinder_listView);
-        cylinders_list = contents.split(",");   //儲存著瓦斯種類的陣列
-
-        (lv_cylinder.findViewById(R.id.btn_gas)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                DetailBaseAdapter apt = new DetailBaseAdapter(DetailedTaskActivity.this);
-                lv_cylinder.setAdapter(apt);
-                setListViewHeightBasedOnChildren(lv_cylinder);
-            }
-
-        });*/
-
 
         //TODO 沖帳
         btn_strikeBalance.setOnClickListener(new OnClickListener() {
@@ -226,13 +213,12 @@ public class DetailedTaskActivity extends Activity {
                 Log.e("callphone", "電話欄位為空");
             } else if (tel.equals("請選擇其他號碼")) {
                 Log.e("callphone", "點到號碼");
-//                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
             } else {
                 Log.e("callphone", "打電話出去");
                 Uri uri = Uri.parse("tel:" + tel);
                 Intent intent = new Intent(action, uri);
                 startActivity(intent);
-
             }
         }
 
@@ -290,78 +276,6 @@ public class DetailedTaskActivity extends Activity {
                     break;
                 }
         }
-    }
-
-
-    //瓦斯種類的adapter
-    private class DetailBaseAdapter extends BaseAdapter {
-        private LayoutInflater inflater;
-
-        public DetailBaseAdapter(Context context) {
-            this.inflater = LayoutInflater.from(context);
-        }
-
-        String[] gasKg = {"50Kg x ", "20Kg x ", "16Kg x ", " 4Kg x "};
-        int testCount = 1;
-
-        @Override
-        public int getCount() {
-            return gasKg.length;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return i;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
-            if (convertView == null) {
-                viewHolder = new ViewHolder();
-                convertView = inflater.inflate(R.layout.adapter_item_detail_cylinder, parent, false);
-                viewHolder.cylinder = (TextView) convertView.findViewById(R.id.tv_cylinder);
-                viewHolder.number = (EditText) convertView.findViewById(R.id.edt_cylinder_num);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            Log.e("detail", "test count:" + testCount);
-            viewHolder.cylinder.setText(gasKg[position]);
-            viewHolder.number.setText(cylinders_list[position]);
-            return convertView;
-        }
-
-
-        public class ViewHolder {
-            TextView cylinder;
-            EditText number;
-        }
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            return;
-        }
-        int totalHeight = 0;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-
-        params.height = totalHeight
-                + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
     }
 
     //TODO 沖帳的多選項dialog

@@ -41,6 +41,7 @@ public class BalancingActivity extends AbstractList
         gasDB.setTaskListener(asyncTaskFinishListener);
     }
 
+
     @Override
     protected void onResume()
     {

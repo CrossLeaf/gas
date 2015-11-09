@@ -57,7 +57,7 @@ public class OtherActivity extends Activity
 
     public void onClick_btn_balancing(View view)
     {
-        intent.setClass(OtherActivity.this, BalancingActivity.class);
+        intent.setClass(OtherActivity.this, NewBalancingActivity.class);
         startActivity(intent);
     }
 

@@ -1,117 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:paddingTop="@dimen/padding_list_item"
-    android:paddingBottom="@dimen/padding_list_item">
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/padding_list_item"
+    android:paddingTop="@dimen/padding_list_item">
 
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="29dp"
         android:layout_height="29dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/circle"
         android:layout_gravity="center"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:src="@drawable/circle"/>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="70dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
             <TextView
+                android:id="@+id/tv_appointment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_appointment"
+                android:layout_weight="0.4"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ff000000"
-                android:textSize="10dp"
-                android:layout_weight="0.4" />
+                android:textSize="10dp"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/tv_kindOfTask"
-                android:layout_weight="0.3" />
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.3"/>
+
+            <TextView
                 android:id="@+id/tv_clientName"
-                android:layout_weight="0.3" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"/>
+
+
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3">
+            android:layout_weight="3"
+            android:orientation="vertical">
+
 
             <TextView
+                android:id="@+id/tv_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_address"
+                android:layout_weight="0.4"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ff000000"
-                android:ellipsize="start"
-                android:singleLine="false"
-                android:textSize="12dp"
-                android:layout_weight="0.4" />
+                android:textSize="12dp"/>
 
             <TextView
+                android:id="@+id/tv_contents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_contents"
-                android:layout_weight="0.3" />
+                android:layout_weight="0.3"/>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_phones"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/tv_phones"
                         android:layout_weight="0.7"/>
 
                     <TextView
+                        android:id="@+id/tv_money"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/tv_money"
                         android:layout_weight="0.3"/>
                 </LinearLayout>
 
                 <ImageButton
+                    android:id="@+id/img_btn_call"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/img_btn_call"
-                    android:src="@android:drawable/sym_action_call"/>
+                    android:src="@android:drawable/sym_action_call"
+                    android:layout_gravity="right|center_vertical"
+                    />
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
 
     <Button
+        android:id="@+id/btn_accept"
         android:layout_width="180dp"
         android:layout_height="match_parent"
-        android:id="@+id/btn_accept"
         android:layout_gravity="center"
-        android:layout_weight="1" />
+        android:layout_weight="1"/>
 
 </LinearLayout>

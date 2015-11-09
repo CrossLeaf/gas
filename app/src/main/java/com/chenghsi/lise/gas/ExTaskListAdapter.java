@@ -2,19 +2,19 @@ package com.chenghsi.lise.gas;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.chenghsi.lise.gas.task.DetailedTaskActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
 import com.google.zxing.client.android.CaptureActivity;
 
@@ -81,12 +81,14 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         Button btn_scanOut;
 //        Button btn_setting;
         Button btn_finish;
+        EditText edt_degree;
 
         public ChildViewHolder(View convertView) {
             btn_scanIn = (Button) convertView.findViewById(R.id.btn_scanIn);
             btn_scanOut = (Button) convertView.findViewById(R.id.btn_scanOut);
             btn_finish = (Button) convertView.findViewById(R.id.btn_finish);
-//            btn_setting = (Button) convertView.findViewById(R.id.btn_setting);
+            edt_degree = (EditText) convertView.findViewById(R.id.edt_degree);
+
         }
     }
 
@@ -154,18 +156,25 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         Log.e("task", "list size:" + list.size());
         final TaskLists taskLists = list.get(groupPosition);
 
-        String add = _toAddress(taskLists.getCustomer_addreess());
+        String add = _toAddress(taskLists.getCustomer_address());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
         final String callPhone = taskLists.getOrder_phone();
+        Log.e("task", "phone" + callPhone);
         groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
         groupViewHolder.address.setText(add);
-        groupViewHolder.contents.setText(cylinders);
+
         groupViewHolder.phones.setText(callPhone);
         groupViewHolder.money.setText("應付金額：" + taskLists.getOrder_should_money());
+        if (taskLists.getOrder_task().equals("抄錶")){
+            groupViewHolder.contents.setVisibility(View.GONE);
+            groupViewHolder.money.setVisibility(View.GONE);
+        }else {
+            groupViewHolder.contents.setText(cylinders);
+        }
         groupViewHolder.btn_accept.setFocusable(false);
-        //TODO 做按鈕點擊跳出子項目
+
         if (taskLists.getOrder_status().equals("") || taskLists.getOrder_status().equals("false")) {
             taskLists.setOrder_status("false");
             groupViewHolder.btn_accept.setText("承接");
@@ -190,6 +199,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     finalGroupView.btn_accept.setText("承接");
                     taskLists.setOrder_accept("");
                     taskLists.setOrder_status("false");
+
                     isCollapse = expListView.collapseGroup(groupPosition);
 
                 } else {
@@ -198,12 +208,12 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        //call
+        //call phone
         groupViewHolder.img_btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (callPhone == null || callPhone.equals("")){
-
+                    Toast.makeText(taskActivity.getApplicationContext(), "請新增客戶電話",Toast.LENGTH_SHORT).show();
                 }else {
                     Uri uri = Uri.parse("tel:" + callPhone);
                     Intent intent = new Intent(action, uri);
@@ -211,7 +221,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
-
         return convertView;
     }
 
@@ -227,11 +236,27 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
 
         final ChildViewHolder finalChildViewHolder = childViewHolder;
+        ArrayList<TaskLists> list = groupList.get(0);
+        TaskLists taskLists = list.get(groupPosition);
+        if (taskLists.getOrder_task().equals("抄錶")){
+            childViewHolder.btn_scanIn.setVisibility(View.GONE);
+            childViewHolder.btn_scanOut.setVisibility(View.GONE);
+            childViewHolder.edt_degree.setVisibility(View.VISIBLE);
+            childViewHolder.edt_degree.setInputType(InputType.TYPE_CLASS_NUMBER);
+            childViewHolder.edt_degree.requestFocus();//让EditText获得焦点，但是获得焦点并不会自动弹出键盘
 
-        // 三個按鈕動作
-        childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
-        childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
-//        childViewHolder.btn_setting.setText(childList.get(childPosition).get("setting"));
+        }else {
+
+            // 三個按鈕動作
+            childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
+            childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
+            childViewHolder.btn_scanIn.setVisibility(View.VISIBLE);
+            childViewHolder.btn_scanOut.setVisibility(View.VISIBLE);
+            childViewHolder.edt_degree.setVisibility(View.GONE);
+
+        }
+
+
         childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
 
         //掃入
@@ -254,33 +279,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        /*原本的設定按鈕
-        childViewHolder.btn_setting.setOnClickListener(new View.OnClickListener() {
+        //TODO 設定輸入瓦斯度數
 
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-                ArrayList<TaskLists> list = groupList.get(0);
-                TaskLists taskLists = list.get(groupPosition);
-
-                //轉換字串
-                String add = _toAddress(taskLists.getCustomer_addreess());
-//                String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
-
-                //傳值到細項Intent
-                intent.setClass(taskActivity, DetailedTaskActivity.class);
-                bundle.putString("appointment", taskLists.getOrder_prefer_time());
-                bundle.putString("kindOfTask", taskLists.getOrder_task());
-                bundle.putString("clientName", taskLists.getCustomer_name());
-                bundle.putString("address", add);
-                bundle.putString("contents", taskLists.getOrder_cylinders_list());
-                bundle.putString("phones", taskLists.getOrder_phone());
-                bundle.putString("customerId", taskLists.getCustomer_id());
-                intent.putExtras(bundle);
-                taskActivity.startActivity(intent);
-            }
-        });*/
         return convertView;
     }
 

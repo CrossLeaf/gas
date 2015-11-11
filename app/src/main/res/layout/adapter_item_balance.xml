@@ -4,15 +4,16 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <CheckedTextView
-        android:id="@+id/checkBox_name"
+        android:id="@+id/checkText_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-        android:checked="true"
         android:text="CheckedTextView"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+        android:focusable="false"
+        android:clickable="false"/>
 
     <LinearLayout
         android:orientation="vertical"

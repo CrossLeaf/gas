@@ -6,9 +6,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.BalanceAdapter;
 import com.chenghsi.lise.gas.BalanceList;
@@ -24,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,6 +43,7 @@ public class NewBalancingActivity extends Activity {
     private BalanceAdapter adapter;
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order";
     EditText edt_search;
+    public static HashMap<Integer,Boolean> isCheckedMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,8 @@ public class NewBalancingActivity extends Activity {
         new BalanceAsyncDownload().execute(url);
 
         listResult.setTextFilterEnabled(true);
+
+
 
         edt_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -64,6 +74,12 @@ public class NewBalancingActivity extends Activity {
                 Log.e("tag", "afterTextChanged");
             }
         });
+    }
+
+    private void getIsCheckedMap(){
+        for (int i = 0; i <balance_list.size() ; i++) {
+            isCheckedMap.put(i, false) ;
+        }
     }
 
     public class BalanceAsyncDownload extends AsyncTask<String, Integer, String[]> {
@@ -102,11 +118,41 @@ public class NewBalancingActivity extends Activity {
             return null;
         }
 
+
         @Override
         protected void onPostExecute(String[] data) {
             super.onPostExecute(data);
             adapter = new BalanceAdapter(NewBalancingActivity.this, balance_list);
             listResult.setAdapter(adapter);
+            listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    CheckedTextView chkItem = (CheckedTextView) view.findViewById(R.id.checkText_name);
+
+                    /*if (!chkItem.isChecked()) {
+                        chkItem.setChecked(true);
+                        checkList.add(position, true);
+                        Toast.makeText(NewBalancingActivity.this, chkItem.getText().toString() + "已核取!",
+                                Toast.LENGTH_SHORT).show();
+                    }else{
+                        chkItem.setChecked(false);
+                        checkList.add(position,false);
+                        Toast.makeText(NewBalancingActivity.this, chkItem.getText().toString() + "已取消核取!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    Toast.makeText(NewBalancingActivity.this, "您點選了第 "+(position+1)+" 項", Toast.LENGTH_SHORT).show();*/
+
+                    if (isCheckedMap.get(position)==false) {
+                        isCheckedMap.put(position, true) ;
+                    } else {
+                        isCheckedMap.put(position, false) ;
+                    }
+                    adapter.notifyDataSetChanged() ;
+                }
+            });
+
+            getIsCheckedMap();
 
         }
 

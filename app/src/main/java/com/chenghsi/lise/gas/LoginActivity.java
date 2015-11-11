@@ -19,6 +19,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LoginActivity extends Activity {
     SharedPreferences sp;
@@ -46,7 +49,10 @@ public class LoginActivity extends Activity {
         //呼叫讀取偏好資料
         readPref();
 
+
+
     }
+
 
 
 

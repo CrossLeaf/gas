@@ -26,6 +26,8 @@ public class GasPriceAdapter extends BaseAdapter {
         myInflater = LayoutInflater.from(context);
         this.list = list;
 //        Log.e("listView", list.get(0).getPriceBulidDate());
+
+
     }
     @Override
     public int getCount() {

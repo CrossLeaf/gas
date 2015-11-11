@@ -12,7 +12,7 @@ public class GasPriceList {
     public String priceChangeDate;
     public String priceRemark;
 
-    GasPriceList(String p20, String p16, String bulidDate, String remark) {
+    public GasPriceList(String p20, String p16, String bulidDate, String remark) {
         setPrice20(p20);
         setPrice16(p16);
         setPriceBulidDate(bulidDate);

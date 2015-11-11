@@ -73,6 +73,7 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
 
         String cylinders = balance.getCylinders_list();
         String[] cylinder_list = cylinders.split(",");
+        String order_id = balance.getId();
         holder.checkText_name.setText(balance.getName());
         holder.tv_cylinder1.setText("50KG:" + cylinder_list[0]);
         holder.tv_cylinder2.setText("20KG:" + cylinder_list[1]);
@@ -82,8 +83,9 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
         holder.order_date.setText(balance.getOrder_date());
         holder.should_money.setText(balance.getMoney());
         count++;
-        Log.e("balance", "balance view:"+position+"\n count:"+count);
-        holder.checkText_name.setChecked(NewBalancingActivity.isCheckedMap.get(position));
+        Log.e("balance", "balance view:" + position + "\n count:" + count);
+
+        holder.checkText_name.setChecked(NewBalancingActivity.isCheckedMap.get(order_id));
         /*check_list = new ArrayList<>();
         check_list = NewBalancingActivity.checkList;
         if (check_list.isEmpty()) {
@@ -97,7 +99,6 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
                 holder.checkText_name.setChecked(false);
             }
         }*/
-
         return convertView;
     }
 

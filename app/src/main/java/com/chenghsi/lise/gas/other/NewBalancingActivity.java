@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Adapter;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chenghsi.lise.gas.BalanceAdapter;
@@ -39,11 +39,17 @@ import java.util.List;
 public class NewBalancingActivity extends Activity {
 
     ListView listResult;
-    List<BalanceList> balance_list = new ArrayList<BalanceList>();
-    private BalanceAdapter adapter;
-    String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order";
     EditText edt_search;
-    public static HashMap<Integer,Boolean> isCheckedMap = new HashMap<>();
+    TextView tv_money;
+    EditText edt_receive;
+    Button btn_strike;
+
+    String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order";
+
+    private BalanceAdapter adapter;
+    List<BalanceList> balance_list = new ArrayList<BalanceList>();
+    public static HashMap<String, Boolean> isCheckedMap = new HashMap<>();
+    private int total_money;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,12 @@ public class NewBalancingActivity extends Activity {
         setContentView(R.layout.activity_other_balance);
         listResult = (ListView) findViewById(R.id.listResult);
         edt_search = (EditText) findViewById(R.id.edt_search);
+        tv_money = (TextView) findViewById(R.id.tv_money);
+        edt_receive = (EditText) findViewById(R.id.edt_receive);
+        btn_strike = (Button) findViewById(R.id.btn_strike);
+
+        tv_money.setText("$0");
+        btn_strike.setOnClickListener(strikeOnClickListener);
         new BalanceAsyncDownload().execute(url);
 
         listResult.setTextFilterEnabled(true);
@@ -76,11 +88,14 @@ public class NewBalancingActivity extends Activity {
         });
     }
 
-    private void getIsCheckedMap(){
-        for (int i = 0; i <balance_list.size() ; i++) {
-            isCheckedMap.put(i, false) ;
+    //TODO btn&edt
+    OnClickListener strikeOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
         }
-    }
+    };
+
 
     public class BalanceAsyncDownload extends AsyncTask<String, Integer, String[]> {
 
@@ -88,6 +103,7 @@ public class NewBalancingActivity extends Activity {
         private String order_day;
         private String order_cylinders_list;
         private String order_should_money;
+        private String order_id;
 
         @Override
         protected String[] doInBackground(String... urls) {
@@ -97,6 +113,7 @@ public class NewBalancingActivity extends Activity {
                 String[] data = new String[jsonArrayOrder.length()];
                 for (int i = 0; i < jsonArrayOrder.length(); i++) {
                     JSONArray order = jsonArrayOrder.getJSONArray(i);  //取得陣列中的每個陣列
+                    order_id = order.getString(Constant.ORDER_ID);
                     order_day = order.getString(Constant.ORDER_DAY);
                     Log.e("balance", "day");
                     order_should_money = order.getString(Constant.ORDER_SHOULD_MONEY);
@@ -105,9 +122,10 @@ public class NewBalancingActivity extends Activity {
                     Log.e("balance", "name");
                     order_cylinders_list = order.getString(Constant.ORDER_CYLINDERS_LIST);
                     Log.e("balance", "cylinders");
-                    BalanceList balanceList = new BalanceList(customer_name, order_cylinders_list, order_day, order_should_money);
+                    BalanceList balanceList = new BalanceList(order_id,customer_name, order_cylinders_list, order_day, order_should_money);
                     balance_list.add(balanceList);
                     Log.e("balance", "order_should_money:" + order_should_money);
+                    isCheckedMap.put(order_id, false) ;
                 }
 
                 return data;
@@ -127,32 +145,22 @@ public class NewBalancingActivity extends Activity {
             listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    CheckedTextView chkItem = (CheckedTextView) view.findViewById(R.id.checkText_name);
 
-                    /*if (!chkItem.isChecked()) {
-                        chkItem.setChecked(true);
-                        checkList.add(position, true);
-                        Toast.makeText(NewBalancingActivity.this, chkItem.getText().toString() + "已核取!",
-                                Toast.LENGTH_SHORT).show();
-                    }else{
-                        chkItem.setChecked(false);
-                        checkList.add(position,false);
-                        Toast.makeText(NewBalancingActivity.this, chkItem.getText().toString() + "已取消核取!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    String ord_id = balance_list.get(position).getId();
+                    order_should_money = balance_list.get(position).getMoney();
 
-                    Toast.makeText(NewBalancingActivity.this, "您點選了第 "+(position+1)+" 項", Toast.LENGTH_SHORT).show();*/
-
-                    if (isCheckedMap.get(position)==false) {
-                        isCheckedMap.put(position, true) ;
+                    if (isCheckedMap.get(ord_id) == false) {
+                        isCheckedMap.put(ord_id, true);
+                        total_money+=Integer.valueOf(order_should_money);
+                        tv_money.setText("$"+total_money);
                     } else {
-                        isCheckedMap.put(position, false) ;
+                        isCheckedMap.put(ord_id, false);
+                        total_money-=Integer.valueOf(order_should_money);
+                        tv_money.setText("$"+total_money);
                     }
-                    adapter.notifyDataSetChanged() ;
+                    adapter.notifyDataSetChanged();
                 }
             });
-
-            getIsCheckedMap();
 
         }
 

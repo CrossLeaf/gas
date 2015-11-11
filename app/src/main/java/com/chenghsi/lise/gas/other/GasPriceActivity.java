@@ -1,23 +1,29 @@
 package com.chenghsi.lise.gas.other;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chenghsi.lise.gas.AbstractList;
-import com.chenghsi.lise.gas.AsynGasPriceDownLoad;
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.GasPriceAdapter;
 import com.chenghsi.lise.gas.GasPriceList;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -25,8 +31,8 @@ import java.util.ArrayList;
 
 
 public class GasPriceActivity extends AbstractList {
-    private ArrayList<GasPriceList> list;
-    private ListAdapter adapter;
+//    private ArrayList<GasPriceList> list;
+    private GasPriceAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +45,21 @@ public class GasPriceActivity extends AbstractList {
                 onBackPressed();
             }
         });
-//        gasDB.setTaskListener(asyncTaskFinishListener);
-
+        new AsynGasPriceDownLoad().execute();
         Log.e("tag", "--onCreate--");
-        adapter = new GasPriceAdapter(GasPriceActivity.this, gasLists());
 
         //去找一下listView
-        listView.setAdapter(adapter);
+        listView = (ListView) findViewById(R.id.listView);
         listView.setTextFilterEnabled(true);
 
     }
-    public ArrayList<GasPriceList> gasLists(){
+    /*public ArrayList<GasPriceList> gasLists(){
         AsynGasPriceDownLoad asynDownLoad = new AsynGasPriceDownLoad();
         list = new ArrayList<>();
         list = asynDownLoad.getList();
         return list;
 
-    }
+    }*/
 
     @Override
     protected void onResume() {
@@ -155,5 +159,83 @@ public class GasPriceActivity extends AbstractList {
 
             return view;
         }
+    }
+
+    public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceList>, ArrayList<GasPriceList>> {
+
+        private ArrayList<GasPriceList> gasPriceLists;
+        private String price_20;
+        private String price_16;
+        private String price_build_date;
+        private String price_remark;
+        private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
+        protected ListView listView;
+
+        @Override
+        protected ArrayList<GasPriceList> doInBackground(String... urls) {
+            try {
+                gasPriceLists = new ArrayList<>();
+
+                JSONArray jsonArray = new JSONArray(getJSONData(url));
+//            HashMap<String,JSONArray> map = new HashMap<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONArray content = jsonArray.getJSONArray(i);  //取得陣列中的每個陣列
+                    price_20 = content.getString(2);
+                    price_16 = content.getString(3);
+                    price_build_date = content.getString(5);
+                    price_remark = content.getString(8);
+                    GasPriceList info = new GasPriceList(price_20, price_16, price_build_date, price_remark);
+                    gasPriceLists.add(info);
+                    Log.e("async", price_build_date);
+                }
+            } catch (Exception e) {
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<GasPriceList> gasPriceLists) {
+            super.onPostExecute(gasPriceLists);
+            adapter = new GasPriceAdapter(GasPriceActivity.this, gasPriceLists);
+            listView.setAdapter(adapter);
+        }
+
+        @Override
+        protected void onProgressUpdate(ArrayList<GasPriceList>... values) {
+            super.onProgressUpdate(values);
+        }
+
+        //取得JSON資料
+        private String getJSONData(String url) {
+            String retSrc = "";
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            Log.e("retSrc", "讀取 JSON-1...");
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                Log.e("retSrc", "讀取 JSON-2...");
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    retSrc = EntityUtils.toString(resEntity);
+                    Log.e("retSrc", "讀取 JSON-3...");
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                } else {
+                    retSrc = "Did not work!";
+                }
+
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+                return null;
+            } finally {
+                httpclient.getConnectionManager().shutdown();
+            }
+            return retSrc;
+        }
+
+        public ArrayList<GasPriceList> getList() {
+            return gasPriceLists;
+        }
+
     }
 }

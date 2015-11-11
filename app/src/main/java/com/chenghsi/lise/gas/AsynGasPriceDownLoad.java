@@ -2,6 +2,8 @@ package com.chenghsi.lise.gas;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,20 +19,23 @@ import java.util.HashMap;
 /**
  * Created by MengHan on 2015/10/26.
  */
-public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceList>, ArrayList<GasPriceList>> {
+/*public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceList>, ArrayList<GasPriceList>> {
 
     private ArrayList<GasPriceList> gasPriceLists;
     private String price_20;
     private String price_16;
     private String price_bulid_date;
     private String price_remark;
+    private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
+    private ListAdapter adapter;
+    protected ListView listView;
 
     @Override
     protected ArrayList<GasPriceList> doInBackground(String... urls) {
         try {
             gasPriceLists = new ArrayList<>();
 
-            JSONArray jsonArray = new JSONArray(getJSONData(urls[0]));
+            JSONArray jsonArray = new JSONArray(getJSONData(url));
 //            HashMap<String,JSONArray> map = new HashMap<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONArray content = jsonArray.getJSONArray(i);  //取得陣列中的每個陣列
@@ -46,6 +51,12 @@ public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceLi
 
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<GasPriceList> gasPriceLists) {
+        super.onPostExecute(gasPriceLists);
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -84,4 +95,4 @@ public class AsynGasPriceDownLoad extends AsyncTask<String, ArrayList<GasPriceLi
         return gasPriceLists;
     }
 
-}
+}*/

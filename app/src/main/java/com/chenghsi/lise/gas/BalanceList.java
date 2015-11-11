@@ -9,12 +9,22 @@ public class BalanceList {
     String cylinders_list;
     String order_date;
     String money;
+    String id;
 
-    public BalanceList(String name, String cylinders_list, String date, String money){
+    public BalanceList(String id, String name, String cylinders_list, String date, String money){
+        setId(id);
         setCylinders_list(cylinders_list);
         setMoney(money);
         setName(name);
         setOrder_date(date);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

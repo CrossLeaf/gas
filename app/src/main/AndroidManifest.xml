@@ -1,92 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.chenghsi.lise.gas" >
+<manifest package="com.chenghsi.lise.gas"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
         </activity>
         <activity
             android:name=".task.NewTaskActivity"
-            android:label="@string/title_activity_task" >
+            android:label="@string/title_activity_task">
         </activity>
         <activity
             android:name=".other.OtherActivity"
-            android:label="@string/title_activity_other" >
+            android:label="@string/title_activity_other">
         </activity>
         <activity
             android:name=".delivery.DeliveryActivity"
-            android:label="@string/title_activity_delivery" >
+            android:label="@string/title_activity_delivery">
         </activity>
         <activity
             android:name=".task.DetailedTaskActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_detailed_task"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
         </activity>
         <activity
             android:name=".delivery.DeliveryScheduleActivity"
-            android:label="@string/title_activity_delivery_schedule" >
+            android:label="@string/title_activity_delivery_schedule">
         </activity>
         <activity
             android:name=".task.HistoryBottleActivity"
-            android:label="@string/title_activity_history_bottle" >
+            android:label="@string/title_activity_history_bottle">
         </activity>
-        <activity
+        <!--<activity
             android:name=".task.HistoryOrderActivity"
             android:label="@string/title_activity_history_order" >
-        </activity>
+        </activity>-->
         <activity
             android:name=".other.NewBalancingActivity"
-            android:label="@string/balancing" >
+            android:label="@string/balancing">
         </activity>
         <activity
             android:name=".other.RoutePlanningActivity"
-            android:label="@string/routePlanning" >
+            android:label="@string/routePlanning">
         </activity>
         <activity
             android:name=".other.NewGasPriceActivity"
-            android:label="@string/gasPricing" >
+            android:label="@string/gasPricing">
         </activity>
         <activity
-            android:name=".other.ClientInfoActivity"
-            android:label="@string/title_activity_client_info" >
+            android:name=".other.NewClientInfoActivity"
+            android:label="@string/title_activity_client_info">
         </activity>
         <activity
             android:name=".other.MeterReadingActivity"
-            android:label="@string/meterReading" >
+            android:label="@string/meterReading">
         </activity>
         <activity
             android:name=".other.DetailedClientInfoActivity"
-            android:label="@string/title_activity_client_info" >
+            android:label="@string/title_activity_client_info">
         </activity>
         <activity
             android:name=".delivery.DeliveryScheduleDetailActivity"
-            android:label="@string/title_activity_delivery_schedule_detail" >
+            android:label="@string/title_activity_delivery_schedule_detail">
         </activity>
         <activity
             android:name=".task.DoddleActivity"
-            android:label="@string/title_activity_doddle" >
+            android:label="@string/title_activity_doddle">
         </activity>
+        <activity
+            android:name=".other.NewDetailClientInfoActivity"
+            android:label="客戶細節">
+        </activity>
+
     </application>
 
 </manifest>

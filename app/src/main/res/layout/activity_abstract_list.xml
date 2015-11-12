@@ -17,6 +17,12 @@
             android:background="?attr/colorPrimary">
         </android.support.v7.widget.Toolbar>
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edt_search"
+            android:visibility="gone"/>
+
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

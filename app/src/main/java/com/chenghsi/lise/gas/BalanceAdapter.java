@@ -25,7 +25,7 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
     private List<BalanceList> balance;
     private List<BalanceList> mOriginalValues;
     private MyFilter filter;
-    private List<Boolean> check_list;
+//    private List<Boolean> check_list;
     int count = 0;
 
     public BalanceAdapter(Context context, List<BalanceList> balance) {

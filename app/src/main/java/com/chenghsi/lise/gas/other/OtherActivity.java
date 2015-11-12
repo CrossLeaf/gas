@@ -64,7 +64,7 @@ public class OtherActivity extends Activity
     public void onClick_btn_clientInfo(View view)
     {
         Intent intent = new Intent();
-        intent.setClass(OtherActivity.this, ClientInfoActivity.class);
+        intent.setClass(OtherActivity.this, NewClientInfoActivity.class);
         startActivity(intent);
     }
 

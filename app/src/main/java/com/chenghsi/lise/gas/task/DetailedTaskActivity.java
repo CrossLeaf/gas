@@ -168,7 +168,7 @@ public class DetailedTaskActivity extends Activity {
         cylinder_input.setInputType(InputType.TYPE_NULL);
         cylinder_num.setInputType(InputType.TYPE_NULL);
 
-        //TODO 沖帳
+        //沖帳按鈕
         btn_strikeBalance.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,7 +213,7 @@ public class DetailedTaskActivity extends Activity {
                 Log.e("callphone", "電話欄位為空");
             } else if (tel.equals("請選擇其他號碼")) {
                 Log.e("callphone", "點到號碼");
-                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
             } else {
                 Log.e("callphone", "打電話出去");
                 Uri uri = Uri.parse("tel:" + tel);
@@ -228,13 +228,8 @@ public class DetailedTaskActivity extends Activity {
         }
     };
 
-    /*public void btn_history(View view) {
-        Intent intent = new Intent();
-        intent.setClass(this, HistoryBottleActivity.class);
-        startActivity(intent);
-    }*/
 
-
+    //TODO 瓦斯調整後需紀錄
     //計算點擊上or下
     int j=0;
     int cylinder_temp = 0;
@@ -310,4 +305,6 @@ public class DetailedTaskActivity extends Activity {
                 .create().show();
 
     }
+
+    //TODO 賒銷現銷按鈕動作
 }

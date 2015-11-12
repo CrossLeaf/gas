@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -34,11 +33,9 @@ public class NewTaskActivity extends Activity {
 
     public ExpandableListView list_Task;   //下拉List控件
     public ExTaskListAdapter adapter;
-    private ArrayList<TaskLists> list;
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
-    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=doddle";
     String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     //今日抄表與訂單 url
     String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
@@ -50,19 +47,13 @@ public class NewTaskActivity extends Activity {
         Log.e("task", "----TaskOnCreate----");
         new AsyncTaskDownLoad().execute(url3, url2);
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
-
-
     }
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.e("task", "----onResume----");
-
     }
-
 
     @Override
     protected void onStop() {
@@ -103,7 +94,6 @@ public class NewTaskActivity extends Activity {
             try {
 
                 taskListses = new ArrayList<>();
-//                String customerURL = urls[1];
                 JSONArray jsonArrayTask = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[1]));
                 JSONArray order_doddle;
@@ -173,10 +163,6 @@ public class NewTaskActivity extends Activity {
                                     order_accept, null);
                             taskListses.add(list);
                         } else {
-//                            JSONArray customer = jsonArrayCustomer.getJSONArray(i);
-//                            customer_name = customer.getString(Constant.CUSTOMER_NAME);
-//                            customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-
                             TaskLists list = new TaskLists(order_day, order_task, order_phone,
                                     order_cylinders_list, customer_name, customer_address,
                                     order_should_money, order_status, order_accept, order_customer_id);
@@ -204,7 +190,6 @@ public class NewTaskActivity extends Activity {
             Log.e("task", "總列表size：" + listses.size());
             adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList);
             list_Task.setAdapter(adapter);
-//            list_Task.setOnGroupExpandListener(new OnListItemExpandListener());
             list_Task.setOnGroupClickListener(new OnItemClickListener());
             adapter.notifyDataSetChanged();
         }
@@ -244,7 +229,7 @@ public class NewTaskActivity extends Activity {
             groupList = new ArrayList<>();
             groupList.add(listses);
             Log.e("task", "listses size;" + listses.size());
-            childList = new ArrayList<Map<String, String>>();
+            childList = new ArrayList<>();
             Map<String, String> childMap = new HashMap<>();
             childMap.put("scanIn", "掃入");
             childMap.put("scanOut", "掃出");
@@ -271,7 +256,6 @@ public class NewTaskActivity extends Activity {
                 } else {
                     //轉換字串
                     String add = _toAddress(taskLists.getCustomer_address());
-//                String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
 
                     //傳值到細項Intent
                     intent.setClass(NewTaskActivity.this, DetailedTaskActivity.class);

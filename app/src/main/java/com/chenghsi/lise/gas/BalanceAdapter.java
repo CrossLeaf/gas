@@ -86,19 +86,7 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
         Log.e("balance", "balance view:" + position + "\n count:" + count);
 
         holder.checkText_name.setChecked(NewBalancingActivity.isCheckedMap.get(order_id));
-        /*check_list = new ArrayList<>();
-        check_list = NewBalancingActivity.checkList;
-        if (check_list.isEmpty()) {
-        } else {
-//            Log.e("balance", "true or false" + check_list.get(position));
 
-            if (holder.checkText_name.isChecked()) {
-
-                holder.checkText_name.setChecked(true);
-            } else {
-                holder.checkText_name.setChecked(false);
-            }
-        }*/
         return convertView;
     }
 

@@ -79,7 +79,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     private class ChildViewHolder {
         Button btn_scanIn;
         Button btn_scanOut;
-//        Button btn_setting;
         Button btn_finish;
         EditText edt_degree;
 
@@ -96,7 +95,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-//        return 50;
         return groupList.get(0).size();
     }
 

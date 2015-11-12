@@ -9,7 +9,7 @@ import com.chenghsi.lise.gas.delivery.DeliveryActivity;
 import com.chenghsi.lise.gas.delivery.DeliveryScheduleActivity;
 import com.chenghsi.lise.gas.other.OtherActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
-import com.chenghsi.lise.gas.task.TaskActivity;
+//import com.chenghsi.lise.gas.task.TaskActivity;
 
 
 public class MainActivity extends TabActivity

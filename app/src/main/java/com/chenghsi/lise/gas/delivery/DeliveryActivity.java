@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.chenghsi.lise.gas.AbstractList;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.db.GasDB;
-import com.chenghsi.lise.gas.task.TaskActivity;
+//import com.chenghsi.lise.gas.task.TaskActivity;
 
 
 public class DeliveryActivity extends AbstractList
@@ -80,8 +80,8 @@ public class DeliveryActivity extends AbstractList
         @Override
         public Object getItem(int position)
         {
-            boolean[] state = TaskActivity.tempState;
-            String[] tempAddress = TaskActivity.tempAddress;
+//            boolean[] state = TaskActivity.tempState;
+//            String[] tempAddress = TaskActivity.tempAddress;
             /*try
             {
                 JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.DELIVERY, position);

@@ -1,3 +1,4 @@
+/*
 package com.chenghsi.lise.gas.task;
 
 import android.content.Context;
@@ -13,6 +14,7 @@ import com.chenghsi.lise.gas.R;
 
 public class HistoryOrderActivity extends AbstractList
 {
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -56,17 +58,20 @@ public class HistoryOrderActivity extends AbstractList
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
-            View item = inflater.inflate(R.layout.adapter_item_history_order, parent, false);
 
-            /*TextView tv_date = (TextView) item.findViewById(R.id.tv_date);
+            View item = inflater.inflate(R.layout.adapter_item_history_order, parent, false);
+            */
+/*TextView tv_date = (TextView) item.findViewById(R.id.tv_date);
             TextView tv_capacity = (TextView) item.findViewById(R.id.tv_capacity);
             TextView tv_numBottle = (TextView) item.findViewById(R.id.tv_numBottle);
 
             tv_date.setText("104/05/05");
             tv_capacity.setText("20kg");
-            tv_numBottle.setText("+10");*/
+            tv_numBottle.setText("+10");*//*
+
 
             return item;
         }
     }
 }
+*/

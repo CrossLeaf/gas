@@ -32,10 +32,6 @@ public class LoginActivity extends Activity {
     String userName;
     String retSrc = "";
     public static String usn;
-    static final int STAFF_COUNT = 9;
-    static final int STAFF_PASSWORD = 10;
-    private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +44,11 @@ public class LoginActivity extends Activity {
         new LoginThread().start();
         //呼叫讀取偏好資料
         readPref();
-
-
-
     }
-
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -92,18 +81,8 @@ public class LoginActivity extends Activity {
 
     }
 
-    //判斷帳號密碼是否正確
-    /*private boolean isLogin(String usn,String pwd){
-        if (usn.equals()){
-
-        }
-    }*/
-
     //按鈕事件
     public void onClick_btn_login(View view) {
-//        String account = et_account.getText().toString();
-//        String password = et_password.getText().toString();
-//        isAccount(retSrc);
         if (isAccount()) {
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
@@ -114,61 +93,58 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private class LoginThread extends Thread{
+    private class LoginThread extends Thread {
         @Override
         public void run() {
             String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
-                HttpGet httpget = new HttpGet(url);
-                HttpClient httpclient = new DefaultHttpClient();
-                Log.e("retSrc", "讀取 JSON-1...");
-                try {
-                    HttpResponse response = httpclient.execute(httpget);
-                    Log.e("retSrc", "讀取 JSON-2...");
-                    HttpEntity resEntity = response.getEntity();
-                    if (resEntity != null) {
-                        retSrc = EntityUtils.toString(resEntity);
-                        Log.e("retSrc", retSrc);
-                    } else {
-                        retSrc = "Did not work!";
-                    }
-
-                } catch (Exception e) {
-                    Log.e("retSrc", "讀取JSON Error...");
-
-                } finally {
-                    httpclient.getConnectionManager().shutdown();
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            Log.e("retSrc", "讀取 JSON-1...");
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                Log.e("retSrc", "讀取 JSON-2...");
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    retSrc = EntityUtils.toString(resEntity);
+                    Log.e("retSrc", retSrc);
+                } else {
+                    retSrc = "Did not work!";
                 }
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+                httpclient.getConnectionManager().shutdown();
+            }
         }
     }
 
-    public boolean isAccount(){
+    public boolean isAccount() {
         try {
             String account = et_account.getText().toString();
             String password = et_password.getText().toString();
             JSONArray jsonArray = new JSONArray(retSrc);
-            for(int i = 0; i < jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 if (account.equals(jsonArray.getJSONArray(i).getString(9)) &&
-                        password.equals(jsonArray.getJSONArray(i).getString(10)))
-                {
+                        password.equals(jsonArray.getJSONArray(i).getString(10))) {
                     userName = jsonArray.getJSONArray(i).getString(3);
-                    Log.e("tag", "比對到第"+i+"筆");
+                    Log.e("tag", "比對到第" + i + "筆");
                     storeName(jsonArray.getJSONArray(i).getString(3));
-                    Log.e("tag", "人名："+userName);
+                    Log.e("tag", "人名：" + userName);
                     return true;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("tag", "false");
         }
         return false;
     }
 
-    public void storeName(String name){
+    public void storeName(String name) {
         this.usn = name;
     }
 
-    public String getUserName (){
-        Log.e("tag", "user Name:"+usn);
+    public String getUserName() {
+        Log.e("tag", "user Name:" + usn);
         return usn;
     }
 }

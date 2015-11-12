@@ -9,7 +9,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.chenghsi.lise.gas.db.GasDB;
-import com.chenghsi.lise.gas.task.TaskActivity;
+//import com.chenghsi.lise.gas.task.TaskActivity;
 
 
 public abstract class AbstractList extends Activity

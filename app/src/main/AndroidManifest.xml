@@ -64,7 +64,7 @@
             android:label="@string/routePlanning" >
         </activity>
         <activity
-            android:name=".other.GasPriceActivity"
+            android:name=".other.NewGasPriceActivity"
             android:label="@string/gasPricing" >
         </activity>
         <activity

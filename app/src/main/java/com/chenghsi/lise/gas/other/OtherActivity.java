@@ -51,7 +51,7 @@ public class OtherActivity extends Activity
 
     public void onClick_btn_priceGas(View view)
     {
-        intent.setClass(OtherActivity.this, GasPriceActivity.class);
+        intent.setClass(OtherActivity.this, NewGasPriceActivity.class);
         startActivity(intent);
     }
 

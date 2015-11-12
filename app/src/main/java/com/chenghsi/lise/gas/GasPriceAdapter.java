@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.chenghsi.lise.gas.other.NewGasPriceActivity;
+
 import java.util.ArrayList;
 
 /**
@@ -19,16 +21,14 @@ public class GasPriceAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
     // 定義 Adapter 內藴藏的資料容器
     private ArrayList<GasPriceList> list;
-    double oldRate = 0.0;
 
-    public GasPriceAdapter(Context context, ArrayList<GasPriceList> list){  //建構子為了動態初始化
+    //建構子
+    public GasPriceAdapter(Context context, ArrayList<GasPriceList> list) {
         //預先取得 LayoutInflater 物件實體
         myInflater = LayoutInflater.from(context);
         this.list = list;
-//        Log.e("listView", list.get(0).getPriceBulidDate());
-
-
     }
+
     @Override
     public int getCount() {
         return list.size();
@@ -48,50 +48,37 @@ public class GasPriceAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
-        if(convertView == null) {
+        if (convertView == null) {
+
             // 1:將 R.layout.cus_view 實例化
             convertView = myInflater.inflate(R.layout.adapter_item_gas_price, null);
 
             // 2:建立 UI 標籤結構並存放到 holder
             holder = new ViewHolder();
             holder.date = (TextView) convertView.findViewById(R.id.tv_date);
-            holder.price = (TextView)convertView.findViewById(R.id.tv_price);
-            holder.rate = (TextView)convertView.findViewById(R.id.tv_rate);
+            holder.price = (TextView) convertView.findViewById(R.id.tv_price);
+            holder.rate = (TextView) convertView.findViewById(R.id.tv_rate);
 
             // 3:注入 UI 標籤結構 --> convertView
             convertView.setTag(holder);
 
         } else {
             // 取得  UI 標籤結構
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
         // 4:取得gasList物件資料
         GasPriceList gasList = list.get(position);
 
         // 5:設定顯示資料
+        Log.e("gasprice", "顯示資料");
         holder.date.setText(gasList.getPriceBulidDate());
         holder.price.setText(gasList.getPrice20() + "/" + gasList.getPrice16());
-        double doubleRate = Double.parseDouble(gasList.getPriceRemark());
-        if (doubleRate == 0.0) {
-            holder.rate.setText("---");
-        } else {
-            if (oldRate > doubleRate) {
-                double rate = oldRate - doubleRate;
-                Log.e("GasPrice", "跌:" + rate);
-                holder.rate.setText("跌" + rate);
-                holder.rate.setTextColor(Color.GREEN);
-
-            } else {
-                double rate = doubleRate - oldRate;
-                Log.e("GasPrice", "漲:" + rate);
-                holder.rate.setText("漲" + rate);
-                holder.rate.setTextColor(Color.RED);
-
-            }
-        }
+        holder.rate.setText(gasList.getPriceRemark());
+        holder.rate.setTextColor(gasList.getRateColor());
         return convertView;
     }
+
     // UI 標籤結構
     static class ViewHolder {
         TextView date;

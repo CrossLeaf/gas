@@ -11,12 +11,14 @@ public class GasPriceList {
     public String priceBulidDate;
     public String priceChangeDate;
     public String priceRemark;
+    private int rateColor;
 
-    public GasPriceList(String p20, String p16, String bulidDate, String remark) {
+    public GasPriceList(String p20, String p16, String bulidDate, String remark, int rateColor) {
         setPrice20(p20);
         setPrice16(p16);
         setPriceBulidDate(bulidDate);
         setPriceRemark(remark);
+        setRateColor(rateColor);
     }
 
     public String getPriceId() {
@@ -73,5 +75,13 @@ public class GasPriceList {
 
     public void setPriceRemark(String priceRemark) {
         this.priceRemark = priceRemark;
+    }
+
+    public int getRateColor() {
+        return rateColor;
+    }
+
+    public void setRateColor(int rateColor) {
+        this.rateColor = rateColor;
     }
 }

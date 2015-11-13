@@ -307,4 +307,5 @@ public class DetailedTaskActivity extends Activity {
     }
 
     //TODO 賒銷現銷按鈕動作
+    //TODO 還要修改 carcy_In 的api
 }

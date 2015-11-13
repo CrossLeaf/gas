@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="工廠"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/tv_fac50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50KG"/>
+
+            <NumberPicker
+                android:id="@+id/numPick_fac50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"/>
+
+            <TextView
+                android:id="@+id/tv_fac20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20KG"/>
+
+            <NumberPicker
+                android:id="@+id/numPick_fac20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"/>
+
+            <TextView
+                android:id="@+id/tv_fac16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="16KG"/>
+
+            <NumberPicker
+                android:id="@+id/numPick_fac16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+            </NumberPicker>
+
+            <TextView
+                android:id="@+id/tv_fac4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4KG"/>
+
+            <NumberPicker
+                android:id="@+id/numPick_fac4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+            </NumberPicker>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/imageButton4"
+                android:src="@drawable/pay_money"
+                android:background="@drawable/ripple_pay"
+                android:elevation="8dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="btn_pay"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/imageButton3"
+                android:src="@drawable/check"
+                android:background="@drawable/ripple"
+                android:elevation="8dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="right"
+                android:onClick="btn_check"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <TextView
+            android:id="@+id/textView22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="車上"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50KG"
+                    android:textSize="25dp"
+                    android:phoneNumber="false"/>
+
+                <TextView
+                    android:id="@+id/tv_car50"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20KG"
+                    android:textSize="25dp"
+                    android:phoneNumber="false"/>
+
+                <TextView
+                    android:id="@+id/tv_car20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="16KG"
+                    android:textSize="25dp"
+                    android:phoneNumber="false"/>
+
+                <TextView
+                    android:id="@+id/tv_car16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textView26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4KG"
+                    android:textSize="25dp"
+                    android:phoneNumber="false"/>
+
+                <TextView
+                    android:id="@+id/tv_car4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

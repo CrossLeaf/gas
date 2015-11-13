@@ -29,7 +29,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/barcodeScanning"
+            android:text="出入氣"
             android:id="@+id/btn_barcodeScanning"
             android:onClick="onClick_btn_barcodeScanning"
             android:textAppearance="?android:attr/textAppearanceMedium"

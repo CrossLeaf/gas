@@ -91,6 +91,10 @@
             android:name=".other.NewDetailClientInfoActivity"
             android:label="客戶細節">
         </activity>
+        <activity
+            android:name=".other.FactoryActivity"
+            android:label="出入氣">
+        </activity>
 
     </application>
 

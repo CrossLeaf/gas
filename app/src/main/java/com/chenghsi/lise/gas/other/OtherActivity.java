@@ -34,13 +34,10 @@ public class OtherActivity extends Activity
 
     public void onClick_btn_barcodeScanning(View view)
     {
-        //TODO
-        //AlertDialog.Builder altBlgBuilder = AltDlgBuilder_choice();
-        //altBlgBuilder.show();
-        barcodeScanning_Dialog();
-        /*Intent intent = new Intent();
-        intent.setClass(OtherActivity.this, CaptureActivity.class);
-        startActivity(intent);*/
+//        barcodeScanning_Dialog();
+        Intent intent = new Intent();
+        intent.setClass(OtherActivity.this, FactoryActivity.class);
+        startActivity(intent);
     }
 
     public void onClick_btn_meterReading(View view)
@@ -74,7 +71,7 @@ public class OtherActivity extends Activity
         startActivity(intent);
     }
 
-    public void barcodeScanning_Dialog() {
+    /*public void barcodeScanning_Dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.barcodeScanning);
         String[] scane = {
@@ -123,42 +120,6 @@ public class OtherActivity extends Activity
             }
         });
         builder.create().show();
-    }
-      /*public AlertDialog.Builder AltDlgBuilder_choice()
-    {
-        String[] options =
-                {
-                        "出任務條碼 刷出","出任務條碼 刷入",
-                        "出入氣條碼 刷出","出入氣條碼 刷入",
-                        "檢驗廠條碼 刷出","檢驗廠條碼 刷入"
-                };
-
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog, int which)
-            {
-                switch (which)
-                {
-                    case 0:
-                        //metaHistoryItem.location = "公司";
-                        break;
-                    case 1:
-                        //metaHistoryItem.location = "檢驗廠";
-                        break;
-                    case 2:
-                        //metaHistoryItem.location = "客戶";
-                        break;
-                }
-                //historyManager.addItem(metaHistoryItem);
-                //renewListview();
-            }
-        };
-
-        AlertDialog.Builder altBlgBuilder = new AlertDialog.Builder(OtherActivity.this);
-        altBlgBuilder.setTitle("請選擇用途");
-        altBlgBuilder.setCancelable(false);
-        altBlgBuilder.setItems(options, listener);
-
-        return altBlgBuilder;
     }*/
+
 }

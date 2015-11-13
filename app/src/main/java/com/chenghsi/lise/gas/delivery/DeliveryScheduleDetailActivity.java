@@ -102,6 +102,7 @@ public class DeliveryScheduleDetailActivity extends Activity {
         numPickHr = (NumberPicker) findViewById(R.id.numPickHr);
         numPickMin = (NumberPicker) findViewById(R.id.numPickMin);
         tv_year = (TextView) findViewById(R.id.year);
+
         edt_add.clearFocus();
 
         cylinder_list = new String[4];
@@ -157,8 +158,9 @@ public class DeliveryScheduleDetailActivity extends Activity {
 
         }
     };
+    //TODO 取得系統時間回傳
 
-    //取消與確認 button
+    //TODO 取消與確認 button
     public void btn_schedule(View view) {
         switch (view.getId()){
             case R.id.btn_cancel:
@@ -196,7 +198,6 @@ public class DeliveryScheduleDetailActivity extends Activity {
         @Override
         protected String[] doInBackground(String... urls) {
             try {
-
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 customer_name = new String[jsonArrayCustomer.length()];
                 customer_address = new String[jsonArrayCustomer.length()];

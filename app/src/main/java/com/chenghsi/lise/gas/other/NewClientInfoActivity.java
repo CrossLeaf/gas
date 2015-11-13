@@ -34,7 +34,7 @@ import java.util.List;
  * Created by MengHan on 2015/11/12.
  */
 public class NewClientInfoActivity extends Activity {
-    String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
+    String url = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     private EditText edt_client;
     private ListView lv_client_info;
     private ClientInfoAdapter adapter;
@@ -59,7 +59,7 @@ public class NewClientInfoActivity extends Activity {
 
                 Intent intent = new Intent();
                 intent.putExtra("customerId", customer_id);
-                intent.setClass(NewClientInfoActivity.this,NewDetailClientInfoActivity.class);
+                intent.setClass(NewClientInfoActivity.this, NewDetailClientInfoActivity.class);
                 startActivity(intent);
             }
         });
@@ -88,25 +88,59 @@ public class NewClientInfoActivity extends Activity {
         String customer_id;
         String customer_name;
         String customer_address;
+        String phone;
+        String[] customer_phone = new String[4];
+        String old_id;
+        int count = 0;
 
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
             try {
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 JSONArray customer;
+                JSONArray oldCustomer;
 
-                for (int i = 0; i < jsonArrayCustomer.length(); i++) {
+                for (int i = 1; i < jsonArrayCustomer.length(); i++) {
                     customer = jsonArrayCustomer.getJSONArray(i);
-                    customer_id = customer.getString(Constant.CUSTOMER_ID);
-                    customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                    customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                    ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address);
+                    oldCustomer = jsonArrayCustomer.getJSONArray(i - 1);
+                    //假如是最後一筆 直接存
+                    if (i==jsonArrayCustomer.length()-1){
+//                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
+//                        Log.e("client", "old_id:" + old_id);
+                        customer_id = customer.getString(Constant.CUSTOMER_ID);
+                        Log.e("client", "customer_id:" + customer_id);
+                        phone = customer.getString(22);
+                        Log.e("client", "phone:" + phone);
+                        customer_phone[count] = phone;
+                        customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                        customer_name = customer.getString(Constant.CUSTOMER_NAME);
+                    }else {
+                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
+                        Log.e("client", "old_id:" + old_id);
+                        customer_id = customer.getString(Constant.CUSTOMER_ID);
+                        Log.e("client", "new_id:" + customer_id);
+                        //假如現在id等於下一筆id
+                        if (old_id.equals(customer_id)) {
+                            phone = oldCustomer.getString(22);
+                            Log.e("client", "phone:" + phone);
+                            customer_phone[count] = phone;
+                            count++;
+                            continue;
+                        }else {
+                            phone = oldCustomer.getString(22);
+                            Log.e("client", "phone:" + phone);
+                            customer_phone[count] = phone;
+                            customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
+                            customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                        }
+                    }
+                    count = 0;
+                    ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, customer_phone);
                     clientList.add(clientInfoList);
                 }
-
                 return clientList;
             } catch (Exception e) {
-                Log.e("delivery", "資料抓取有誤");
+                Log.e("client", "資料抓取有誤");
             }
             return null;
         }

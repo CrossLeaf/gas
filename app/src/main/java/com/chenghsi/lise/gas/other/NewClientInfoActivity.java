@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,6 +45,7 @@ public class NewClientInfoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         new AsyncClientDownLoad().execute(url);
         setContentView(R.layout.activity_client_info);
         edt_client = (EditText) findViewById(R.id.edt_search_client);
@@ -56,7 +58,6 @@ public class NewClientInfoActivity extends Activity {
                 newClientList = new ArrayList<>(ClientInfoAdapter.clientInfoLists);
                 String customer_id = newClientList.get(position).getId();
 //                Toast.makeText(NewClientInfoActivity.this, "id:" + customer_id, Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent();
                 intent.putExtra("customerId", customer_id);
                 intent.setClass(NewClientInfoActivity.this, NewDetailClientInfoActivity.class);
@@ -91,7 +92,7 @@ public class NewClientInfoActivity extends Activity {
         String phone;
         String[] customer_phone = new String[4];
         String old_id;
-        int count = 0;
+        int count = 1;
 
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
@@ -99,45 +100,77 @@ public class NewClientInfoActivity extends Activity {
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 JSONArray customer;
                 JSONArray oldCustomer;
+                Log.e("client", "array執行成功");
 
                 for (int i = 1; i < jsonArrayCustomer.length(); i++) {
+
+//                    customer_phone = new String[4];
+                    customer_phone[0] = "請選擇號碼";
                     customer = jsonArrayCustomer.getJSONArray(i);
                     oldCustomer = jsonArrayCustomer.getJSONArray(i - 1);
                     //假如是最後一筆 直接存
-                    if (i==jsonArrayCustomer.length()-1){
+                    if (i == jsonArrayCustomer.length() - 1) {
 //                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
 //                        Log.e("client", "old_id:" + old_id);
                         customer_id = customer.getString(Constant.CUSTOMER_ID);
                         Log.e("client", "customer_id:" + customer_id);
                         phone = customer.getString(22);
-                        Log.e("client", "phone:" + phone);
+//                        Log.e("client", "phone:" + phone);
                         customer_phone[count] = phone;
                         customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                         customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                    }else {
+                    } else {    //不是最後一筆的話
                         old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
                         Log.e("client", "old_id:" + old_id);
                         customer_id = customer.getString(Constant.CUSTOMER_ID);
                         Log.e("client", "new_id:" + customer_id);
-                        //假如現在id等於下一筆id
+
+                        //假如現在id等於下一筆id 為了將電話存在陣列上
                         if (old_id.equals(customer_id)) {
                             phone = oldCustomer.getString(22);
+                            Log.e("client", "if count:" + count);
                             Log.e("client", "phone:" + phone);
                             customer_phone[count] = phone;
+                            Log.e("client", "cus_pho:" + customer_phone[count]);
                             count++;
                             continue;
-                        }else {
+                        } else {
                             phone = oldCustomer.getString(22);
                             Log.e("client", "phone:" + phone);
+                            Log.e("client", "else count:" + count);
                             customer_phone[count] = phone;
                             customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
+                            Log.e("client", "name:" + customer_name);
                             customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                            Log.e("client", "address:" + customer_address);
                         }
+
                     }
-                    count = 0;
-                    ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, customer_phone);
+                    count = 1;
+                    int a = 0;
+                    int j = 0;
+                    for (String str : customer_phone) {
+                        Log.e("client", "a：" + a);
+                        if (customer_phone[a] == null) {
+                            customer_phone[a] = "";
+                            Log.e("client", "customer_phone[" + a + "]=null");
+                            break;
+                        } else {
+                            j++;
+                        }
+                        a++;
+                        Log.e("client", "phone：" + str);
+                    }
+                    String phone[] = new String[j];
+
+                    for (int k = 0; k < j; k++) {
+                        phone[k]=customer_phone[k];
+                    }
+                    ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, phone);
                     clientList.add(clientInfoList);
+                    customer_phone = new String[4];
                 }
+
                 return clientList;
             } catch (Exception e) {
                 Log.e("client", "資料抓取有誤");

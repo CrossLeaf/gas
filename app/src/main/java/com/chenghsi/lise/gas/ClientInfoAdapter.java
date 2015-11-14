@@ -75,16 +75,17 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         String add = _toAddress(clientList.getAddress());
         holder.tv_name.setText(clientList.getName());
         holder.tv_address.setText(add);
+
         //TODO 電話號碼呈現
-        /*String[] phone_num = clientList.getPhone();
-        Log.e("client", "phone number:"+phone_num[0]);
-        String phones[] = new String[clientList.getPhone().length+1];
-        phones[0] = "請選擇號碼";
-        for (int i = 0; i < clientList.getPhone().length;i++){
-            phones[i+1] = phone_num[i];
+        String[] phone_list ;
+        phone_list = clientList.getPhone();
+        for (String ph : clientList.getPhone()){
+            Log.e("client", "phone num:"+ph);
         }
+
         clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
-        ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phones);
+        clientPhones.setFocusable(false);
+        ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phone_list);
         apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientPhones.setAdapter(apt);
         //電話撥號
@@ -95,7 +96,6 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                 return false;
             }
         });
-*/
         return convertView;
     }
 
@@ -109,15 +109,25 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
             this.tv_address = tv_address;
         }
     }
+
     //電話 spinner 點按動作
     private Spinner.OnItemSelectedListener spnListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             //取得選項內容
             String tel = parent.getSelectedItem().toString();
-            if (tel == null || tel.equals("")) {
+            if (tel.equals("請選擇號碼")) {
+                Log.e("callphone", "點到號碼");
+            }else {
+                Log.e("callphone", "打電話出去");
+                Uri uri = Uri.parse("tel:" + tel);
+                Intent intent = new Intent(action, uri);
+                context.startActivity(intent);
+            }
+
+            /*if (tel == null || tel.equals("")) {
                 Log.e("callphone", "電話欄位為空");
-            } else if (tel.equals("請選擇其他號碼")) {
+            } else if (tel.equals("請選擇號碼")) {
                 Log.e("callphone", "點到號碼");
 //                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
             } else {
@@ -125,7 +135,7 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                 Uri uri = Uri.parse("tel:" + tel);
                 Intent intent = new Intent(action, uri);
                 context.startActivity(intent);
-            }
+            }*/
         }
 
         @Override

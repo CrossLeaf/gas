@@ -18,7 +18,7 @@ public class DetailClientInfoAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
     private List<DetailClientInfoList> detailClientInfoLists;
     String[] cylinders_list = {};
-    String[] order_day_list= {};
+    String[] order_day_list = {};
     TextView tv_do_de;
 
     public DetailClientInfoAdapter(Context context, List<DetailClientInfoList> detailClientInfoLists) {
@@ -63,8 +63,8 @@ public class DetailClientInfoAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         DetailClientInfoList clientList = (DetailClientInfoList) getItem(position);
-        order_day_list = clientList.getOrder_time().split("-",2);
-        holder.tv_order_day.setText(order_day_list[0]+"\n"+order_day_list[1]);
+        order_day_list = clientList.getOrder_time().split("-", 2);
+        holder.tv_order_day.setText(order_day_list[0] + "\n" + order_day_list[1]);
         holder.tv_order_task.setText(clientList.getOrder_task());
         cylinders_list = clientList.getOrder_cylinders_list().split(",");
         holder.tv_50.setText(cylinders_list[0]);
@@ -73,7 +73,6 @@ public class DetailClientInfoAdapter extends BaseAdapter {
         holder.tv_4.setText(cylinders_list[3]);
         holder.tv_doddle_this_phase_degree.setText(clientList.getDoddle_this_phase_degree());
         tv_do_de.setText("度數");
-
         return convertView;
     }
 

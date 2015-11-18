@@ -25,6 +25,7 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
     private List<BalanceList> balance;
     private List<BalanceList> mOriginalValues;
     private MyFilter filter;
+    private String[] order_date_list;
 //    private List<Boolean> check_list;
     int count = 0;
 
@@ -79,8 +80,8 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
         holder.tv_cylinder2.setText("20KG:" + cylinder_list[1]);
         holder.tv_cylinder3.setText("16KG:" + cylinder_list[2]);
         holder.tv_cylinder4.setText("4KG:" + cylinder_list[3]);
-
-        holder.order_date.setText(balance.getOrder_date());
+        order_date_list = balance.getOrder_date().split("-",2);
+        holder.order_date.setText(order_date_list[0]+"\n"+order_date_list[1]);
         holder.should_money.setText(balance.getMoney());
         count++;
         Log.e("balance", "balance view:" + position + "\n count:" + count);

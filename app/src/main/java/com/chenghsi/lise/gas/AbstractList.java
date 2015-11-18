@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
@@ -63,10 +64,12 @@ public abstract class AbstractList extends Activity
             // Enable refreshing event if at the top of listView
             if(firstVisibleItem==0)
             {
+                Log.e("refresh", "firstVisibleItem:"+firstVisibleItem);
                 swipeRefreshLayout.setEnabled(true);
             }
             else
             {
+                Log.e("refresh", "not firstVisibleItem:"+firstVisibleItem);
                 swipeRefreshLayout.setEnabled(false);
             }
         }

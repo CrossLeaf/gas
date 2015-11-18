@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
@@ -30,6 +31,7 @@ public class DeliveryScheduleDetailActivity extends Activity {
     Spinner spinner_day;
     Spinner spinner_clientName;
     EditText edt_add;
+    EditText edt_remark;
     TextView tv_year;
     NumberPicker numPick_50;
     NumberPicker numPick_20;
@@ -42,10 +44,24 @@ public class DeliveryScheduleDetailActivity extends Activity {
 
     private String[] customer_name;
     private String[] customer_address;
+    private String[] customer_id;
     private String[] cylinder_list;
     private String[] month_list = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
     private String[] day_list;
+    private String hr = "0";
+    private String min = "0";
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
+
+    private String cus_id;
+    private String cly_name;
+    private String cly_time;
+    private String cly_50;
+    private String cly_20;
+    private String cly_16;
+    private String cly_4;
+    private String ms1_addr;
+    private String cly_PS;
+    private String cly_day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,15 +88,19 @@ public class DeliveryScheduleDetailActivity extends Activity {
         numPick_20.setOnValueChangedListener(new NumChangeListener());
         numPick_16.setOnValueChangedListener(new NumChangeListener());
         numPick_4.setOnValueChangedListener(new NumChangeListener());
+        numPickHr.setOnValueChangedListener(new NumChangeListener());
+        numPickMin.setOnValueChangedListener(new NumChangeListener());
+
         spinner_clientName.setOnItemSelectedListener(nameSelectListener);
 
         ArrayAdapter monAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, month_list);
 //        monAdapter.setDropDownViewResource(R.layout.spinner_text_size);
         spinner_month.setAdapter(monAdapter);
+        spinner_month.setSelection(month - 1);
         spinner_month.setOnItemSelectedListener(monSelectListener);
         ArrayAdapter dayAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, day_list);
-//        monAdapter.setDropDownViewResource(R.layout.spinner_text_size);
         spinner_day.setAdapter(dayAdapter);
+        spinner_day.setSelection(day - 1);
         spinner_day.setOnItemSelectedListener(daySelectListener);
 
     }
@@ -95,6 +115,7 @@ public class DeliveryScheduleDetailActivity extends Activity {
         spinner_day = (Spinner) findViewById(R.id.spinner_day);
         spinner_clientName = (Spinner) findViewById(R.id.spinner_clientName);
         edt_add = (EditText) findViewById(R.id.edt_add);
+        edt_remark = (EditText) findViewById(R.id.edt_remark);
         numPick_50 = (NumberPicker) findViewById(R.id.numPick_50);
         numPick_20 = (NumberPicker) findViewById(R.id.numPick_20);
         numPick_16 = (NumberPicker) findViewById(R.id.numPick_16);
@@ -104,14 +125,17 @@ public class DeliveryScheduleDetailActivity extends Activity {
         tv_year = (TextView) findViewById(R.id.year);
 
         edt_add.clearFocus();
+        edt_remark.clearFocus();
 
-        cylinder_list = new String[4];
 
         Bundle bundle = this.getIntent().getExtras();
         year = bundle.getInt("year");
         month = bundle.getInt("month");
         day = bundle.getInt("day");
 
+        cly_day = year + "-" + month + "-" + day;
+
+        cylinder_list = new String[]{"0", "0", "0", "0"};
         day_list = new String[31];
         for (int i = 1; i < 32; i++) {
             day_list[i - 1] = String.valueOf(i);
@@ -123,12 +147,13 @@ public class DeliveryScheduleDetailActivity extends Activity {
     AdapterView.OnItemSelectedListener monSelectListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            spinner_month.setSelection(month - 1);
+            month = Integer.parseInt(parent.getSelectedItem().toString());
+            cly_day = year + "-" + month + "-" + day;
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
-
+            Log.e("month:", "未作選取");
         }
     };
 
@@ -136,12 +161,13 @@ public class DeliveryScheduleDetailActivity extends Activity {
     AdapterView.OnItemSelectedListener daySelectListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            spinner_day.setSelection(day - 1);
+            day = Integer.parseInt(parent.getSelectedItem().toString());
+            cly_day = year + "-" + month + "-" + day;
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
-
+            Log.e("day:", "未作選取");
         }
     };
 
@@ -149,6 +175,8 @@ public class DeliveryScheduleDetailActivity extends Activity {
     private AdapterView.OnItemSelectedListener nameSelectListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            cly_name = parent.getSelectedItem().toString();
+            cus_id = customer_id[position];
             String address = _toAddress(customer_address[position]);
             edt_add.setText(address);
         }
@@ -158,17 +186,68 @@ public class DeliveryScheduleDetailActivity extends Activity {
 
         }
     };
-    //TODO 取得系統時間回傳
 
     //TODO 取消與確認 button
     public void btn_schedule(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_cancel:
                 onBackPressed();
                 break;
             case R.id.btn_ok:
+                ms1_addr = edt_add.getText().toString();
+                cly_PS = edt_remark.getText().toString();
+                cly_50 = cylinder_list[0];
+                cly_20 = cylinder_list[1];
+                cly_16 = cylinder_list[2];
+                cly_4 = cylinder_list[3];
+                cly_time = hr + ":" + min;
+                Log.e("btn", cus_id);
+                Log.e("btn", cly_name);
+                Log.e("btn", cly_time);
+                Log.e("btn", ms1_addr);
+                Log.e("btn", cly_day);
+                Log.e("btn", cly_50);
+                Log.e("btn", cly_20);
+                Log.e("btn", cly_16);
+                Log.e("btn", cly_4);
+                Log.e("btn", cly_PS);
+                new DeliveryUpdate().start();
+                Toast.makeText(this, "新增成功", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
+        }
+    }
+
+    //確定按鈕 post資料
+    private class DeliveryUpdate extends Thread {
+
+        @Override
+        public void run() {
+//          http://198.245.55.221:8089/ProjectGAPP/php/upd_cly.php?cly_name=cly_name&cly_time=cly_time
+//          &cly_50=50公斤桶數&cly_20=20公斤桶數&cly_16=16公斤桶數&cly_4=4公斤桶數&ms1_addr=客戶地址
+//          &cly_PS=備註&cly_day=cly_day
+            String url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_cly.php?cly_name=" + cus_id +
+                    "&cly_time=" + cly_time + "&cly_50=" + cly_50 + "&cly_20=" + cly_20 + "&cly_16=" + cly_16 +
+                    "&cly_4=" + cly_4 + "&ms1_addr=" + ms1_addr + "&cly_PS=" + cly_PS + "&cly_day=" + cly_day;
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            Log.e("retSrc", "讀取 JSON-1...");
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                Log.e("retSrc", "讀取 JSON-2...");
+                HttpEntity resEntity = response.getEntity();
+
+                if (resEntity != null) {
+                    String retSrc = EntityUtils.toString(resEntity);
+                    Toast.makeText(DeliveryScheduleDetailActivity.this, "新增成功", Toast.LENGTH_SHORT).show();
+                    Log.e("retSrc", retSrc);
+                }
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+
+                httpclient.getConnectionManager().shutdown();
+            }
         }
     }
 
@@ -188,6 +267,12 @@ public class DeliveryScheduleDetailActivity extends Activity {
                 case R.id.numPick_4:
                     cylinder_list[3] = String.valueOf(newValue);
                     break;
+                case R.id.numPickHr:
+                    hr = String.valueOf(newValue);
+                    break;
+                case R.id.numPickMin:
+                    min = String.valueOf(newValue);
+                    break;
             }
         }
     }
@@ -199,12 +284,14 @@ public class DeliveryScheduleDetailActivity extends Activity {
         protected String[] doInBackground(String... urls) {
             try {
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
+                customer_id = new String[jsonArrayCustomer.length()];
                 customer_name = new String[jsonArrayCustomer.length()];
                 customer_address = new String[jsonArrayCustomer.length()];
                 JSONArray customer;
 
                 for (int j = 0; j < jsonArrayCustomer.length(); j++) {
                     customer = jsonArrayCustomer.getJSONArray(j);
+                    customer_id[j] = customer.getString(Constant.CUSTOMER_ID);
                     customer_name[j] = customer.getString(Constant.CUSTOMER_NAME);
                     customer_address[j] = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                     Log.e("delivery", "cus_name" + customer_name[j]);

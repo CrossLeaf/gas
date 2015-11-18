@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.R;
@@ -34,10 +35,13 @@ public class FactoryActivity extends Activity {
     TextView tv_car16;
     TextView tv_car4;
 
+
     String url_fac = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=facylN";
     String url_car = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcylN";
 
     int[] fac_list;
+    String[] fac_car_id = new String[2];
+    String[] fac_car_content = new String[2];
     String[] fac_content;   //最後要把這回傳回去
     String[] car_content;
 
@@ -77,7 +81,6 @@ public class FactoryActivity extends Activity {
 
         fac_content = new String[4];
         car_content = new String[4];
-        fac_list = new int[4];
     }
 
     public class NumChangeListener implements NumberPicker.OnValueChangeListener {
@@ -85,8 +88,8 @@ public class FactoryActivity extends Activity {
         public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue) {
             switch (numberPicker.getId()) {
                 case R.id.numPick_fac50:
-                    Log.e("factory", "old:"+oldValue);
-                    Log.e("factory", "new:"+newValue);
+                    Log.e("factory", "old:" + oldValue);
+                    Log.e("factory", "new:" + newValue);
                     fac_list[0] = newValue;
                     break;
                 case R.id.numPick_fac20:
@@ -104,23 +107,62 @@ public class FactoryActivity extends Activity {
 
     //TODO 工廠數量改變後按下 傳至車上
     public void btn_check(View view) {
-        int car_50 = Integer.parseInt(car_content[0])+(Integer.parseInt(fac_content[0])-fac_list[0]);
-        Log.e("factory", "50KG:"+car_50);
+        int car_50 = Integer.parseInt(car_content[0]) + (Integer.parseInt(fac_content[0]) - fac_list[0]);
+        Log.e("factory", "50KG:" + car_50);
         tv_car50.setText(String.valueOf(car_50));
 
-        int car_20 = Integer.parseInt(car_content[1])+(Integer.parseInt(fac_content[1])-fac_list[1]);
+        int car_20 = Integer.parseInt(car_content[1]) + (Integer.parseInt(fac_content[1]) - fac_list[1]);
         tv_car20.setText(String.valueOf(car_20));
 
-        int car_16 = Integer.parseInt(car_content[2])+(Integer.parseInt(fac_content[2])-fac_list[2]);
+        int car_16 = Integer.parseInt(car_content[2]) + (Integer.parseInt(fac_content[2]) - fac_list[2]);
         tv_car16.setText(String.valueOf(car_16));
 
-        int car_4 = Integer.parseInt(car_content[3])+(Integer.parseInt(fac_content[3])-fac_list[3]);
+        int car_4 = Integer.parseInt(car_content[3]) + (Integer.parseInt(fac_content[3]) - fac_list[3]);
         tv_car4.setText(String.valueOf(car_4));
+        fac_car_content[0] = fac_list[0] + "," + fac_list[1] + "," + fac_list[2] + "," + fac_list[3];
+        fac_car_content[1] = car_50 + "," + car_20 + "," + car_16 + "," + car_4;
+
+        new CheckUpdate().start();
     }
 
     //TODO 付款
     public void btn_pay(View view) {
 
+    }
+
+    private class CheckUpdate extends Thread {
+
+        @Override
+        public void run() {
+            String[] tb_name = new String[]{"facyln", "carcyln"};
+            String tb_where_name[] = new String[]{"facyln_id", "carcyln_id"};
+            String tb_td[] = new String[]{"facyln_content", "carcyln_content"};
+            for (int i = 0; i < fac_car_id.length; i++) {
+                String url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name="+tb_name[i]+
+                        "&tb_where_name=" + tb_where_name[i] + "&tb_where_val=" + fac_car_id[i] +
+                        "&tb_td="+tb_td[i]+"&tb_val=" + fac_car_content[i];
+                HttpGet httpget = new HttpGet(url);
+                HttpClient httpclient = new DefaultHttpClient();
+                Log.e("retSrc", "讀取 JSON-1...");
+                try {
+                    HttpResponse response = httpclient.execute(httpget);
+                    Log.e("retSrc", "讀取 JSON-2...");
+                    HttpEntity resEntity = response.getEntity();
+
+                    if (resEntity != null) {
+                        Log.e("retSrc", "rrrr");
+                        String retSrc = EntityUtils.toString(resEntity);
+                        Toast.makeText(FactoryActivity.this, "完成", Toast.LENGTH_SHORT).show();
+                        Log.e("retSrc", retSrc);
+                    }
+                } catch (Exception e) {
+                    Log.e("retSrc", "讀取JSON Error...");
+                } finally {
+
+                    httpclient.getConnectionManager().shutdown();
+                }
+            }
+        }
     }
 
     private class AsyncFactoryDownload extends AsyncTask<String, Integer, Void> {
@@ -139,14 +181,14 @@ public class FactoryActivity extends Activity {
                 JSONArray factory;
                 JSONArray car;
 
-                for (int i = 0; i < jsonArrayFactory.length(); i++) {
-                    factory = jsonArrayFactory.getJSONArray(i);
-                    facylN_content = factory.getString(2);
-                }
-                for (int i = 0; i < jsonArrayCar.length(); i++) {
-                    car = jsonArrayCar.getJSONArray(i);
-                    carcylN_content = car.getString(2);
-                }
+                //目前只有一筆資料才這麼做
+                factory = jsonArrayFactory.getJSONArray(0);
+                facylN_id = factory.getString(Constant.FACYLN_ID);
+                facylN_content = factory.getString(Constant.FACYLN_CONTENT);
+
+                car = jsonArrayCar.getJSONArray(0);
+                carcylN_id = car.getString(Constant.CARCYLN_ID);
+                carcylN_content = car.getString(Constant.CARCYLN_CONTENT);
 
             } catch (Exception e) {
                 Log.e("delivery", "資料抓取有誤");
@@ -165,10 +207,16 @@ public class FactoryActivity extends Activity {
             numPick_fac16.setValue(Integer.parseInt(fac_content[2]));
             numPick_fac4.setValue(Integer.parseInt(fac_content[3]));
 
+            fac_list = new int[]{Integer.parseInt(fac_content[0]), Integer.parseInt(fac_content[1])
+                    , Integer.parseInt(fac_content[2]), Integer.parseInt(fac_content[3])};
+
             tv_car50.setText(car_content[0]);
             tv_car20.setText(car_content[1]);
             tv_car16.setText(car_content[2]);
             tv_car4.setText(car_content[3]);
+
+            fac_car_id[0] = facylN_id;
+            fac_car_id[1] = carcylN_id;
         }
 
         //取得JSON資料

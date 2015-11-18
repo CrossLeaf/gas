@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.BalanceAdapter;
 import com.chenghsi.lise.gas.BalanceList;
@@ -52,8 +53,9 @@ public class NewBalancingActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_other_balance);
+        setContentView(R.layout.activity_balance);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         listResult = (ListView) findViewById(R.id.listResult);
         edt_search = (EditText) findViewById(R.id.edt_search);
@@ -92,10 +94,37 @@ public class NewBalancingActivity extends Activity {
     OnClickListener strikeOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-
+//            new StrikeUpdate().start();
         }
     };
 
+    //沖帳 後台 update
+    private class StrikeUpdate extends Thread {
+
+        @Override
+        public void run() {
+            String url = "";
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            Log.e("retSrc", "讀取 JSON-1...");
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                Log.e("retSrc", "讀取 JSON-2...");
+                HttpEntity resEntity = response.getEntity();
+
+                if (resEntity != null) {
+                    String retSrc = EntityUtils.toString(resEntity);
+                    Toast.makeText(NewBalancingActivity.this, "沖帳成功", Toast.LENGTH_SHORT).show();
+                    Log.e("retSrc", retSrc);
+                }
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+
+                httpclient.getConnectionManager().shutdown();
+            }
+        }
+    }
 
     public class BalanceAsyncDownload extends AsyncTask<String, Integer, String[]> {
 

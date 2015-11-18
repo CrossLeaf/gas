@@ -18,6 +18,13 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
 import com.google.zxing.client.android.CaptureActivity;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +46,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     public static List<ArrayList<TaskLists>> groupList;
     public static boolean isCollapse;
 
+    String up_order_id;
+    String up_order_accept;
+    int flag;
+
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
                              List<Map<String, String>> childList) {
@@ -51,6 +62,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         inflater = LayoutInflater.from(taskActivity);
 
     }
+    //TODO 事後最好用api判斷是否為月結戶
 
     private class GroupViewHolder {
         TextView appointment;
@@ -165,10 +177,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         groupViewHolder.phones.setText(callPhone);
         groupViewHolder.money.setText("應付金額：" + taskLists.getOrder_should_money());
-        if (taskLists.getOrder_task().equals("抄錶")){
+        if (taskLists.getOrder_task().equals("抄錶")) {
             groupViewHolder.contents.setVisibility(View.GONE);
             groupViewHolder.money.setVisibility(View.GONE);
-        }else {
+        } else {
             groupViewHolder.contents.setText(cylinders);
         }
         groupViewHolder.btn_accept.setFocusable(false);
@@ -181,38 +193,72 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.btn_accept.setText(taskLists.getOrder_accept());
         }
 
-        //承接按鈕動作
+        //TODO 承接按鈕動作
         final GroupViewHolder finalGroupView = groupViewHolder;
         groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View view) {
-                if (taskLists.getOrder_status().equals("false")) {
+                if (taskLists.getOrder_accept().equals("承接")) { //使用者承接
                     finalGroupView.btn_accept.setText(userName);
                     taskLists.setOrder_accept(userName);
-                    taskLists.setOrder_status("true");
+
                     //展開expandable listView
                     isCollapse = expListView.expandGroup(groupPosition);
+                    up_order_id = taskLists.getOrder_id();
+                    up_order_accept = taskLists.getOrder_accept();
+                    new Update().start();
                     Log.e("task", "button");
-                } else if (taskLists.getOrder_status().equals("true") && taskLists.getOrder_accept().equals(userName)) {
+                } else if (taskLists.getOrder_accept().equals(userName)) {
                     finalGroupView.btn_accept.setText("承接");
                     taskLists.setOrder_accept("");
-                    taskLists.setOrder_status("false");
+                    up_order_id = taskLists.getOrder_id();
+                    up_order_accept = taskLists.getOrder_accept();
 
                     isCollapse = expListView.collapseGroup(groupPosition);
 
                 } else {
 
                 }
+                flag = 0;
             }
+
+            /*class AcceptUpdate extends Thread {
+                @Override
+                public void run() {
+                    String url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=order" +
+                            "&tb_where_name=order_id&tb_where_val=" + up_order_id + "&tb_td=order_accept&tb_val=" + up_order_accept;
+                    HttpGet httpget = new HttpGet(url);
+                    HttpClient httpclient = new DefaultHttpClient();
+                    Log.e("retSrc", "讀取 JSON-1...");
+                    try {
+                        HttpResponse response = httpclient.execute(httpget);
+                        Log.e("retSrc", "讀取 JSON-2...");
+                        HttpEntity resEntity = response.getEntity();
+                        if (resEntity != null) {
+                            String retSrc = EntityUtils.toString(resEntity);
+                            Log.e("retSrc", retSrc);
+                        } else {
+//                            retSrc = "Did not work!";
+                        }
+                    } catch (Exception e) {
+                        Log.e("retSrc", "讀取JSON Error...");
+                    } finally {
+                        httpclient.getConnectionManager().shutdown();
+                    }
+                }
+            }*/
         });
+
 
         //call phone
         groupViewHolder.img_btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (callPhone == null || callPhone.equals("")){
-                    Toast.makeText(taskActivity.getApplicationContext(), "請新增客戶電話",Toast.LENGTH_SHORT).show();
-                }else {
+                if (callPhone == null || callPhone.equals("")) {
+                    Toast.makeText(taskActivity.getApplicationContext(), "請新增客戶電話", Toast.LENGTH_SHORT).show();
+                } else {
                     Uri uri = Uri.parse("tel:" + callPhone);
                     Intent intent = new Intent(action, uri);
                     taskActivity.startActivity(intent);
@@ -223,7 +269,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild,
+                             View convertView, final ViewGroup parent) {
         final ChildViewHolder childViewHolder;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.adapter_item_child_task, null);
@@ -233,17 +280,16 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
 
-        final ChildViewHolder finalChildViewHolder = childViewHolder;
         ArrayList<TaskLists> list = groupList.get(0);
         TaskLists taskLists = list.get(groupPosition);
-        if (taskLists.getOrder_task().equals("抄錶")){
+        if (taskLists.getOrder_task().equals("抄錶")) {
             childViewHolder.btn_scanIn.setVisibility(View.GONE);
             childViewHolder.btn_scanOut.setVisibility(View.GONE);
             childViewHolder.edt_degree.setVisibility(View.VISIBLE);
             childViewHolder.edt_degree.setInputType(InputType.TYPE_CLASS_NUMBER);
             childViewHolder.edt_degree.requestFocus();//让EditText获得焦点，但是获得焦点并不会自动弹出键盘
 
-        }else {
+        } else {
 
             // 三個按鈕動作
             childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
@@ -254,10 +300,9 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         }
 
-
         childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
 
-        //掃入
+        //TODO 掃入
         childViewHolder.btn_scanIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -267,7 +312,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        //掃出
+        //TODO 掃出
         childViewHolder.btn_scanOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,9 +322,59 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        //TODO 結案要考慮 order&doddle
+        childViewHolder.btn_finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("tag", "結案：" + groupPosition);
+                groupList.get(0).remove(groupPosition);
+                notifyDataSetChanged();
+            }
+        });
+
         //TODO 設定輸入瓦斯度數
 
+
         return convertView;
+    }
+
+    private class Update extends Thread {
+        @Override
+        public void run() {
+            String url = "";
+            switch (flag) {
+                case 0:
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=order" +
+                            "&tb_where_name=order_id&tb_where_val=" + up_order_id + "&tb_td=order_accept&tb_val=" + up_order_accept;
+                    break;
+                case 1:
+//                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=order" +
+//                            "&tb_where_name=order_id&tb_where_val=" + order_id + "&tb_td=order_status&tb_val=" + order_status;
+                    break;
+            }
+            String retSrc;
+            //doddle url
+            //order url
+
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    retSrc = EntityUtils.toString(resEntity);
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                } else {
+                    retSrc = "Did not work!";
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                }
+
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+                httpclient.getConnectionManager().shutdown();
+            }
+        }
     }
 
     public String _toAddress(String address) {

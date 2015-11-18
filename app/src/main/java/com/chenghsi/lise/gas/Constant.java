@@ -1,8 +1,7 @@
 package com.chenghsi.lise.gas;
 
 
-public class Constant
-{
+public class Constant {
     public static final String MAP_URL = "file:///android_asset/map.html";
 
     // The corresponding index for database table: "order"
@@ -89,5 +88,16 @@ public class Constant
     public static int PHONE_BUILT_TIME = 1;
     public static int PHONE_NUMBER = 2;
     public static int PHONE_CUSTOMER_ID = 3;
+
+    // The corresponding index for database table: "facyln"
+    public static int FACYLN_ID = 0;
+    public static int SUPPLIERS_ID = 1;
+    public static int FACYLN_CONTENT = 2;
+    public static int FACYLN_CHANGE_DATE = 3;
+
+    // The corresponding index for database table: "carcyln"
+    public static int CARCYLN_ID = 0;
+    public static int CARCYLN_CONTENT = 2;
+    public static int CARCYLN_CHANGE_DATE = 3;
 
 }

@@ -4,6 +4,7 @@ package com.chenghsi.lise.gas;
  * Created by MengHan on 2015/10/29.
  */
 public class TaskLists {
+    private String order_id;
     private String order_prefer_time;
     private String order_task;
     private String order_phone;
@@ -15,7 +16,8 @@ public class TaskLists {
     private String customer_id;
     private String order_should_money;
 
-    public TaskLists(String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_status, String order_accept, String customer_id) {
+    public TaskLists(String order_id, String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_status, String order_accept, String customer_id) {
+        setOrder_id(order_id);
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
         setOrder_prefer_time(order_prefer_time);
@@ -26,6 +28,14 @@ public class TaskLists {
         setOrder_status(order_status);
         setCustomer_id(customer_id);
         setOrder_should_money(order_should_money);
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 
     public String getOrder_prefer_time() {

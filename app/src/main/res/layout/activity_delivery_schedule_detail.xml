@@ -65,6 +65,54 @@
 
             <include layout="@layout/general_division_line"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="25dp"
+                    android:text="時"
+                    android:textSize="30dp"/>
+
+                <NumberPicker
+                    android:id="@+id/numPickHr"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"/>
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="25dp"
+                    android:text="分"
+                    android:textSize="30dp"/>
+
+                <NumberPicker
+                    android:id="@+id/numPickMin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="25dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"/>
+
+            </LinearLayout>
+
+            <include layout="@layout/general_division_line"/>
+
             <TextView
                 android:id="@+id/clientName"
                 android:layout_width="wrap_content"
@@ -176,51 +224,6 @@
 
             <include layout="@layout/general_division_line"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="25dp"
-                    android:text="時"
-                    android:textSize="30dp"/>
-
-                <NumberPicker
-                    android:id="@+id/numPickHr"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="25dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"/>
-
-                <TextView
-                    android:id="@+id/textView15"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="25dp"
-                    android:text="分"
-                    android:textSize="30dp"/>
-
-                <NumberPicker
-                    android:id="@+id/numPickMin"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="25dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"/>
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -250,16 +253,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="取消"
-                    android:onClick="btn_schedule"/>
+                    android:onClick="btn_schedule"
+                    android:text="取消"/>
 
                 <Button
                     android:id="@+id/btn_ok"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="確定"
-                    android:onClick="btn_schedule"/>
+                    android:onClick="btn_schedule"
+                    android:text="確定"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

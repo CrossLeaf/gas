@@ -64,6 +64,7 @@ public class Constant {
     public static int DODDLE_SHOULD_MONEY = 11;
     public static int DODDLE_REMARK = 12;
     public static int DODDLE_CUSTOMER_ID = 13;
+    public static int DODDLE_STATUS = 14;
 
     // The corresponding index for database table: "price"
     public static int PRICE_ID = 0;

@@ -65,6 +65,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Collection;
@@ -122,6 +129,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     //private ListView listView_barcode;
     private ArrayAdapter<String> arrayAdapter_barcode;
 
+    private String cylinders_number;
+    private String cylinders_locate;
+    private int flag;
+
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -147,6 +158,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
+
+        Intent intent = getIntent();
+        flag = intent.getIntExtra("flag", -1);
+        cylinders_locate = intent.getStringExtra("locate");
 
         //menu的介面
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -459,13 +474,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             case PRODUCT_SEARCH_LINK:
                 handleDecodeExternally(rawResult, resultHandler, barcode);
                 break;
-            case ZXING_LINK:
-        /*if (scanFromWebPageManager == null || !scanFromWebPageManager.isScanFromWebPage()) {
-          handleDecodeInternally(rawResult, resultHandler, barcode);
-        } else {
-          handleDecodeExternally(rawResult, resultHandler, barcode);
-        }*/
-                break;
+            /*case ZXING_LINK:
+                if (scanFromWebPageManager == null || !scanFromWebPageManager.isScanFromWebPage()) {
+                    handleDecodeInternally(rawResult, resultHandler, barcode);
+                } else {
+                    handleDecodeExternally(rawResult, resultHandler, barcode);
+                }
+                break;*/
             case NONE:
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (fromLiveScan && prefs.getBoolean(PreferencesActivity.KEY_BULK_MODE, false)) {
@@ -536,77 +551,87 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             resultHandler.handleButtonPress(resultHandler.getDefaultButtonID());
             return;
         }
+        //TODO 判斷為掃入掃出or掃描
+        if (flag == 0) {    //掃入的動作
+            cylinders_number = rawResult.getText();
+            new Update().start();
+        } else if (flag == 1) {
+            cylinders_number = rawResult.getText();
+            new Update().start();
 
-        statusView.setVisibility(View.GONE);
-        viewfinderView.setVisibility(View.GONE);
-        resultView.setVisibility(View.VISIBLE);
-
-        ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
-        if (barcode == null) {
-            barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-                    R.drawable.launcher_icon));
         } else {
-            barcodeImageView.setImageBitmap(barcode);
-        }
-        //掃描後所呈現的資訊
-        //
-        TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
-        formatTextView.setText(rawResult.getBarcodeFormat().toString());
+            statusView.setVisibility(View.GONE);
+            viewfinderView.setVisibility(View.GONE);
+            resultView.setVisibility(View.VISIBLE);
 
-        TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
-        typeTextView.setText(resultHandler.getType().toString());
+            ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
+            if (barcode == null) {
+                barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.launcher_icon));
+            } else {
+                barcodeImageView.setImageBitmap(barcode);
+            }
 
-        DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-        TextView timeTextView = (TextView) findViewById(R.id.time_text_view);
-        timeTextView.setText(formatter.format(new Date(rawResult.getTimestamp())));
+            //掃描後所呈現的資訊
+            TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
+            formatTextView.setText(rawResult.getBarcodeFormat().toString());
+
+            TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
+            typeTextView.setText(resultHandler.getType().toString());
+
+            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+            TextView timeTextView = (TextView) findViewById(R.id.time_text_view);
+            timeTextView.setText(formatter.format(new Date(rawResult.getTimestamp())));
 
 
-        TextView metaTextView = (TextView) findViewById(R.id.meta_text_view);
-        View metaTextViewLabel = findViewById(R.id.meta_text_view_label);
-        metaTextView.setVisibility(View.GONE);
-        metaTextViewLabel.setVisibility(View.GONE);
-        Map<ResultMetadataType, Object> metadata = rawResult.getResultMetadata();
-        if (metadata != null) {
-            //最大格所呈現的文字-----目前為掃到條碼底下的文字
-            StringBuilder metadataText = new StringBuilder(20);
-            for (Map.Entry<ResultMetadataType, Object> entry : metadata.entrySet()) {
-                if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
-                    metadataText.append(entry.getValue()).append('\n');
+            TextView metaTextView = (TextView) findViewById(R.id.meta_text_view);
+            View metaTextViewLabel = findViewById(R.id.meta_text_view_label);
+            metaTextView.setVisibility(View.GONE);
+            metaTextViewLabel.setVisibility(View.GONE);
+            Map<ResultMetadataType, Object> metadata = rawResult.getResultMetadata();
+            if (metadata != null) {
+                //最大格所呈現的文字-----目前為掃到條碼底下的文字
+                StringBuilder metadataText = new StringBuilder(20);
+                for (Map.Entry<ResultMetadataType, Object> entry : metadata.entrySet()) {
+                    if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
+                        metadataText.append(entry.getValue()).append('\n');
+                    }
+                }
+                if (metadataText.length() > 0) {
+                    metadataText.setLength(metadataText.length() - 1);
+                    metaTextView.setText(metadataText);
+                    metaTextView.setVisibility(View.VISIBLE);
+                    metaTextViewLabel.setVisibility(View.VISIBLE);
                 }
             }
-            if (metadataText.length() > 0) {
-                metadataText.setLength(metadataText.length() - 1);
-                metaTextView.setText(metadataText);
-                metaTextView.setVisibility(View.VISIBLE);
-                metaTextViewLabel.setVisibility(View.VISIBLE);
+
+            TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
+            contentsTextView.setText(displayContents);
+            int scaledSize = Math.max(22, 32 - displayContents.length() / 4);
+            contentsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
+
+            TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
+            supplementTextView.setText("");
+            supplementTextView.setOnClickListener(null);
+
+
+            //TODO <LISE>
+            metaHistoryItem = new HistoryItem(rawResult.getText());
+            if (historyManager.isBarcodeExist(metaHistoryItem.barcode)) {
+                //這裡看一下掃到什麼
+
+                Log.e("tag", "掃描的內容：" + rawResult.getText());
+                AlertDialog.Builder altBlgBuilder = AltDlgBuilder_OldItemFound();
+                altBlgBuilder.show();
+            } else {
+                Log.e("tag", "Insert new barcode?");
+                AlertDialog.Builder altBlgBuilder = AltDlgBuilder_NewItemFound();
+                altBlgBuilder.show();
             }
+            Toast.makeText(this, metaHistoryItem.capacity, Toast.LENGTH_SHORT).show();
+            //historyManager.addItem(metaHistoryItem);
+            //</LISE>
         }
-
-        TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
-        contentsTextView.setText(displayContents);
-        int scaledSize = Math.max(22, 32 - displayContents.length() / 4);
-        contentsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
-
-        TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
-        supplementTextView.setText("");
-        supplementTextView.setOnClickListener(null);
-
-
-        //<LISE>
-        metaHistoryItem = new HistoryItem(rawResult.getText());
-        if (historyManager.isBarcodeExist(metaHistoryItem.barcode)) {
-            //這裡看一下掃到什麼
-            Log.e("tag", rawResult.getText());
-            AlertDialog.Builder altBlgBuilder = AltDlgBuilder_OldItemFound();
-            altBlgBuilder.show();
-        } else {
-            Log.e("tag", "Insert new barcode?");
-            AlertDialog.Builder altBlgBuilder = AltDlgBuilder_NewItemFound();
-            altBlgBuilder.show();
-        }
-        Toast.makeText(this, metaHistoryItem.capacity, Toast.LENGTH_SHORT).show();
-        //historyManager.addItem(metaHistoryItem);
-        //</LISE>
     }
 
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
@@ -767,6 +792,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        //回傳鋼瓶號碼  cylinders_number
+                        new Update().start();
+
                         AlertDialog.Builder dlg_choice = AltDlgBuilder_choice();
                         dlg_choice.show();
                     }
@@ -794,6 +822,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        //回傳鋼瓶號碼  cylinders_number
+                        new Update().start();
+
                         AlertDialog.Builder dlg_choice = AltDlgBuilder_choice();
                         dlg_choice.show();
                     }
@@ -850,7 +881,52 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 Log.e("tag", "arrayAdapter_barcode:" + items.next().barcode);
             }
         } catch (NoSuchElementException e) {
-            Log.e("scanner", e.toString());
+            Log.e("scanner", "錯誤問題：" + e.toString());
+        }
+    }
+
+    public class Update extends Thread {
+
+        @Override
+        public void run() {
+            String retSrc;
+            String url = "";
+            switch (flag) {
+                case 0: //掃入
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
+                            "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
+                            "&tb_td=cylinders_remark&tb_val=" + cylinders_locate;
+                    break;
+                case 1: //掃出
+                    break;
+                case 2: //更新狀態
+                    break;
+                case 3: //入檢驗廠
+                    break;
+                case 4: //出檢驗廠
+                    break;
+                default:
+                    break;
+
+            }
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    retSrc = EntityUtils.toString(resEntity);
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                } else {
+                    retSrc = "Did not work!";
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                }
+
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+                httpclient.getConnectionManager().shutdown();
+            }
         }
     }
 }

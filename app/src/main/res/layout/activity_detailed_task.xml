@@ -112,7 +112,8 @@
                     android:layout_height="120dp"
                     android:text="賒銷"
                     android:textSize="50dp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:onClick="btn_money_credit"/>
 
                 <Button
                     android:id="@+id/money_cash"
@@ -120,7 +121,8 @@
                     android:layout_height="120dp"
                     android:text="@string/payBill"
                     android:textSize="50dp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:onClick="btn_money_cash"/>
             </LinearLayout>
 
 

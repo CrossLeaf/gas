@@ -31,6 +31,13 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
 import com.chenghsi.lise.gas.R;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 
 public class DetailedTaskActivity extends Activity {
     protected Toolbar toolbar;
@@ -62,7 +69,11 @@ public class DetailedTaskActivity extends Activity {
     private String address;
     private String phonesNum;
     private String contents;
+
+    //回傳api
     private String customerId;
+    private String[] money_pay;
+
     private String action;
     String[] cylinders_list = {};
     String[] gasKg = {"50", "20", "16", "4"};
@@ -111,7 +122,7 @@ public class DetailedTaskActivity extends Activity {
         spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
         btn_finish = (Button) findViewById(R.id.btn_finish);
 
-        
+
         // Set title
         ((TextView) R_name.findViewById(R.id.text1)).setText(R.string.name);
         ((TextView) R_address.findViewById(R.id.text1)).setText(R.string.address);
@@ -130,6 +141,7 @@ public class DetailedTaskActivity extends Activity {
         cylinder_num_down = (ImageButton) cylinders.findViewById(R.id.cylinder_num_down);
         cylinder_num_up = (ImageButton) cylinders.findViewById(R.id.cylinder_num_up);
     }
+
     //紀錄 spinner touch 事件發生次數
     int i = 1;
 
@@ -176,6 +188,7 @@ public class DetailedTaskActivity extends Activity {
             }
         });
 
+        money_pay = new String[]{"現金", "支票", "匯款"};
         //TODO 付費方式
         String[] payMethod_array = {"現金", "支票", "匯款"};
         ArrayAdapter<String> payMethod_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, payMethod_array);
@@ -184,7 +197,8 @@ public class DetailedTaskActivity extends Activity {
         spi_payMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+                money_pay[i] = adapterView.getSelectedItem().toString();
+                Log.e("DetailedTask", money_pay[i]);
             }
 
             @Override
@@ -231,41 +245,42 @@ public class DetailedTaskActivity extends Activity {
 
     //TODO 瓦斯調整後需紀錄
     //計算點擊上or下
-    int j=0;
+    int j = 0;
     int cylinder_temp = 0;
     //計算目前為陣列的哪個
-    int which ;
+    int which;
+
     //瓦斯種類調整
-    public void btn_gasAdjust (View view) {
-        switch (view.getId()){
+    public void btn_gasAdjust(View view) {
+        switch (view.getId()) {
             case R.id.cylinders_up:
                 Log.e("tag", "cy up被點選");
                 j--;
-                if (j==-1){
-                    j=3;
+                if (j == -1) {
+                    j = 3;
                 }
-                which = j%gasKg.length;
+                which = j % gasKg.length;
                 cylinder_input.setText(gasKg[which]);
                 cylinder_num.setText(cylinders_list[which]);
                 break;
             case R.id.cylinders_down:
                 j++;
-                which = j%gasKg.length;
+                which = j % gasKg.length;
                 cylinder_input.setText(gasKg[which]);
                 cylinder_num.setText(cylinders_list[which]);
                 break;
             case R.id.cylinder_num_up:
-                which = j%gasKg.length;
+                which = j % gasKg.length;
                 cylinder_temp = Integer.parseInt(cylinders_list[which]);
                 cylinders_list[which] = String.valueOf(cylinder_temp + 1);
                 cylinder_num.setText(cylinders_list[which]);
                 break;
             case R.id.cylinder_num_down:
-                which = j%gasKg.length;
+                which = j % gasKg.length;
                 cylinder_temp = Integer.parseInt(cylinders_list[which]);
-                if (cylinder_temp==0){
+                if (cylinder_temp == 0) {
                     break;
-                }else {
+                } else {
                     cylinders_list[which] = String.valueOf(cylinder_temp - 1);
                     cylinder_num.setText(cylinders_list[which]);
                     break;
@@ -307,5 +322,43 @@ public class DetailedTaskActivity extends Activity {
     }
 
     //TODO 賒銷現銷按鈕動作
-    //TODO 還要修改 carcy_In 的api
+
+    public void btn_money_credit(View view) {
+    }
+
+    public void btn_money_cash(View view) {
+    }
+
+
+    //TODO 還要修改 carcy_ln 的api
+
+    private class Update extends Thread {
+        @Override
+        public void run() {
+            String url = "";
+            url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=order" +
+                    "&tb_where_name=條件欄位名稱&tb_where_val=條件值&tb_td=修改的欄位名稱1|修改的欄位名稱2" +
+                    "&tb_val=修改的欄位值1|修改的欄位值2";
+            String retSrc;
+
+            HttpGet httpget = new HttpGet(url);
+            HttpClient httpclient = new DefaultHttpClient();
+            try {
+                HttpResponse response = httpclient.execute(httpget);
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    retSrc = EntityUtils.toString(resEntity);
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                } else {
+                    retSrc = "Did not work!";
+                    Log.e("retSrc", "完整資料：" + retSrc);
+                }
+
+            } catch (Exception e) {
+                Log.e("retSrc", "讀取JSON Error...");
+            } finally {
+                httpclient.getConnectionManager().shutdown();
+            }
+        }
+    }
 }

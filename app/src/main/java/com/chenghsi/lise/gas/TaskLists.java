@@ -4,38 +4,38 @@ package com.chenghsi.lise.gas;
  * Created by MengHan on 2015/10/29.
  */
 public class TaskLists {
-    private String order_id;
+    private String order_doddle_id;
     private String order_prefer_time;
     private String order_task;
     private String order_phone;
     private String order_cylinders_list;
     private String customer_name;
     private String customer_address;
-    private String order_accept;
-    private String order_status;
+    private String order_doddle_accept;
+    private String order_doddle_status;
     private String customer_id;
     private String order_should_money;
 
-    public TaskLists(String order_id, String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_status, String order_accept, String customer_id) {
-        setOrder_id(order_id);
+    public TaskLists(String order_doddle_id, String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_doddle_status, String order_doddle_accept, String customer_id) {
+        setOrder_doddle_id(order_doddle_id);
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
         setOrder_prefer_time(order_prefer_time);
         setOrder_task(order_task);
         setCustomer_name(customer_name);
         setCustomer_address(customer_address);
-        setOrder_accept(order_accept);
-        setOrder_status(order_status);
+        setOrder_doddle_accept(order_doddle_accept);
+        setOrder_doddle_status(order_doddle_status);
         setCustomer_id(customer_id);
         setOrder_should_money(order_should_money);
     }
 
-    public String getOrder_id() {
-        return order_id;
+    public String getOrder_doddle_id() {
+        return order_doddle_id;
     }
 
-    public void setOrder_id(String order_id) {
-        this.order_id = order_id;
+    public void setOrder_doddle_id(String order_doddle_id) {
+        this.order_doddle_id = order_doddle_id;
     }
 
     public String getOrder_prefer_time() {
@@ -88,20 +88,20 @@ public class TaskLists {
         this.customer_address = customer_address;
     }
 
-    public String getOrder_accept() {
-        return order_accept;
+    public String getOrder_doddle_accept() {
+        return order_doddle_accept;
     }
 
-    public void setOrder_accept(String order_accept) {
-        this.order_accept = order_accept;
+    public void setOrder_doddle_accept(String order_doddle_accept) {
+        this.order_doddle_accept = order_doddle_accept;
     }
 
-    public String getOrder_status() {
-        return order_status;
+    public String getOrder_doddle_status() {
+        return order_doddle_status;
     }
 
-    public void setOrder_status(String order_status) {
-        this.order_status = order_status;
+    public void setOrder_doddle_status(String order_doddle_status) {
+        this.order_doddle_status = order_doddle_status;
     }
 
     public String getCustomer_id() {

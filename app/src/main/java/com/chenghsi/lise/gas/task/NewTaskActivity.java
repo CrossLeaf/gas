@@ -43,6 +43,9 @@ public class NewTaskActivity extends Activity {
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
+    private static final String ORDER_FINISH = "2";
+    private static final String DODDLE_FINISH = "2";
+
     String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     //今日抄表與訂單 url
     String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
@@ -147,6 +150,7 @@ public class NewTaskActivity extends Activity {
         private String doddle_address;
         private String doddle_customer_id;
         private String doddle_accept;
+        private String doddle_status;
 
         @Override
         protected ArrayList<TaskLists> doInBackground(String... urls) {
@@ -163,25 +167,25 @@ public class NewTaskActivity extends Activity {
                         //判斷是否為抄表
                         if (order_doddle.getInt(0) == -1) {
                             Log.e("task", "抄表作業" + "i:" + i);
-
                             for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
                                 order_doddle = jsonArrayTask.getJSONArray(j);
-                                //TODO
-//                                if (order_doddle.getString(Constant.DODDLE_STATUS))
-                                Log.e("task", "j:" + j);
+                                if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
+                                    continue;
+                                }
                                 doddle_id = order_doddle.getString(Constant.DODDLE_ID);
                                 doddle_time = order_doddle.getString(Constant.DODDLE_TIME);
                                 doddle_address = order_doddle.getString(Constant.DODDLE_ADDRESS);
                                 doddle_customer_id = order_doddle.getString(Constant.DODDLE_CUSTOMER_ID);
                                 doddle_accept = order_doddle.getString(Constant.DODDLE_ACCEPT);
+                                doddle_status = order_doddle.getString(Constant.DODDLE_STATUS);
                                 Log.e("task", "基本資料抓取完畢");
 
                                 for (int k = 0; k < jsonArrayCustomer.length(); k++) {
                                     customer = jsonArrayCustomer.getJSONArray(k);
-                                    Log.e("task", "客戶ID：" + doddle_customer_id);
-                                    Log.e("task", "要比對的ID:" + customer.getString(Constant.CUSTOMER_ID));
+//                                    Log.e("task", "客戶ID：" + doddle_customer_id);
+//                                    Log.e("task", "要比對的ID:" + customer.getString(Constant.CUSTOMER_ID));
                                     if (!(doddle_customer_id.equals(customer.getString(Constant.CUSTOMER_ID)))) {
-                                        Log.e("task", "ID不同");
+//                                        Log.e("task", "ID不同");
                                         continue;
                                     }
 
@@ -191,7 +195,7 @@ public class NewTaskActivity extends Activity {
                                     //TODO order&doddle ID
                                     TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
                                             null, customer_name, doddle_address,
-                                            null, "", doddle_accept, doddle_customer_id);
+                                            null, doddle_status, doddle_accept, doddle_customer_id);
                                     taskListses.add(list);
                                     break;
                                 }
@@ -199,7 +203,7 @@ public class NewTaskActivity extends Activity {
                             break;
 
                         } else {    //取出訂單 in 簡易任務
-                            if (order_doddle.getString(Constant.ORDER_STATUS).equals("true")) {
+                            if (order_doddle.getString(Constant.ORDER_STATUS).equals(ORDER_FINISH)) {
                                 continue;
                             }
                             order_id = order_doddle.getString(Constant.ORDER_ID);
@@ -296,7 +300,6 @@ public class NewTaskActivity extends Activity {
             Map<String, String> childMap = new HashMap<>();
             childMap.put("scanIn", "掃入");
             childMap.put("scanOut", "掃出");
-//            childMap.put("setting", "設定");
             childMap.put("finish", "結案");
             childList.add(childMap);
             Log.e("task", "getData 做完");

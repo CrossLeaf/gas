@@ -32,6 +32,7 @@ public class OtherActivity extends Activity
 
     }
 
+    //出入氣按鈕
     public void onClick_btn_barcodeScanning(View view)
     {
 //        barcodeScanning_Dialog();
@@ -65,19 +66,20 @@ public class OtherActivity extends Activity
         startActivity(intent);
     }
 
+    //掃描
     public void onClick_btn_navigation(View view)
     {
-        intent.setClass(OtherActivity.this, RoutePlanningActivity.class);
-        startActivity(intent);
+        /*intent.setClass(OtherActivity.this, RoutePlanningActivity.class);
+        startActivity(intent);*/
+        barcodeScanning_Dialog();
     }
 
-    /*public void barcodeScanning_Dialog() {
+    public void barcodeScanning_Dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.barcodeScanning);
-        String[] scane = {
-                "出任務條碼 刷出", "出任務條碼 刷入",
-                "出入氣條碼 刷出", "出入氣條碼 刷入",
+        String[] scane = {"更新狀態",
                 "檢驗場條碼 刷出", "檢驗場條碼 刷入"};
+
         builder.setItems(scane, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
@@ -94,7 +96,7 @@ public class OtherActivity extends Activity
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         startActivity(intent);
                         break;
-                    case 3:
+                    /*case 3:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         startActivity(intent);
                         break;
@@ -109,7 +111,7 @@ public class OtherActivity extends Activity
                     case 6:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         startActivity(intent);
-                        break;
+                        break;*/
                 }
             }
         });
@@ -120,6 +122,6 @@ public class OtherActivity extends Activity
             }
         });
         builder.create().show();
-    }*/
+    }
 
 }

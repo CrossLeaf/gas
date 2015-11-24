@@ -14,6 +14,7 @@ import android.widget.ExpandableListView;
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.ExTaskListAdapter;
 import com.chenghsi.lise.gas.R;
+import com.chenghsi.lise.gas.StaffList;
 import com.chenghsi.lise.gas.TaskLists;
 
 import org.apache.http.HttpEntity;
@@ -46,6 +47,7 @@ public class NewTaskActivity extends Activity {
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
 
+    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
     String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     //今日抄表與訂單 url
     String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
@@ -55,7 +57,7 @@ public class NewTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
-        new AsyncTaskDownLoad().execute(url3, url2);
+        new AsyncTaskDownLoad().execute(url3, url2, url1);
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -72,6 +74,7 @@ public class NewTaskActivity extends Activity {
     }
 
     // Refreshing when pulling down
+    //下拉更新
     private AbsListView.OnScrollListener onScrollListener = new AbsListView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -96,7 +99,7 @@ public class NewTaskActivity extends Activity {
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
 
-            new AsyncTaskDownLoad().execute(url3, url2);
+            new AsyncTaskDownLoad().execute(url3, url2, url1);
 
             adapter.notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {
@@ -130,6 +133,7 @@ public class NewTaskActivity extends Activity {
 
         private ArrayList<TaskLists> taskListses;
         private ArrayList<TaskLists> listses;
+        private ArrayList<StaffList> staffLists;
 
         private String order_id;
         private String order_day;
@@ -143,6 +147,8 @@ public class NewTaskActivity extends Activity {
         private String order_should_money;
         private String order_status;
         private String order_accept;
+        private String order_gas_residual;
+        private String staff_discount;
         private String customer_settle_type;
 
         private String doddle_id;
@@ -152,15 +158,29 @@ public class NewTaskActivity extends Activity {
         private String doddle_accept;
         private String doddle_status;
 
+        private String staff_id;
+        private String staff_name;
+
         @Override
         protected ArrayList<TaskLists> doInBackground(String... urls) {
             try {
 
                 taskListses = new ArrayList<>();
+                staffLists = new ArrayList<>();
                 JSONArray jsonArrayTask = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[1]));
+                JSONArray jsonArrayStaff = new JSONArray(getJSONData(urls[2]));
                 JSONArray order_doddle;
                 JSONArray customer;
+                JSONArray staff;
+
+                for (int j =0; j<jsonArrayStaff.length(); j++){
+                    staff = jsonArrayStaff.getJSONArray(j);
+                    staff_id = staff.getString(0);
+                    staff_name = staff.getString(3);
+                    StaffList list = new StaffList(staff_id, staff_name);
+                    staffLists.add(list);
+                }
 
                 for (int i = 0; i < jsonArrayTask.length(); i++) {
                     order_doddle = jsonArrayTask.getJSONArray(i);  //取得陣列中的每個陣列
@@ -169,9 +189,11 @@ public class NewTaskActivity extends Activity {
                             Log.e("task", "抄表作業" + "i:" + i);
                             for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
                                 order_doddle = jsonArrayTask.getJSONArray(j);
+//                                staff = jsonArrayStaff.getJSONArray(j);
                                 if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
                                     continue;
                                 }
+//                                staff_name = staff.getString(3);
                                 doddle_id = order_doddle.getString(Constant.DODDLE_ID);
                                 doddle_time = order_doddle.getString(Constant.DODDLE_TIME);
                                 doddle_address = order_doddle.getString(Constant.DODDLE_ADDRESS);
@@ -246,7 +268,7 @@ public class NewTaskActivity extends Activity {
 
                 return taskListses;
             } catch (Exception e) {
-                Log.e("task", "資料抓取有誤");
+                Log.e("task", "NewTask資料抓取有誤");
             }
             return taskListses;
         }
@@ -257,7 +279,7 @@ public class NewTaskActivity extends Activity {
             listses = taskListses;
             getData(taskListses);
             Log.e("task", "總列表size：" + listses.size());
-            adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList);
+            adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList, staffLists);
             list_Task.setAdapter(adapter);
             list_Task.setOnGroupClickListener(new OnItemClickListener());
         }
@@ -324,6 +346,7 @@ public class NewTaskActivity extends Activity {
 
                     //傳值到細項Intent
                     intent.setClass(NewTaskActivity.this, DetailedTaskActivity.class);
+                    bundle.putString("orderId", taskLists.getOrder_doddle_id());
                     bundle.putString("appointment", taskLists.getOrder_prefer_time());
                     bundle.putString("kindOfTask", taskLists.getOrder_task());
                     bundle.putString("clientName", taskLists.getCustomer_name());
@@ -331,6 +354,7 @@ public class NewTaskActivity extends Activity {
                     bundle.putString("contents", taskLists.getOrder_cylinders_list());
                     bundle.putString("phones", taskLists.getOrder_phone());
                     bundle.putString("customerId", taskLists.getCustomer_id());
+                    bundle.putString("totalPay", taskLists.getOrder_should_money());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

@@ -22,6 +22,7 @@ public class DetailTaskDownLoad extends AsyncTask<String, Integer, String[]> {
     public static String[] data;
     private String order_get_time;
     private String order_money_credit;
+    public static String[] order_id;
 
     @Override
     protected String[] doInBackground(String... urls) {
@@ -29,12 +30,15 @@ public class DetailTaskDownLoad extends AsyncTask<String, Integer, String[]> {
 
             JSONArray jsonArrayOrder = new JSONArray(getData(urls[0]));
             String[] data = new String[jsonArrayOrder.length()];
+            order_id = new String[jsonArrayOrder.length()];
+
             for (int i = 0; i < jsonArrayOrder.length(); i++) {
                 JSONArray order = jsonArrayOrder.getJSONArray(i);  //取得陣列中的每個陣列
+                String order_id = order.getString(Constant.ORDER_ID);
                 order_get_time = order.getString(Constant.ORDER_GET_TIME);
                 order_money_credit = order.getString(Constant.ORDER_MONEY_CREDIT);
                 data[i]="訂單日期："+order_get_time+"\n金額："+order_money_credit;
-
+                this.order_id[i] = order_id;
                 Log.e("task", "order_money_credit:"+ order_money_credit);
                 Log.e("task", "data:::"+ data[i]);
             }
@@ -42,7 +46,7 @@ public class DetailTaskDownLoad extends AsyncTask<String, Integer, String[]> {
             return data;
 
         } catch (Exception e) {
-            Log.e("task", "資料抓取有誤");
+            Log.e("task", "Detail Task 資料抓取有誤");
         }
         return null;
     }
@@ -85,7 +89,4 @@ public class DetailTaskDownLoad extends AsyncTask<String, Integer, String[]> {
         }
         return retSrc;
     }
-
-
-
 }

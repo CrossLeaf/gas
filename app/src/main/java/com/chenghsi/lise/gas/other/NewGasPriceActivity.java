@@ -53,7 +53,7 @@ public class NewGasPriceActivity extends Activity {
         private String price_remark;
         private String price_rate;
 
-        double oldRate = 0.0;
+        double oldPrice = 0.0;
         int textColor;
 
         private String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=price";
@@ -82,26 +82,27 @@ public class NewGasPriceActivity extends Activity {
         }
 
 
-        public String countRate(double rate){
+        public String countRate(double newPrice){
             String strRate ;
-            Log.e("gasprice", "rate:"+rate);
-
-                if (rate == 0.0) {
+            double rate;
+            Log.e("gasprice", "newPrice:"+newPrice);
+            //rate = 差價
+                if (newPrice == 0.0) {
                     strRate = "---";
                     setColor(Color.GRAY);
                 } else {
-                    if (oldRate > rate) {
-                        rate = oldRate - rate;
-                        Log.e("GasPrice", "跌:" + rate);
+                    if (oldPrice > newPrice) {
+                        rate = oldPrice - newPrice;
+                        Log.e("GasPrice", "跌:" + newPrice);
                         strRate = "跌" + rate;
                         setColor(Color.GREEN);
-                        oldRate = rate;
+                        oldPrice = newPrice;
                     } else {
-                        rate = rate - oldRate;
-                        Log.e("GasPrice", "漲:" + rate);
+                        rate = newPrice - oldPrice;
+                        Log.e("GasPrice", "漲:" + newPrice);
                         strRate = "漲" + rate;
                         setColor(Color.RED);
-                        oldRate = rate;
+                        oldPrice = newPrice;
                     }
                 }
             return strRate;

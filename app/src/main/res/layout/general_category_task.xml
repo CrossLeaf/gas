@@ -41,7 +41,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:inputType="number"
-            android:id="@+id/cylinder_input"
+            android:id="@+id/text2"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:background="@android:drawable/edit_text"
             android:gravity="fill_horizontal"
@@ -56,8 +56,8 @@
             android:id="@+id/textView4"
             android:textSize="20dp"
             android:layout_below="@+id/cylinders_up"
-            android:layout_toRightOf="@+id/cylinder_input"
-            android:layout_toEndOf="@+id/cylinder_input"/>
+            android:layout_toRightOf="@+id/text2"
+            android:layout_toEndOf="@+id/text2"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
             android:textSize="45dp"
             android:layout_marginLeft="19dp"
             android:layout_marginStart="19dp"
-            android:layout_alignTop="@+id/cylinder_input"
+            android:layout_alignTop="@+id/text2"
             android:layout_toRightOf="@+id/cylinders_down"
             android:layout_toEndOf="@+id/cylinders_down"/>
 

@@ -32,6 +32,7 @@ public class LoginActivity extends Activity {
     String userName;
     String retSrc = "";
     public static String usn;
+    public static String staff_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class LoginActivity extends Activity {
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
             intent.putExtra("userName", getUserName());
+            intent.putExtra("staffId", staff_id);
             startActivity(intent);
         } else {
             Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT).show();
@@ -126,7 +128,8 @@ public class LoginActivity extends Activity {
             for (int i = 0; i < jsonArray.length(); i++) {
                 if (account.equals(jsonArray.getJSONArray(i).getString(9)) &&
                         password.equals(jsonArray.getJSONArray(i).getString(10))) {
-                    userName = jsonArray.getJSONArray(i).getString(3);
+                    staff_id = jsonArray.getJSONArray(i).getString(0);  //staff_id
+                    userName = jsonArray.getJSONArray(i).getString(3);  //staff_name
                     Log.e("tag", "比對到第" + i + "筆");
                     storeName(jsonArray.getJSONArray(i).getString(3));
                     Log.e("tag", "人名：" + userName);

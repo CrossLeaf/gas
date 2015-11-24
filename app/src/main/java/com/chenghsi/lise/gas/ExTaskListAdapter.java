@@ -35,9 +35,11 @@ import java.util.Map;
 public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     private NewTaskActivity taskActivity;
+    private List<StaffList> staffList;
     private ExpandableListView expListView;
     private List<Map<String, String>> childList;
     private String userName = LoginActivity.usn;
+    private String staff_id = LoginActivity.staff_id;
     private String action = Intent.ACTION_CALL;
 
     private LayoutInflater inflater;
@@ -53,17 +55,20 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     String up_doddle_id;
     String up_doddle_accept;
     String up_doddle_status;
+    String up_degree;
 
     int flag;
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
-                             List<Map<String, String>> childList) {
+                             List<Map<String, String>> childList,
+                             List<StaffList> staffList) {
         super();
         this.taskActivity = taskActivity;
         this.expListView = expListView;
         this.groupList = groupList;
         this.childList = childList;
+        this.staffList = staffList;
 
         inflater = LayoutInflater.from(taskActivity);
 
@@ -191,16 +196,22 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
         groupViewHolder.btn_accept.setFocusable(false);
 
+        //按鈕文字初始化
         if (taskLists.getOrder_doddle_status().equals("")) {
-            taskLists.setOrder_doddle_status("");
+//            taskLists.setOrder_doddle_status("");
             groupViewHolder.btn_accept.setText("承接");
             expListView.collapseGroup(groupPosition);
-        } else if (taskLists.getOrder_doddle_status().equals("1") && taskLists.getOrder_doddle_accept().equals(userName)) {
-            groupViewHolder.btn_accept.setText(taskLists.getOrder_doddle_accept());
+        } else if (taskLists.getOrder_doddle_status().equals("1") && taskLists.getOrder_doddle_accept().equals(staff_id)) {
+            groupViewHolder.btn_accept.setText(userName);
             isCollapse = expListView.expandGroup(groupPosition);
         } else {
             taskLists.setOrder_doddle_status("1");
-            groupViewHolder.btn_accept.setText(taskLists.getOrder_doddle_accept());
+            for (int i=0;i<staffList.size(); i++){
+                String staff_id = staffList.get(i).getStaff_id();
+                if (staff_id.equals(taskLists.getOrder_doddle_accept()))
+                    groupViewHolder.btn_accept.setText(staffList.get(i).getStaff_name());
+            }
+//            groupViewHolder.btn_accept.setText(taskLists.getOrder_doddle_accept());
             expListView.collapseGroup(groupPosition);
         }
 
@@ -215,7 +226,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     flag = 0;
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
                         finalGroupView.btn_accept.setText(userName);
-                        taskLists.setOrder_doddle_accept(userName);
+                        taskLists.setOrder_doddle_accept(staff_id);
                         taskLists.setOrder_doddle_status("1");
                         //展開expandable listView
                         isCollapse = expListView.expandGroup(groupPosition);
@@ -225,7 +236,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                         Log.e("task", "承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else if (taskLists.getOrder_doddle_status().equals("1") &&
-                            taskLists.getOrder_doddle_accept().equals(userName)) {
+                            taskLists.getOrder_doddle_accept().equals(staff_id)) {
                         taskLists.setOrder_doddle_status("");
                         finalGroupView.btn_accept.setText("承接");
                         taskLists.setOrder_doddle_accept("");
@@ -246,7 +257,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     flag = 1;
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
                         finalGroupView.btn_accept.setText(userName);
-                        taskLists.setOrder_doddle_accept(userName);
+                        taskLists.setOrder_doddle_accept(staff_id);
                         taskLists.setOrder_doddle_status("1");
                         //展開expandable listView
                         isCollapse = expListView.expandGroup(groupPosition);
@@ -256,7 +267,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                         Log.e("task", "承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else if (taskLists.getOrder_doddle_status().equals("1") &&
-                            taskLists.getOrder_doddle_accept().equals(userName)) {
+                            taskLists.getOrder_doddle_accept().equals(staff_id)) {
                         taskLists.setOrder_doddle_status("");
                         finalGroupView.btn_accept.setText("承接");
                         taskLists.setOrder_doddle_accept("");
@@ -350,20 +361,23 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        //結案
         childViewHolder.btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (taskLists.getOrder_task().equals("抄錶")){    //抄錶結案
                     flag = 4;
-                    taskLists.setOrder_doddle_status("2");
+//                    taskLists.setOrder_doddle_status("2");
+                    up_doddle_id = taskLists.getOrder_doddle_id();
+                    up_degree = childViewHolder.edt_degree.getText().toString();
                     //TODO doddle
-//                    new Update().start();
+                    new Update().start();
                 }else {
-                    flag = 0;
-                    taskLists.setOrder_doddle_status("2");
+                    flag = 5;
+//                    taskLists.setOrder_doddle_status("2");
                     up_order_id = taskLists.getOrder_doddle_id();
-                    up_order_accept = taskLists.getOrder_doddle_accept();
-                    up_order_status = taskLists.getOrder_doddle_status();
+//                    up_order_accept = taskLists.getOrder_doddle_accept();
+//                    up_order_status = taskLists.getOrder_doddle_status();
                     Log.e("task", "flag:"+flag+" status:"+up_order_status);
                 }
                 new Update().start();
@@ -382,21 +396,32 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         public void run() {
             String url = "";
             switch (flag) {
+                //訂單承接
                 case 0:
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=order" +
                             "&tb_where_name=order_id&tb_where_val=" + up_order_id + "&tb_td=order_accept%7Corder_status&tb_val=" + up_order_accept + "%7C" + up_order_status;
                     Log.e("task", "order "+url);
                     break;
+                //抄錶承接
                 case 1:
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=doddle" +
                     "&tb_where_name=doddle_id&tb_where_val=" + up_doddle_id + "&tb_td=doddle_accept%7Cdoddle_status&tb_val=" + up_doddle_accept + "%7C" + up_doddle_status;
                     Log.e("task", "doddle 承接"+url);
                     break;
+                //掃入
                 case 2:
                     break;
+                //掃出
                 case 3:
                     break;
+                //抄錶結案
                 case 4:
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_dod.php?" +
+                            "doddle_id="+up_doddle_id+"&doddle_this_phase_degree="+up_degree;
+                    break;
+                //訂單結案
+                case 5:
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_del.php?order_id="+up_order_id;
                     break;
             }
             String retSrc;

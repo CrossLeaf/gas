@@ -83,20 +83,43 @@
                 android:id="@+id/tvi_remnant"
                 layout="@layout/general_twoline_title_input"/>
 
-            <include
-                android:id="@+id/tvi_allowance"
-                layout="@layout/general_twoline_title_input"/>
+            <!--<include-->
+            <!--android:id="@+id/tvi_allowance"-->
+            <!--layout="@layout/general_twoline_title_input"/>-->
 
             <include
                 android:id="@+id/tvi_receive"
                 layout="@layout/general_twoline_title_input"/>
 
-            <Button
-                android:id="@+id/btn_strikeBalance"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="沖帳"
-                android:textSize="35dp"/>
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_strikeBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="沖帳"
+                    android:textSize="35dp"/>
+
+                <TextView
+                    android:id="@+id/pay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="金額："
+                    android:textSize="30dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/total_pay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="money"
+                    android:textSize="30dp"/>
+
+            </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 
@@ -110,19 +133,19 @@
                     android:id="@+id/money_credit"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:text="賒銷"
-                    android:textSize="50dp"
                     android:layout_weight="1"
-                    android:onClick="btn_money_credit"/>
+                    android:onClick="btn_money_credit"
+                    android:text="賒銷"
+                    android:textSize="50dp"/>
 
                 <Button
                     android:id="@+id/money_cash"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:text="@string/payBill"
-                    android:textSize="50dp"
                     android:layout_weight="1"
-                    android:onClick="btn_money_cash"/>
+                    android:onClick="btn_money_cash"
+                    android:text="@string/payBill"
+                    android:textSize="50dp"/>
             </LinearLayout>
 
 

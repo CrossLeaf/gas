@@ -48,6 +48,12 @@
 
             <include layout="@layout/general_division_line"/>
 
+            <include
+                android:id="@+id/tv_spr_staff"
+                layout="@layout/general_title_spinner"/>
+
+            <include layout="@layout/general_division_line"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

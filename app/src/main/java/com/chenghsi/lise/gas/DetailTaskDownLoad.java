@@ -11,8 +11,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-
 /**
  * Created by MengHan on 2015/10/29.
  */
@@ -21,28 +19,35 @@ public class DetailTaskDownLoad extends AsyncTask<String, Integer, String[]> {
 
     public static String[] data;
     private String order_get_time;
-    private String order_money_credit;
+    private String order_should_money;
     public static String[] order_id;
+    private String oldId;
 
     @Override
     protected String[] doInBackground(String... urls) {
         try {
 
             JSONArray jsonArrayOrder = new JSONArray(getData(urls[0]));
-            String[] data = new String[jsonArrayOrder.length()];
-            order_id = new String[jsonArrayOrder.length()];
-
+            String[] data = new String[jsonArrayOrder.length()-1];
+            order_id = new String[jsonArrayOrder.length()-1];
+            oldId = urls[1];
+            int j =0;
             for (int i = 0; i < jsonArrayOrder.length(); i++) {
                 JSONArray order = jsonArrayOrder.getJSONArray(i);  //取得陣列中的每個陣列
                 String order_id = order.getString(Constant.ORDER_ID);
+                if (order_id.equals(oldId)){
+                    continue;
+                    //有一個數字i會跳過
+                }
                 order_get_time = order.getString(Constant.ORDER_GET_TIME);
-                order_money_credit = order.getString(Constant.ORDER_MONEY_CREDIT);
-                data[i]="訂單日期："+order_get_time+"\n金額："+order_money_credit;
-                this.order_id[i] = order_id;
-                Log.e("task", "order_money_credit:"+ order_money_credit);
-                Log.e("task", "data:::"+ data[i]);
+                order_should_money = order.getString(Constant.ORDER_SHOULD_MONEY);
+                data[j]="訂單日期："+order_get_time+"\n金額："+ order_should_money;
+                this.order_id[j] = order_id;
+                Log.e("task", "order_should_money:"+ order_should_money);
+                Log.e("task", "data:::"+ data[j]);
+                j++;
             }
-
+            Log.e("task", "data:length::"+ data.length);
             return data;
 
         } catch (Exception e) {

@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -21,9 +23,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
+import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
+import com.chenghsi.lise.gas.StaffList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,6 +38,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class DetailedTaskActivity extends Activity {
@@ -40,9 +47,11 @@ public class DetailedTaskActivity extends Activity {
     private View R_name;
     private View R_address;
     private View R_remnant;
+
     //    private View R_allowance;
     private View R_receive;
     private View R_clientPhones;
+    private View R_staff;
     private View cylinders;
 
 //    private TextView history;
@@ -50,8 +59,11 @@ public class DetailedTaskActivity extends Activity {
     private Button btn_strikeBalance;
     private Spinner spi_payMethod;
     private Spinner clientPhones;
-    private Button btn_finish;
+    private Spinner staffChoice;
+
+    //    private Button btn_finish;
     private EditText gas_residual;
+
     //    private EditText gas_allowance;
     private EditText cylinder_input;
     private EditText cylinder_num;
@@ -64,13 +76,16 @@ public class DetailedTaskActivity extends Activity {
     private String clientName;
     private String address;
     private String phonesNum;
+    private String partner;
+    private String partnerId;
     private String contents;
     private String totalPay;
-
+    private String id;
     private String[] data;
+    private String[] partner_id;
     private boolean[] checkList;
     private String[] orderId;
-    private ArrayList<String> IdList;
+    public ArrayList<StaffList> partnerList;
 
     //回傳api
     private String customerId;
@@ -78,8 +93,7 @@ public class DetailedTaskActivity extends Activity {
     private String order_id;
     private String order_money_credit;
     private String order_cylinders_list;
-    private String order_gas_residual;
-    private String staff_discount;
+    private String order_gas_residual = "0";
     private String strId = "";
 
     private String action;
@@ -88,7 +102,7 @@ public class DetailedTaskActivity extends Activity {
 
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order&where=customer_id~";
     private int cc = 1;
-    private int flag;
+//    private int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,19 +110,20 @@ public class DetailedTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_task);
         Bundle bundle = this.getIntent().getExtras();
-        order_id = bundle.getString("orderId");
+        id = bundle.getString("orderId");
         clientName = bundle.getString("clientName");
         address = bundle.getString("address");
         phonesNum = bundle.getString("phones"); //會影響
         contents = bundle.getString("contents");
         customerId = bundle.getString("customerId");
         totalPay = bundle.getString("totalPay");
-
+        order_id = id;
 
         action = Intent.ACTION_CALL;
         //下載沖帳的時間和金錢
         url += customerId;
-        new DetailTaskDownLoad().execute(url);
+        new DetailTaskDownLoad().execute(url, id);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_detailed_task);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
@@ -126,11 +141,12 @@ public class DetailedTaskActivity extends Activity {
         R_receive = findViewById(R.id.tvi_receive);
         R_clientPhones = findViewById(R.id.tv_spr_phones);
         //MengHan
+        R_staff = findViewById(R.id.tv_spr_staff);
         cylinders = findViewById(R.id.indexed_task);
 //        history = (TextView) findViewById(R.id.text3);
         btn_strikeBalance = (Button) findViewById(R.id.btn_strikeBalance);
         spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
-        btn_finish = (Button) findViewById(R.id.btn_finish);
+//        btn_finish = (Button) findViewById(R.id.btn_finish);
         total_pay = (TextView) findViewById(R.id.total_pay);
 
         // Set title
@@ -140,12 +156,13 @@ public class DetailedTaskActivity extends Activity {
 //        ((TextView) R_allowance.findViewById(R.id.text)).setText(R.string.allowance);
         ((TextView) R_receive.findViewById(R.id.text)).setText(R.string.should_receive);
         ((TextView) R_clientPhones.findViewById(R.id.title)).setText(R.string.phone);
-
+        ((TextView)R_staff.findViewById(R.id.title)).setText("選擇夥伴");
 
         gas_residual = (EditText) R_remnant.findViewById(R.id.text2);
 //        gas_allowance = (EditText) R_allowance.findViewById(R.id.text2);
 
         clientPhones = ((Spinner) R_clientPhones.findViewById(R.id.spinner));
+        staffChoice = (Spinner) R_staff.findViewById(R.id.spinner);
 
         cylinder_input = (EditText) cylinders.findViewById(R.id.text2);
         cylinder_num = (EditText) cylinders.findViewById(R.id.cylinder_num);
@@ -162,16 +179,38 @@ public class DetailedTaskActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-
         ((TextView) R_name.findViewById(R.id.text2)).setText(clientName);
         ((TextView) R_address.findViewById(R.id.text2)).setText(address);
-//        ((TextView)R_name.findViewById(R.id.text2)).setText(TestData.name[position]);
-//        ((TextView)R_address.findViewById(R.id.text2)).setText(TestData.address[position]);
+
         total_pay.setText(totalPay);
+
         String phones[] = {"請選擇其他號碼", this.phonesNum};
         ArrayAdapter apt = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, phones);
         apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientPhones.setAdapter(apt);
+
+        //選擇夥伴
+        partnerList = NewTaskActivity.partnerList;
+        String partner[] = new String[partnerList.size()];
+        partner_id = new String[partnerList.size()];
+        partner[0] = "請選擇夥伴";
+        partner_id[0] = "null";
+        String staffId = LoginActivity.staff_id;
+        int k=1;
+        for (int i=0;i<partnerList.size();i++){
+            if (staffId.equals(partnerList.get(i).getStaff_id())){
+             continue;
+            }
+            
+            partner_id[k] = partnerList.get(i).getStaff_id();
+            partner[k] = partnerList.get(i).getStaff_name();
+            Log.e("detailTask", "夥伴們："+partner[k]);
+            k++;
+        }
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, partner);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        staffChoice.setAdapter(arrayAdapter);
 
         //殘氣輸入狀態監聽
         gas_residual.addTextChangedListener(new TextWatcher() {
@@ -187,14 +226,10 @@ public class DetailedTaskActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                try {
-                    Thread.sleep(3000);
-                    Log.e("detail", "residual:" + gas_residual.getText().toString());
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                flag = 0;
+                Log.e("detail", "residual:" + gas_residual.getText().toString());
+                order_gas_residual = gas_residual.getText().toString();
+//                flag = 0;
                 new ShowUpdate().start();
             }
         });
@@ -210,7 +245,18 @@ public class DetailedTaskActivity extends Activity {
             }
         });
 
+        //夥伴選擇
+        /*staffChoice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });*/
+
+        staffChoice.setOnItemSelectedListener(partnerListener);
+
         //訂單瓦斯數量
+        order_cylinders_list = contents;
         cylinders_list = contents.split(",");
         Log.e("detail", "----cylinder----");
         cylinder_input.setText(gasKg[0]);
@@ -219,20 +265,26 @@ public class DetailedTaskActivity extends Activity {
         cylinder_input.setInputType(InputType.TYPE_NULL);
         cylinder_num.setInputType(InputType.TYPE_NULL);
 
-        IdList = new ArrayList<>();
         //沖帳按鈕
         btn_strikeBalance.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                strId = "";
-                if (cc == 1) {
-                    data = DetailTaskDownLoad.data;
-                    checkList = new boolean[data.length];
-                    orderId = DetailTaskDownLoad.order_id;
-                    Log.e("DetailedTask", "checkList:" + checkList.length);
-                    cc++;
+                data = DetailTaskDownLoad.data;
+                Log.e("DetailedTask", "data長度："+data.length);
+                if (data.length == 0) {
+                    Toast.makeText(DetailedTaskActivity.this, "無其他沖帳項目", Toast.LENGTH_SHORT).show();
+                } else {
+                    strId = "";
+                    if (cc == 1) {
+
+
+                        checkList = new boolean[data.length];
+                        orderId = DetailTaskDownLoad.order_id;
+                        Log.e("DetailedTask", "checkList:" + checkList.length);
+                        cc++;
+                    }
+                    strikeBalance();
                 }
-                strikeBalance();
             }
         });
 
@@ -254,7 +306,7 @@ public class DetailedTaskActivity extends Activity {
 
             }
         });
-        final boolean[] credit = {false};
+//        final boolean[] credit = {false};
     }
 
     private Spinner.OnItemSelectedListener spnListener = new AdapterView.OnItemSelectedListener() {
@@ -281,6 +333,21 @@ public class DetailedTaskActivity extends Activity {
         }
     };
 
+    private Spinner.OnItemSelectedListener partnerListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            partner = parent.getSelectedItem().toString();
+            partnerId = partner_id[position];
+            Log.e("detailedTask", "夥伴名稱："+partner);
+            Log.e("detailedTask", "夥伴ID:"+partnerId);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
     //TODO 瓦斯調整後需紀錄
     //計算點擊上or下
     int j = 0;
@@ -290,7 +357,7 @@ public class DetailedTaskActivity extends Activity {
 
     //瓦斯種類調整
     public void btn_gasAdjust(View view) {
-        flag = 0;
+//        flag = 0;
         switch (view.getId()) {
             case R.id.cylinders_up:
                 Log.e("detail", "cy up被點選");
@@ -333,10 +400,9 @@ public class DetailedTaskActivity extends Activity {
 
     //TODO 沖帳的多選項dialog
     private void strikeBalance() {
-
+        order_id = id;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Log.e("detail", "do diaLog");
-
         builder.setTitle("選擇沖帳項目")
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setMultiChoiceItems(data, checkList, new DialogInterface.OnMultiChoiceClickListener() {
@@ -354,18 +420,19 @@ public class DetailedTaskActivity extends Activity {
                                 strId += "_" + orderId[i];
                             }
                         }
-
+                        order_id += strId;
+                        new ShowUpdate().start();
                     }
                 })
                 .create().show();
-
     }
 
     //TODO 賒銷現銷按鈕動作
 
     //現銷
     public void btn_money_cash(View view) {
-        order_id += strId;
+
+//        order_id += strId;
         order_money_credit = "0";
 //        staff_discount = gas_allowance.getText().toString();
         order_gas_residual = gas_residual.getText().toString();
@@ -437,11 +504,13 @@ public class DetailedTaskActivity extends Activity {
 
         @Override
         public void run() {
-            String url = "";
+            totalPay = "";
+            String url;
+            Log.e("detail", "order_id:" + order_id);
             url = "http://198.245.55.221:8089/ProjectGAPP/php/show_cash_credit.php?order_id=" + order_id +
                     "&order_cylinders_list=" + order_cylinders_list + "&order_gas_residual=" + order_gas_residual;
             String retSrc;
-
+            Log.e("detail", "url:" + url);
             HttpGet httpget = new HttpGet(url);
             HttpClient httpclient = new DefaultHttpClient();
             try {
@@ -449,6 +518,13 @@ public class DetailedTaskActivity extends Activity {
                 HttpEntity resEntity = response.getEntity();
                 if (resEntity != null) {
                     retSrc = EntityUtils.toString(resEntity);
+                    //將字串中的數字取出
+                    Pattern p = Pattern.compile("[0-9]");
+                    Matcher m = p.matcher(retSrc);
+                    totalPay = "";
+                    while (m.find()) {
+                        totalPay += m.group();
+                    }
                     Log.e("retSrc", "完整資料：" + retSrc);
                 } else {
                     retSrc = "Did not work!";
@@ -458,8 +534,25 @@ public class DetailedTaskActivity extends Activity {
             } catch (Exception e) {
                 Log.e("retSrc", "讀取JSON Error...");
             } finally {
+
+                Message message = new Message();
+                message.what = 0;
+                myHandler.sendMessage(message);
+
                 httpclient.getConnectionManager().shutdown();
             }
         }
     }
+
+    Handler myHandler = new Handler() {
+
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    total_pay.setText(totalPay);
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 }

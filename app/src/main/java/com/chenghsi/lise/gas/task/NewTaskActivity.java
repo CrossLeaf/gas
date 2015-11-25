@@ -39,6 +39,8 @@ public class NewTaskActivity extends Activity {
 
     public ExpandableListView list_Task;   //下拉List控件
     public ExTaskListAdapter adapter;
+    //新增了夥伴List
+    public static ArrayList<StaffList> partnerList;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     ArrayList<ArrayList<TaskLists>> groupList;
@@ -282,6 +284,7 @@ public class NewTaskActivity extends Activity {
             adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList, staffLists);
             list_Task.setAdapter(adapter);
             list_Task.setOnGroupClickListener(new OnItemClickListener());
+            partnerList = staffLists;
         }
 
         @Override

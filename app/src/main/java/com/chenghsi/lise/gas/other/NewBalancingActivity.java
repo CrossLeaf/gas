@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,8 @@ public class NewBalancingActivity extends Activity {
     TextView tv_money;
     EditText edt_receive;
     Button btn_strike;
+    Spinner spi_payMethod;
+
 
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order";
 
@@ -50,10 +54,10 @@ public class NewBalancingActivity extends Activity {
     List<BalanceList> balance_list = new ArrayList<BalanceList>();
     public static HashMap<String, Boolean> isCheckedMap = new HashMap<>();
     private int total_money;
+    private String[] money_pay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -62,14 +66,30 @@ public class NewBalancingActivity extends Activity {
         tv_money = (TextView) findViewById(R.id.tv_money);
         edt_receive = (EditText) findViewById(R.id.edt_receive);
         btn_strike = (Button) findViewById(R.id.btn_strike);
-
+        spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
         tv_money.setText("$0");
         btn_strike.setOnClickListener(strikeOnClickListener);
         new BalanceAsyncDownload().execute(url);
 
         listResult.setTextFilterEnabled(true);
 
+        money_pay = new String[]{"現金", "支票", "匯款"};
+        //TODO 付費方式
+//        String[] payMethod_array = {"現金", "支票", "匯款"};
+        ArrayAdapter<String> payMethod_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, money_pay);
+        payMethod_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spi_payMethod.setAdapter(payMethod_adapter);
+        spi_payMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                money_pay[i] = adapterView.getSelectedItem().toString();
+                Log.e("DetailedTask", money_pay[i]);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         edt_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -134,6 +154,7 @@ public class NewBalancingActivity extends Activity {
         private String order_should_money;
         private String order_id;
 
+        //TODO 滑動時有錯誤
         @Override
         protected String[] doInBackground(String... urls) {
             try {

@@ -17,6 +17,7 @@ public class DetailedClientInfoActivity extends Activity
     private View R_name;
     private View R_address;
     private View R_phones;
+    private View R_staff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,12 +40,14 @@ public class DetailedClientInfoActivity extends Activity
         R_name = findViewById(R.id.tv2_name);
         R_address = findViewById(R.id.tv2_address);
         R_phones = findViewById(R.id.tv_spr_phones);
+        R_staff = findViewById(R.id.tv_spr_staff);
 
         // Set title
 
         ((TextView)R_name.findViewById(R.id.text1)).setText("姓名");
         ((TextView)R_address.findViewById(R.id.text1)).setText("地址");
         ((TextView)R_phones.findViewById(R.id.title)).setText("電話");
+        ((TextView)R_staff.findViewById(R.id.title)).setText("選擇夥伴");
     }
 
     @Override

@@ -11,12 +11,18 @@ public class TaskLists {
     private String order_cylinders_list;
     private String customer_name;
     private String customer_address;
+    private String customer_settle_type;
     private String order_doddle_accept;
     private String order_doddle_status;
     private String customer_id;
     private String order_should_money;
+    private String order_gas_residual;
 
-    public TaskLists(String order_doddle_id, String order_prefer_time, String order_task, String order_phone, String order_cylinders_list, String customer_name, String customer_address, String order_should_money, String order_doddle_status, String order_doddle_accept, String customer_id) {
+
+    public TaskLists(String order_doddle_id, String order_prefer_time, String order_task,
+                     String order_phone, String order_cylinders_list, String customer_name,
+                     String customer_address, String customer_settle_type, String order_should_money, String order_doddle_status,
+                     String order_doddle_accept, String customer_id, String order_gas_residual) {
         setOrder_doddle_id(order_doddle_id);
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
@@ -24,10 +30,12 @@ public class TaskLists {
         setOrder_task(order_task);
         setCustomer_name(customer_name);
         setCustomer_address(customer_address);
+        setCustomer_settle_type(customer_settle_type);
         setOrder_doddle_accept(order_doddle_accept);
         setOrder_doddle_status(order_doddle_status);
         setCustomer_id(customer_id);
         setOrder_should_money(order_should_money);
+        setOrder_gas_residual(order_gas_residual);
     }
 
     public String getOrder_doddle_id() {
@@ -88,6 +96,14 @@ public class TaskLists {
         this.customer_address = customer_address;
     }
 
+    public String getCustomer_settle_type() {
+        return customer_settle_type;
+    }
+
+    public void setCustomer_settle_type(String customer_settle_type) {
+        this.customer_settle_type = customer_settle_type;
+    }
+
     public String getOrder_doddle_accept() {
         return order_doddle_accept;
     }
@@ -118,5 +134,13 @@ public class TaskLists {
 
     public void setOrder_should_money(String order_should_money) {
         this.order_should_money = order_should_money;
+    }
+
+    public String getOrder_gas_residual() {
+        return order_gas_residual;
+    }
+
+    public void setOrder_gas_residual(String order_gas_residual) {
+        this.order_gas_residual = order_gas_residual;
     }
 }

@@ -27,6 +27,9 @@
     <string name="navigation">導航和定位</string>
     <string name="gas">瓦斯</string>
     <string name="maintain">維修</string>
+    <string name="cash">現金</string>
+    <string name="ticket">支票</string>
+    <string name="remit">匯款</string>
 
     <string name="title_activity_task">任務清單</string>
     <string name="title_activity_other">其他功能</string>

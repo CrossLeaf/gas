@@ -116,6 +116,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        new AsyncTaskDownLoad().execute(url3, url2, url1);
         Log.e("task", "----onResume----");
     }
 
@@ -218,8 +219,8 @@ public class NewTaskActivity extends Activity {
                                     customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                                     //TODO order&doddle ID
                                     TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
-                                            null, customer_name, doddle_address,
-                                            null, doddle_status, doddle_accept, doddle_customer_id);
+                                            null, customer_name, doddle_address,null,
+                                            null, doddle_status, doddle_accept, doddle_customer_id, null);
                                     taskListses.add(list);
                                     break;
                                 }
@@ -239,13 +240,14 @@ public class NewTaskActivity extends Activity {
                             order_should_money = order_doddle.getString(Constant.ORDER_SHOULD_MONEY);
                             order_status = order_doddle.getString(Constant.ORDER_STATUS);
                             order_accept = order_doddle.getString(Constant.ORDER_ACCEPT);
-
+                            order_gas_residual = order_doddle.getString(Constant.ORDER_GAS_RESIDUAL);
                             Log.e("task", "order_customer_id:" + order_customer_id);
                             for (int j = 0; j < jsonArrayCustomer.length(); j++) {
                                 customer = jsonArrayCustomer.getJSONArray(j);
                                 if (order_customer_id.equals(customer.getString(0))) {
                                     customer_name = customer.getString(Constant.CUSTOMER_NAME);
                                     customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                                    customer_settle_type  = customer.getString(Constant.CUSTOMER_SETTLE_TYPE);
                                     break;
                                 }
 
@@ -253,16 +255,17 @@ public class NewTaskActivity extends Activity {
                             //判斷是否有此客戶id
                             if (order_customer_id.equals(null)) {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
-                                        order_cylinders_list, null, null, order_should_money, order_status,
-                                        order_accept, null);
+                                        order_cylinders_list, null, null,null, order_should_money, order_status,
+                                        order_accept, null,order_gas_residual);
                                 taskListses.add(list);
                             } else {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
-                                        order_cylinders_list, customer_name, customer_address,
-                                        order_should_money, order_status, order_accept, order_customer_id);
+                                        order_cylinders_list, customer_name, customer_address,customer_settle_type,
+                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual);
                                 taskListses.add(list);
 
                                 Log.e("task", "name:" + customer_name);
+                                Log.e("task", "customerSettleType:"+customer_settle_type);
                             }
 
                         }
@@ -358,6 +361,10 @@ public class NewTaskActivity extends Activity {
                     bundle.putString("phones", taskLists.getOrder_phone());
                     bundle.putString("customerId", taskLists.getCustomer_id());
                     bundle.putString("totalPay", taskLists.getOrder_should_money());
+                    bundle.putString("gasResidual", taskLists.getOrder_gas_residual());
+                    bundle.putString("settleType", taskLists.getCustomer_settle_type());
+
+                    Log.e("bundle", "customerSettleType:"+taskLists.getCustomer_settle_type());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

@@ -151,7 +151,6 @@ public class NewTaskActivity extends Activity {
         private String order_status;
         private String order_accept;
         private String order_gas_residual;
-        private String staff_discount;
         private String customer_settle_type;
 
         private String doddle_id;
@@ -363,6 +362,7 @@ public class NewTaskActivity extends Activity {
                     bundle.putString("totalPay", taskLists.getOrder_should_money());
                     bundle.putString("gasResidual", taskLists.getOrder_gas_residual());
                     bundle.putString("settleType", taskLists.getCustomer_settle_type());
+                    bundle.putString("orderStatus", taskLists.getOrder_doddle_status());
 
                     Log.e("bundle", "customerSettleType:"+taskLists.getCustomer_settle_type());
                     intent.putExtras(bundle);

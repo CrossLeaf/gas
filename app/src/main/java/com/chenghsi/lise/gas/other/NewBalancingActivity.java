@@ -207,6 +207,7 @@ public class NewBalancingActivity extends Activity {
         private String order_should_money;
         private String order_id;
         private String order_strike_balance;
+        private String order_status;
 
         @Override
         protected Void doInBackground(String... urls) {
@@ -216,7 +217,8 @@ public class NewBalancingActivity extends Activity {
                 for (int i = 0; i < jsonArrayOrder.length(); i++) {
                     JSONArray order = jsonArrayOrder.getJSONArray(i);  //取得陣列中的每個陣列
                     order_strike_balance = order.getString(Constant.ORDER_STRIKE_BALANCE);
-                    if (order_strike_balance.equals("1")) {
+                    order_status = order.getString(Constant.ORDER_STATUS);
+                    if (order_strike_balance.equals("1") || !order_status.equals("2")) {
                         Log.e("balance", "跳過:" + i);
                         continue;
                     }
@@ -287,7 +289,6 @@ public class NewBalancingActivity extends Activity {
                 } else {
                     retSrc = "Did not work!";
                 }
-
             } catch (Exception e) {
                 Log.e("retSrc", "讀取JSON Error...");
                 return null;

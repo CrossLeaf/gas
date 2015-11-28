@@ -196,7 +196,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
         groupViewHolder.btn_accept.setFocusable(false);
 
-        //按鈕文字初始化
+        /*按鈕文字初始化*/
         if (taskLists.getOrder_doddle_status().equals("")) {
 //            taskLists.setOrder_doddle_status("");
             groupViewHolder.btn_accept.setText("承接");
@@ -216,7 +216,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
 
 
-        //TODO 承接按鈕動作
+        /*承接按鈕動作*/
         final GroupViewHolder finalGroupView = groupViewHolder;
 
         groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {

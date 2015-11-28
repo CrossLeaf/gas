@@ -81,6 +81,7 @@ public class DetailedTaskActivity extends Activity {
     private String contents;
     private String gasResidual;
     private String customer_settle_type;
+    private String order_status;
     public static String totalPay;
     private String id;
     private String[] data;
@@ -127,8 +128,9 @@ public class DetailedTaskActivity extends Activity {
         totalPay = bundle.getString("totalPay");
         gasResidual = bundle.getString("gasResidual");
         customer_settle_type = bundle.getString("settleType");
+        order_status = bundle.getString("orderStatus");
 
-        Log.e("detailTask", "customer_settle_type:"+customer_settle_type);
+        Log.e("detailTask", "customer_settle_type:" + customer_settle_type);
         order_gas_residual = gasResidual;
         order_id = id;
 
@@ -279,13 +281,13 @@ public class DetailedTaskActivity extends Activity {
             public void onClick(View view) {
                 data = DetailTaskDownLoad.data;
                 Log.e("DetailedTask", "data長度：" + data.length);
-                if (data.length == 0) {
+                if (customer_settle_type.equals("2")) {
+                    Toast.makeText(DetailedTaskActivity.this, "此筆為月結戶", Toast.LENGTH_SHORT).show();
+                } else if (data.length == 0) {
                     Toast.makeText(DetailedTaskActivity.this, "無其他沖帳項目", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (order_status.equals("2")) {
                     strId = "";
                     if (cc == 1) {
-
-
                         checkList = new boolean[data.length];
                         orderId = DetailTaskDownLoad.order_id;
                         Log.e("DetailedTask", "checkList:" + checkList.length);
@@ -300,8 +302,8 @@ public class DetailedTaskActivity extends Activity {
         /*付費方式*/
         if (customer_settle_type.equals("1")) {
             money_pay = new String[]{"現金", "支票", "匯款"};
-        }else {
-            money_pay = new String[]{"月結付費"};
+        } else {
+            money_pay = new String[]{"月結"};
         }
 
         order_payment = money_pay[0];
@@ -316,7 +318,6 @@ public class DetailedTaskActivity extends Activity {
                 order_payment = money_pay[i];
                 Log.e("DetailedTask", money_pay[i]);
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -509,6 +510,7 @@ public class DetailedTaskActivity extends Activity {
 
         @Override
         public void run() {
+
             String url = "";
             if (order_money_credit.equals("0")) {
                 Log.e("detailTask", "呼叫 現銷");
@@ -523,7 +525,6 @@ public class DetailedTaskActivity extends Activity {
                         "&order_gas_residual=" + order_gas_residual + "&order_payment=" + java.net.URLEncoder.encode(order_payment) +
                         "&order_staff_help=" + order_staff_help;
             }
-
             Log.e("detailTask", "update url:" + url);
             String retSrc;
             HttpGet httpget = new HttpGet(url);

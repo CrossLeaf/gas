@@ -1,8 +1,10 @@
+/*
 package com.chenghsi.lise.gas.other;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -43,7 +45,7 @@ public class DetailedClientInfoActivity extends Activity
         R_staff = findViewById(R.id.tv_spr_staff);
 
         // Set title
-
+        Log.e("detailClient", "------初始化啊....-----");
         ((TextView)R_name.findViewById(R.id.text1)).setText("姓名");
         ((TextView)R_address.findViewById(R.id.text1)).setText("地址");
         ((TextView)R_phones.findViewById(R.id.title)).setText("電話");
@@ -66,3 +68,4 @@ public class DetailedClientInfoActivity extends Activity
         ((Spinner)R_phones.findViewById(R.id.spinner)).setAdapter(apt);
     }
 }
+*/

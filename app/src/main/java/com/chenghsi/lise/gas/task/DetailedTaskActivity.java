@@ -36,6 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -73,7 +74,9 @@ public class DetailedTaskActivity extends Activity {
     private ImageButton cylinder_num_down;
     private ImageButton cylinder_num_up;
     private TextView total_pay;
+    private TextView tv_order_remark;
 
+    //bundle 傳進來的詳細資料
     private String clientName;
     private String address;
     private String phonesNum;
@@ -82,6 +85,8 @@ public class DetailedTaskActivity extends Activity {
     private String gasResidual;
     private String customer_settle_type;
     private String order_status;
+    private String order_remark;
+
     public static String totalPay;
     private String id;
     private String[] data;
@@ -129,6 +134,7 @@ public class DetailedTaskActivity extends Activity {
         gasResidual = bundle.getString("gasResidual");
         customer_settle_type = bundle.getString("settleType");
         order_status = bundle.getString("orderStatus");
+        order_remark = bundle.getString("orderRemark");
 
         Log.e("detailTask", "customer_settle_type:" + customer_settle_type);
         order_gas_residual = gasResidual;
@@ -157,14 +163,15 @@ public class DetailedTaskActivity extends Activity {
 //        R_allowance = findViewById(R.id.tvi_allowance);
         R_receive = findViewById(R.id.tvi_receive);
         R_clientPhones = findViewById(R.id.tv_spr_phones);
-        //MengHan
+
+        //MengHan write
         R_staff = findViewById(R.id.tv_spr_staff);
         cylinders = findViewById(R.id.indexed_task);
-//        history = (TextView) findViewById(R.id.text3);
         btn_strikeBalance = (Button) findViewById(R.id.btn_strikeBalance);
         spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
 //        btn_finish = (Button) findViewById(R.id.btn_finish);
         total_pay = (TextView) findViewById(R.id.total_pay);
+        tv_order_remark = (TextView) findViewById(R.id.tv_order_remark);
 
         // Set title
         ((TextView) R_name.findViewById(R.id.text1)).setText(R.string.name);
@@ -196,12 +203,11 @@ public class DetailedTaskActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
         ((TextView) R_name.findViewById(R.id.text2)).setText(clientName);
         ((TextView) R_address.findViewById(R.id.text2)).setText(address);
 
         total_pay.setText(totalPay);
-
+        tv_order_remark.setText(order_remark);
         //打電話
         String phones[] = {"請選擇其他號碼", this.phonesNum};
         ArrayAdapter apt = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, phones);

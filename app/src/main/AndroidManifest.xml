@@ -95,7 +95,11 @@
             android:name=".other.FactoryActivity"
             android:label="出入氣">
         </activity>
+        <activity android:name=".other.FactoryDialogActivity"
+                  android:label="付款列表"
+                  android:theme="@android:style/Theme.Dialog">
 
+        </activity>
     </application>
 
 </manifest>

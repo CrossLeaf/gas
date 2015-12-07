@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,17 +50,18 @@ public class NewTaskActivity extends Activity {
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
 
-    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
-    String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
+    String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
+    //customer join phone --->customer_id
+    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     //今日抄表與訂單 url
-    String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
+    String url0 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
-        new AsyncTaskDownLoad().execute(url3, url2, url1);
+        new AsyncTaskDownLoad().execute(url0, url1, url2);
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -101,7 +103,7 @@ public class NewTaskActivity extends Activity {
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
 
-            new AsyncTaskDownLoad().execute(url3, url2, url1);
+            new AsyncTaskDownLoad().execute(url0, url1, url2);
 
             adapter.notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {
@@ -116,7 +118,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        new AsyncTaskDownLoad().execute(url3, url2, url1);
+        new AsyncTaskDownLoad().execute(url0, url1, url2);
         Log.e("task", "----onResume----");
     }
 
@@ -152,6 +154,7 @@ public class NewTaskActivity extends Activity {
         private String order_accept;
         private String order_gas_residual;
         private String customer_settle_type;
+        private String order_remark;
 
         private String doddle_id;
         private String doddle_time;
@@ -159,6 +162,7 @@ public class NewTaskActivity extends Activity {
         private String doddle_customer_id;
         private String doddle_accept;
         private String doddle_status;
+        private String doddle_remark;
 
         private String staff_id;
         private String staff_name;
@@ -191,17 +195,16 @@ public class NewTaskActivity extends Activity {
                             Log.e("task", "抄表作業" + "i:" + i);
                             for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
                                 order_doddle = jsonArrayTask.getJSONArray(j);
-//                                staff = jsonArrayStaff.getJSONArray(j);
                                 if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
                                     continue;
                                 }
-//                                staff_name = staff.getString(3);
                                 doddle_id = order_doddle.getString(Constant.DODDLE_ID);
                                 doddle_time = order_doddle.getString(Constant.DODDLE_TIME);
                                 doddle_address = order_doddle.getString(Constant.DODDLE_ADDRESS);
                                 doddle_customer_id = order_doddle.getString(Constant.DODDLE_CUSTOMER_ID);
                                 doddle_accept = order_doddle.getString(Constant.DODDLE_ACCEPT);
                                 doddle_status = order_doddle.getString(Constant.DODDLE_STATUS);
+                                doddle_remark = order_doddle.getString(Constant.DODDLE_REMARK);
                                 Log.e("task", "基本資料抓取完畢");
 
                                 for (int k = 0; k < jsonArrayCustomer.length(); k++) {
@@ -216,10 +219,9 @@ public class NewTaskActivity extends Activity {
                                     customer_phone = customer.getString(22);
                                     customer_name = customer.getString(Constant.CUSTOMER_NAME);
                                     customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                                    //TODO order&doddle ID
                                     TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
                                             null, customer_name, doddle_address,null,
-                                            null, doddle_status, doddle_accept, doddle_customer_id, null);
+                                            null, doddle_status, doddle_accept, doddle_customer_id, null,doddle_remark);
                                     taskListses.add(list);
                                     break;
                                 }
@@ -240,10 +242,13 @@ public class NewTaskActivity extends Activity {
                             order_status = order_doddle.getString(Constant.ORDER_STATUS);
                             order_accept = order_doddle.getString(Constant.ORDER_ACCEPT);
                             order_gas_residual = order_doddle.getString(Constant.ORDER_GAS_RESIDUAL);
+                            order_remark = order_doddle.getString(Constant.ORDER_REMARK);
                             Log.e("task", "order_customer_id:" + order_customer_id);
                             for (int j = 0; j < jsonArrayCustomer.length(); j++) {
                                 customer = jsonArrayCustomer.getJSONArray(j);
                                 if (order_customer_id.equals(customer.getString(0))) {
+                                    //儲存電話方法
+//                                    storePhone(jsonArrayCustomer, j);
                                     customer_name = customer.getString(Constant.CUSTOMER_NAME);
                                     customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                                     customer_settle_type  = customer.getString(Constant.CUSTOMER_SETTLE_TYPE);
@@ -255,12 +260,12 @@ public class NewTaskActivity extends Activity {
                             if (order_customer_id.equals(null)) {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
                                         order_cylinders_list, null, null,null, order_should_money, order_status,
-                                        order_accept, null,order_gas_residual);
+                                        order_accept, null,order_gas_residual, order_remark);
                                 taskListses.add(list);
                             } else {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
                                         order_cylinders_list, customer_name, customer_address,customer_settle_type,
-                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual);
+                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual,order_remark);
                                 taskListses.add(list);
 
                                 Log.e("task", "name:" + customer_name);
@@ -275,6 +280,16 @@ public class NewTaskActivity extends Activity {
                 Log.e("task", "NewTask資料抓取有誤");
             }
             return taskListses;
+        }
+
+        //TODO 儲存電話號碼
+        private void storePhone(JSONArray jsonArrayCustomer, int node) {
+            JSONArray phone;
+            try {
+                phone = jsonArrayCustomer.getJSONArray(node);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -363,6 +378,7 @@ public class NewTaskActivity extends Activity {
                     bundle.putString("gasResidual", taskLists.getOrder_gas_residual());
                     bundle.putString("settleType", taskLists.getCustomer_settle_type());
                     bundle.putString("orderStatus", taskLists.getOrder_doddle_status());
+                    bundle.putString("orderRemark", taskLists.getOrder_remark());
 
                     Log.e("bundle", "customerSettleType:"+taskLists.getCustomer_settle_type());
                     intent.putExtras(bundle);

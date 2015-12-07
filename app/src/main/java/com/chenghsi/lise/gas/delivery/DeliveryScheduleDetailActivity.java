@@ -223,9 +223,6 @@ public class DeliveryScheduleDetailActivity extends Activity {
 
         @Override
         public void run() {
-//          http://198.245.55.221:8089/ProjectGAPP/php/upd_cly.php?cly_name=cly_name&cly_time=cly_time
-//          &cly_50=50公斤桶數&cly_20=20公斤桶數&cly_16=16公斤桶數&cly_4=4公斤桶數&ms1_addr=客戶地址
-//          &cly_PS=備註&cly_day=cly_day
             String url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_cly.php?cly_name=" + cus_id +
                     "&cly_time=" + cly_time + "&cly_50=" + cly_50 + "&cly_20=" + cly_20 + "&cly_16=" + cly_16 +
                     "&cly_4=" + cly_4 + "&ms1_addr=" + ms1_addr + "&cly_PS=" + cly_PS + "&cly_day=" + cly_day;

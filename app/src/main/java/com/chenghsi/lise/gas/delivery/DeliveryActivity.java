@@ -1,3 +1,4 @@
+/*
 package com.chenghsi.lise.gas.delivery;
 
 import android.content.Context;
@@ -82,7 +83,8 @@ public class DeliveryActivity extends AbstractList
         {
 //            boolean[] state = TaskActivity.tempState;
 //            String[] tempAddress = TaskActivity.tempAddress;
-            /*try
+            */
+/*try
             {
                 JSONArray item_delivery = gasDB.getTableItemByIndex(GasDB.DELIVERY, position);
 
@@ -105,7 +107,8 @@ public class DeliveryActivity extends AbstractList
                 return result.toArray(new String[result.size()]);
 
             }
-            catch(JSONException e) {Log.e("DeliveryListAdapter",e.toString());}*/
+            catch(JSONException e) {Log.e("DeliveryListAdapter",e.toString());}*//*
+
             return null;
         }
 
@@ -139,3 +142,4 @@ public class DeliveryActivity extends AbstractList
         }
     }
 }
+*/

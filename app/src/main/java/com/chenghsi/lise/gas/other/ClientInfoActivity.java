@@ -1,3 +1,4 @@
+/*
 package com.chenghsi.lise.gas.other;
 
 import android.content.Context;
@@ -245,3 +246,4 @@ public class ClientInfoActivity extends AbstractList
         }
     }
 }
+*/

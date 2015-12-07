@@ -17,12 +17,13 @@ public class TaskLists {
     private String customer_id;
     private String order_should_money;
     private String order_gas_residual;
+    private String order_remark;
 
 
     public TaskLists(String order_doddle_id, String order_prefer_time, String order_task,
                      String order_phone, String order_cylinders_list, String customer_name,
                      String customer_address, String customer_settle_type, String order_should_money, String order_doddle_status,
-                     String order_doddle_accept, String customer_id, String order_gas_residual) {
+                     String order_doddle_accept, String customer_id, String order_gas_residual, String order_remark) {
         setOrder_doddle_id(order_doddle_id);
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
@@ -36,6 +37,7 @@ public class TaskLists {
         setCustomer_id(customer_id);
         setOrder_should_money(order_should_money);
         setOrder_gas_residual(order_gas_residual);
+        setOrder_remark(order_remark);
     }
 
     public String getOrder_doddle_id() {
@@ -142,5 +144,13 @@ public class TaskLists {
 
     public void setOrder_gas_residual(String order_gas_residual) {
         this.order_gas_residual = order_gas_residual;
+    }
+
+    public String getOrder_remark() {
+        return order_remark;
+    }
+
+    public void setOrder_remark(String order_remark) {
+        this.order_remark = order_remark;
     }
 }

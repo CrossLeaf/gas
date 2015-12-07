@@ -1,12 +1,10 @@
 package com.chenghsi.lise.gas.delivery;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.ImageButton;
@@ -15,7 +13,6 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.R;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class DeliveryScheduleActivity extends Activity {
     protected Toolbar toolbar;
@@ -24,7 +21,7 @@ public class DeliveryScheduleActivity extends Activity {
     int Myear, Mmonth, Mday;
     Calendar c = Calendar.getInstance();
     int prevDay = c.get(Calendar.DAY_OF_MONTH);
-    int prevMonth = c.get(Calendar.MONTH)+1;
+    int prevMonth = c.get(Calendar.MONTH) + 1;
     int prevYear = c.get(Calendar.YEAR);
 
     @Override
@@ -63,8 +60,8 @@ public class DeliveryScheduleActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                    String date = Myear + "/" + Mmonth + "/" + Mday;
-                    Toast.makeText(DeliveryScheduleActivity.this, date, Toast.LENGTH_SHORT).show();
+                String date = Myear + "/" + Mmonth + "/" + Mday;
+                Toast.makeText(DeliveryScheduleActivity.this, date, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
                 bundle.putInt("year", Myear);
@@ -77,4 +74,24 @@ public class DeliveryScheduleActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("deliverySchedule", "----onResume----");
+
+//        c.set(prevYear, prevMonth, prevDay);
+        Myear = prevYear;
+        Mmonth = prevMonth;
+        Mday = prevDay;
+        calendarView = (CalendarView) findViewById(R.id.calendarView);
+        calendarView.setDate(System.currentTimeMillis());
+        Log.e("deliverySchedule", Myear+"/"+Mmonth+"/"+Mday);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("deliverySchedule", "----onPause----");
+
+    }
 }

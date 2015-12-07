@@ -196,8 +196,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:id="@+id/imageButton4"
-                android:src="@drawable/pay_money"
-                android:background="@drawable/ripple_pay"
+                android:background="@drawable/pay_money"
                 android:elevation="8dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -216,13 +215,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:id="@+id/imageButton3"
-                android:src="@drawable/check"
-                android:background="@drawable/ripple"
-                android:elevation="8dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="right"
+                android:background="@drawable/circle_red"
+
+                android:layout_gravity="end"
                 android:onClick="btn_check"/>
 
         </LinearLayout>

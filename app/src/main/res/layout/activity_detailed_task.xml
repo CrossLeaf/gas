@@ -33,12 +33,36 @@
 
             </LinearLayout>
 
+
             <include layout="@layout/general_division_line"/>
 
 
             <include
                 android:id="@+id/tv2_address"
                 layout="@layout/general_twoline_title_text"/>
+
+            <include layout="@layout/general_division_line"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="備註"/>
+
+                <TextView
+                    android:id="@+id/tv_order_remark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
+            </LinearLayout>
 
             <include layout="@layout/general_division_line"/>
 

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.BalanceAdapter;
 import com.chenghsi.lise.gas.BalanceList;
 import com.chenghsi.lise.gas.Constant;
+import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 
@@ -59,6 +60,7 @@ public class NewBalancingActivity extends Activity {
     public static HashMap<String, Boolean> isCheckedMap = new HashMap<>();
     private int total_money;
     private String[] money_pay;
+
     //回傳api
     private String order_id;
     private String staff_id;
@@ -142,7 +144,8 @@ public class NewBalancingActivity extends Activity {
                 Toast.makeText(NewBalancingActivity.this, "請輸入實收金額", Toast.LENGTH_SHORT).show();
             } else {
                 income_money_real = edt_receive.getText().toString();
-                staff_id = LoginActivity.staff_id;
+                Globals g = new Globals();
+                staff_id = g.getUser_id();
 
                 Log.e("balancing", "order_id:" + order_id);
                 Log.e("balancing", "income_money_real:" + income_money_real);
@@ -298,4 +301,17 @@ public class NewBalancingActivity extends Activity {
             return retSrc;
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("NewBalance", "------NewBalance STOP------");
+        finish();
+    }
+
 }

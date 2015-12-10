@@ -105,13 +105,14 @@ public class Constant {
     // The corresponding index for database table: "payment"
     public static int PAYMENT_ID = 0;
     public static int PAYMENT_TYPE = 1;
-    public static int PAYMENT_STATUS=2;
-    public static int PAYMENT_CONTENT=3;
-    public static int PAYMENT_MONEY_CASH=4;
-    public static int PAYMENT_MONEY_CREDIT=5;
-    public static int PAYMENT_BUILD_DATE=6;
-    public static int PAYMENT_GET_DATE=7;
-    public static int PAYMENT_MONEY_REAL=8;
+    public static int PAYMENT_STATUS = 2;
+    public static int PAYMENT_CONTENT = 3;
+    public static int PAYMENT_MONEY_CASH = 4;
+    public static int PAYMENT_MONEY_CREDIT = 5;
+    public static int PAYMENT_BUILD_DATE = 6;
+    public static int PAYMENT_GET_DATE = 7;
+    public static int PAYMENT_MONEY_REAL = 8;
+    public static int SAVEOUT_ID = 9;
 
 
 }

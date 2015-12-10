@@ -151,4 +151,10 @@ public class NewGasPriceActivity extends Activity {
             return retSrc;
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 }

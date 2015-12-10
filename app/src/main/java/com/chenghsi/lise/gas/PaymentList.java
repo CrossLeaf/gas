@@ -10,15 +10,17 @@ public class PaymentList {
     private String payment_content;
     private String payment_money_cash;
     private String payment_build_date;
+    private String saveout_id;
 
     public PaymentList(String payment_id, String payment_type, String payment_status,
-                       String payment_content, String payment_money_cash, String payment_build_date) {
+                       String payment_content, String payment_money_cash, String payment_build_date, String saveout_id) {
         this.payment_id = payment_id;
         this.payment_type = payment_type;
         this.payment_status = payment_status;
         this.payment_content = payment_content;
         this.payment_money_cash = payment_money_cash;
         this.payment_build_date = payment_build_date;
+        this.saveout_id = saveout_id;
     }
 
     public String getPayment_id() {
@@ -67,5 +69,13 @@ public class PaymentList {
 
     public void setPayment_build_date(String payment_build_date) {
         this.payment_build_date = payment_build_date;
+    }
+
+    public String getSaveout_id() {
+        return saveout_id;
+    }
+
+    public void setSaveout_id(String saveout_id) {
+        this.saveout_id = saveout_id;
     }
 }

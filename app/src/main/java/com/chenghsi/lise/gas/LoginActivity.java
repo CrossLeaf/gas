@@ -1,15 +1,15 @@
 package com.chenghsi.lise.gas;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.chenghsi.lise.gas.task.NewTaskActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,9 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class LoginActivity extends Activity {
     SharedPreferences sp;
@@ -29,34 +26,52 @@ public class LoginActivity extends Activity {
     EditText et_password;
     String account;
     String password;
-    String userName;
     String retSrc = "";
-    public static String usn;
-    public static String staff_id;
+
+    private String userName;
+    private String staff_id;
+
+    Toast showToastMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        Log.e("login", "------login create-----");
         sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
         et_account = (EditText) findViewById(R.id.account);
         et_password = (EditText) findViewById(R.id.password);
         new LoginThread().start();
-        //呼叫讀取偏好資料
-        readPref();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("login", "------login resume-----");
+        //呼叫讀取偏好資料
+        readPref();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.e("login", "------login pause-----");
+
         //儲存偏好資料
         restorePref();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("login", "------login stop-----");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("login", "------login destroy-----");
     }
 
     private void restorePref() {
@@ -74,7 +89,7 @@ public class LoginActivity extends Activity {
     }
 
     //讀取偏好資料
-    private void readPref() {
+    public void readPref() {
         account = sp.getString("account", "");
         password = sp.getString("password", "");
         et_account.setText(account);
@@ -84,14 +99,24 @@ public class LoginActivity extends Activity {
 
     //按鈕事件
     public void onClick_btn_login(View view) {
-        if (isAccount()) {
+        Log.e("login", "account, password:" + et_account.getText().toString().isEmpty() + et_password.getText().toString().isEmpty());
+        Log.e("login", "account text:" + et_account.getText().toString().equals(""));
+        if (verification()) {
+            Globals globals = new Globals();
+            globals.setUser_id(staff_id);
+            globals.setUser_name(userName);
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userName", getUserName());
-            intent.putExtra("staffId", staff_id);
             startActivity(intent);
         } else {
-            Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT).show();
+            if (showToastMessage!=null) {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            }else {
+                showToastMessage = Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            }
         }
     }
 
@@ -120,19 +145,26 @@ public class LoginActivity extends Activity {
         }
     }
 
-    public boolean isAccount() {
+    /*驗證帳號密碼*/
+    public boolean verification() {
         try {
             String account = et_account.getText().toString();
             String password = et_password.getText().toString();
+            if (account.isEmpty() || password.isEmpty()) {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(this, "帳號或密碼為空", Toast.LENGTH_SHORT);
+                showToastMessage.show();
+                return false;
+            }
             JSONArray jsonArray = new JSONArray(retSrc);
             for (int i = 0; i < jsonArray.length(); i++) {
                 if (account.equals(jsonArray.getJSONArray(i).getString(9)) &&
                         password.equals(jsonArray.getJSONArray(i).getString(10))) {
                     staff_id = jsonArray.getJSONArray(i).getString(0);  //staff_id
                     userName = jsonArray.getJSONArray(i).getString(3);  //staff_name
-                    Log.e("tag", "比對到第" + i + "筆");
-                    storeName(jsonArray.getJSONArray(i).getString(3));
+
                     Log.e("tag", "人名：" + userName);
+                    Log.e("tag", "staff_id:"+staff_id);
                     return true;
                 }
             }
@@ -141,13 +173,8 @@ public class LoginActivity extends Activity {
         }
         return false;
     }
+    /*驗證帳號密碼 結束*/
 
-    public void storeName(String name) {
-        this.usn = name;
-    }
 
-    public String getUserName() {
-        Log.e("tag", "user Name:" + usn);
-        return usn;
-    }
+
 }

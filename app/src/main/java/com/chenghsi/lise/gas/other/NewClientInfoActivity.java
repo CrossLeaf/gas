@@ -212,6 +212,11 @@ public class NewClientInfoActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 
 }
 

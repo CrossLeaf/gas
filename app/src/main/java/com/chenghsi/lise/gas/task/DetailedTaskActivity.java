@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
+import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
@@ -231,7 +232,9 @@ public class DetailedTaskActivity extends Activity {
         partner[0] = "請選擇夥伴";
         partner_id[0] = "0";
         order_staff_help = partner[0];
-        String staffId = LoginActivity.staff_id;
+        //從Globals拿id
+        Globals g = new Globals();
+        String staffId = g.getUser_id();
         int k = 1;
         for (int i = 0; i < partnerList.size(); i++) {
             if (staffId.equals(partnerList.get(i).getStaff_id())) {
@@ -356,11 +359,9 @@ public class DetailedTaskActivity extends Activity {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            //Todo
         }
     };
 
-    //TODO 傳接 夥伴api
     //選擇夥伴監聽事件
     private Spinner.OnItemSelectedListener partnerListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -461,7 +462,6 @@ public class DetailedTaskActivity extends Activity {
     }
     /*沖帳結束*/
 
-    //TODO 賒銷現銷按鈕動作
     /*現銷*/
     public void btn_money_cash(View view) {
         order_money_credit = "0";
@@ -610,4 +610,9 @@ public class DetailedTaskActivity extends Activity {
             super.handleMessage(msg);
         }
     };
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 }

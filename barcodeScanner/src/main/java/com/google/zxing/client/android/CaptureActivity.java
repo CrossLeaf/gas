@@ -539,7 +539,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
     }
 
-    // Put up our own UI for how to handle the decoded contents.
+    // TODO Put up our own UI for how to handle the decoded contents.
     private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
 
         CharSequence displayContents = resultHandler.getDisplayContents();
@@ -555,83 +555,89 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         if (flag == 0) {    //掃入的動作
             cylinders_number = rawResult.getText();
             new Update().start();
-        } else if (flag == 1) {
+        } else if (flag == 1) {   //掃出的動作
             cylinders_number = rawResult.getText();
             new Update().start();
 
-        } else {
-            statusView.setVisibility(View.GONE);
-            viewfinderView.setVisibility(View.GONE);
-            resultView.setVisibility(View.VISIBLE);
-
-            ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
-            if (barcode == null) {
-                barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.launcher_icon));
-            } else {
-                barcodeImageView.setImageBitmap(barcode);
-            }
-
-            //掃描後所呈現的資訊
-            TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
-            formatTextView.setText(rawResult.getBarcodeFormat().toString());
-
-            TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
-            typeTextView.setText(resultHandler.getType().toString());
-
-            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-            TextView timeTextView = (TextView) findViewById(R.id.time_text_view);
-            timeTextView.setText(formatter.format(new Date(rawResult.getTimestamp())));
-
-
-            TextView metaTextView = (TextView) findViewById(R.id.meta_text_view);
-            View metaTextViewLabel = findViewById(R.id.meta_text_view_label);
-            metaTextView.setVisibility(View.GONE);
-            metaTextViewLabel.setVisibility(View.GONE);
-            Map<ResultMetadataType, Object> metadata = rawResult.getResultMetadata();
-            if (metadata != null) {
-                //最大格所呈現的文字-----目前為掃到條碼底下的文字
-                StringBuilder metadataText = new StringBuilder(20);
-                for (Map.Entry<ResultMetadataType, Object> entry : metadata.entrySet()) {
-                    if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
-                        metadataText.append(entry.getValue()).append('\n');
-                    }
-                }
-                if (metadataText.length() > 0) {
-                    metadataText.setLength(metadataText.length() - 1);
-                    metaTextView.setText(metadataText);
-                    metaTextView.setVisibility(View.VISIBLE);
-                    metaTextViewLabel.setVisibility(View.VISIBLE);
-                }
-            }
-
-            TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
-            contentsTextView.setText(displayContents);
-            int scaledSize = Math.max(22, 32 - displayContents.length() / 4);
-            contentsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
-
-            TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
-            supplementTextView.setText("");
-            supplementTextView.setOnClickListener(null);
-
-
-            //TODO <LISE>
-            metaHistoryItem = new HistoryItem(rawResult.getText());
-            if (historyManager.isBarcodeExist(metaHistoryItem.barcode)) {
-                //這裡看一下掃到什麼
-
-                Log.e("tag", "掃描的內容：" + rawResult.getText());
-                AlertDialog.Builder altBlgBuilder = AltDlgBuilder_OldItemFound();
-                altBlgBuilder.show();
-            } else {
-                Log.e("tag", "Insert new barcode?");
-                AlertDialog.Builder altBlgBuilder = AltDlgBuilder_NewItemFound();
-                altBlgBuilder.show();
-            }
-            Toast.makeText(this, metaHistoryItem.capacity, Toast.LENGTH_SHORT).show();
-            //historyManager.addItem(metaHistoryItem);
-            //</LISE>
+        } else if (flag == 2) {     //更新狀態
+            //TODO 更新狀態
         }
+
+        statusView.setVisibility(View.GONE);
+        viewfinderView.setVisibility(View.GONE);
+        resultView.setVisibility(View.VISIBLE);
+
+        ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
+        if (barcode == null) {
+            barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                    R.drawable.launcher_icon));
+        } else {
+            barcodeImageView.setImageBitmap(barcode);
+        }
+
+        //掃描後所呈現的資訊
+        TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
+        formatTextView.setText(rawResult.getBarcodeFormat().toString());
+
+        TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
+        typeTextView.setText(resultHandler.getType().toString());
+
+        DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        TextView timeTextView = (TextView) findViewById(R.id.time_text_view);
+        timeTextView.setText(formatter.format(new Date(rawResult.getTimestamp())));
+
+        TextView metaTextView = (TextView) findViewById(R.id.meta_text_view);
+        View metaTextViewLabel = findViewById(R.id.meta_text_view_label);
+        metaTextView.setVisibility(View.GONE);
+        metaTextViewLabel.setVisibility(View.GONE);
+        Map<ResultMetadataType, Object> metadata = rawResult.getResultMetadata();
+        if (metadata != null) {
+            //最大格所呈現的文字-----目前為掃到條碼底下的文字
+            StringBuilder metadataText = new StringBuilder(20);
+            for (Map.Entry<ResultMetadataType, Object> entry : metadata.entrySet()) {
+                if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
+                    metadataText.append(entry.getValue()).append('\n');
+                }
+            }
+
+            Log.e("tag", "what is metadataText:"+metadataText);
+
+            if (metadataText.length() > 0) {
+                metadataText.setLength(metadataText.length() - 1);
+                metaTextView.setText(metadataText);
+                metaTextView.setVisibility(View.VISIBLE);
+                metaTextViewLabel.setVisibility(View.VISIBLE);
+            }
+        }
+
+        TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
+        Log.e("tag", "what is displayContents:"+displayContents);
+        contentsTextView.setText(displayContents);
+        int scaledSize = Math.max(22, 32 - displayContents.length() / 4);
+        contentsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
+
+        TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
+        supplementTextView.setText("");
+        supplementTextView.setOnClickListener(null);
+
+
+        //TODO <LISE>
+        metaHistoryItem = new HistoryItem(rawResult.getText());
+        if (historyManager.isBarcodeExist(metaHistoryItem.barcode)) {
+            //這裡看一下掃到什麼
+
+            Log.e("tag", "掃描的內容：" + rawResult.getText());
+            AlertDialog.Builder altBlgBuilder = AltDlgBuilder_OldItemFound();
+            altBlgBuilder.show();
+        } else {
+            Log.e("tag", "Insert new barcode?");
+            AlertDialog.Builder altBlgBuilder = AltDlgBuilder_NewItemFound();
+            altBlgBuilder.show();
+        }
+        Toast.makeText(this, metaHistoryItem.capacity, Toast.LENGTH_SHORT).show();
+        //historyManager.addItem(metaHistoryItem);
+        //</LISE>
+
     }
 
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
@@ -893,9 +899,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             String url = "";
             switch (flag) {
                 case 0: //掃入
-                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
-                            "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
-                            "&tb_td=cylinders_remark&tb_val=" + cylinders_locate;
+                    url = "";
                     break;
                 case 1: //掃出
                     break;

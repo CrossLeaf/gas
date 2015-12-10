@@ -38,8 +38,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     private List<StaffList> staffList;
     private ExpandableListView expListView;
     private List<Map<String, String>> childList;
-    private String userName = LoginActivity.usn;
-    private String staff_id = LoginActivity.staff_id;
+    /*使用者id & name*/
+    private static String userName ;
+    private static String staff_id ;
+
     private String action = Intent.ACTION_CALL;
 
     private LayoutInflater inflater;
@@ -70,7 +72,13 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         this.childList = childList;
         this.staffList = staffList;
 
+        Log.e("extaskList", "userName:"+userName);
+        Log.e("extaskList", "staff_id:"+staff_id);
+
         inflater = LayoutInflater.from(taskActivity);
+        Globals g = new Globals();
+        userName = g.getUser_name();
+        staff_id = g.getUser_id();
 
     }
     //TODO 事後最好用api判斷是否為月結戶
@@ -169,18 +177,18 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
-        Log.e("task", "group size:" + groupList.size());
+//        Log.e("task", "group size:" + groupList.size());
 
         ArrayList<TaskLists> list = groupList.get(0);
-        Log.e("task", "getView call 次數：" + count);
+//        Log.e("task", "getView call 次數：" + count);
         count++;
-        Log.e("task", "list size:" + list.size());
+//        Log.e("task", "list size:" + list.size());
         final TaskLists taskLists = list.get(groupPosition);
 
         String add = _toAddress(taskLists.getCustomer_address());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
         final String callPhone = taskLists.getOrder_phone();
-        Log.e("task", "phone" + callPhone);
+//        Log.e("task", "phone" + callPhone);
         groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
@@ -346,6 +354,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 flag = 2;
                 Intent intent = new Intent();
                 intent.setClass(taskActivity, CaptureActivity.class);
+                intent.putExtra("flag", flag-1);
                 taskActivity.startActivity(intent);
             }
         });
@@ -357,6 +366,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 flag = 3;
                 Intent intent = new Intent();
                 intent.setClass(taskActivity, CaptureActivity.class);
+                intent.putExtra("flag", flag-1);
                 taskActivity.startActivity(intent);
             }
         });
@@ -386,7 +396,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 notifyDataSetChanged();
             }
         });
-        //TODO 設定輸入瓦斯度數
 
         return convertView;
     }
@@ -452,7 +461,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             String[] addr_name = new String[]{"", "", "巷", "弄", "號", "樓", "室"};
             String temp = "";
             String[] address_arr = address.split("_");
-            Log.e("add", "addLength : " + address_arr.length);
+//            Log.e("add", "addLength : " + address_arr.length);
             for (int i = 0; i < address_arr.length; i++) {
                 if (!address_arr[i].equals("") && address_arr[i] != null) {
                     temp += address_arr[i] + addr_name[i];

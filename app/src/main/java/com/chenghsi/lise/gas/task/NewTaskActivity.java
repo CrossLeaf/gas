@@ -13,6 +13,8 @@ import android.widget.ExpandableListView;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.ExTaskListAdapter;
+import com.chenghsi.lise.gas.Globals;
+import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
 import com.chenghsi.lise.gas.TaskLists;
@@ -47,6 +49,11 @@ public class NewTaskActivity extends Activity {
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
+    public static String user_name;
+    public static String user_id;
+    public String u_n;
+    public String u_i;
+
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
 
@@ -59,6 +66,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO if id or name null 回到登入畫面
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
         new AsyncTaskDownLoad().execute(url0, url1, url2);
@@ -75,6 +83,12 @@ public class NewTaskActivity extends Activity {
 
         // Initializing listView
         list_Task.setOnScrollListener(onScrollListener);
+
+        Globals g = new Globals();
+        u_i = g.getUser_id();
+        u_n = g.getUser_name();
+        Log.e("exception test", "globals test:"+ u_i);
+        Log.e("exception test", "globals test:"+ u_n);
     }
 
     // Refreshing when pulling down
@@ -192,7 +206,7 @@ public class NewTaskActivity extends Activity {
                     order_doddle = jsonArrayTask.getJSONArray(i);  //取得陣列中的每個陣列
                         //判斷是否為抄表
                         if (order_doddle.getInt(0) == -1) {
-                            Log.e("task", "抄表作業" + "i:" + i);
+//                            Log.e("task", "抄表作業" + "i:" + i);
                             for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
                                 order_doddle = jsonArrayTask.getJSONArray(j);
                                 if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
@@ -205,7 +219,7 @@ public class NewTaskActivity extends Activity {
                                 doddle_accept = order_doddle.getString(Constant.DODDLE_ACCEPT);
                                 doddle_status = order_doddle.getString(Constant.DODDLE_STATUS);
                                 doddle_remark = order_doddle.getString(Constant.DODDLE_REMARK);
-                                Log.e("task", "基本資料抓取完畢");
+//                                Log.e("task", "基本資料抓取完畢");
 
                                 for (int k = 0; k < jsonArrayCustomer.length(); k++) {
                                     customer = jsonArrayCustomer.getJSONArray(k);
@@ -243,7 +257,7 @@ public class NewTaskActivity extends Activity {
                             order_accept = order_doddle.getString(Constant.ORDER_ACCEPT);
                             order_gas_residual = order_doddle.getString(Constant.ORDER_GAS_RESIDUAL);
                             order_remark = order_doddle.getString(Constant.ORDER_REMARK);
-                            Log.e("task", "order_customer_id:" + order_customer_id);
+//                            Log.e("task", "order_customer_id:" + order_customer_id);
                             for (int j = 0; j < jsonArrayCustomer.length(); j++) {
                                 customer = jsonArrayCustomer.getJSONArray(j);
                                 if (order_customer_id.equals(customer.getString(0))) {
@@ -268,8 +282,8 @@ public class NewTaskActivity extends Activity {
                                         order_should_money, order_status, order_accept, order_customer_id,order_gas_residual,order_remark);
                                 taskListses.add(list);
 
-                                Log.e("task", "name:" + customer_name);
-                                Log.e("task", "customerSettleType:"+customer_settle_type);
+//                                Log.e("task", "name:" + customer_name);
+//                                Log.e("task", "customerSettleType:"+customer_settle_type);
                             }
 
                         }
@@ -283,14 +297,14 @@ public class NewTaskActivity extends Activity {
         }
 
         //TODO 儲存電話號碼
-        private void storePhone(JSONArray jsonArrayCustomer, int node) {
+        /*private void storePhone(JSONArray jsonArrayCustomer, int node) {
             JSONArray phone;
             try {
                 phone = jsonArrayCustomer.getJSONArray(node);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         @Override
         protected void onPostExecute(ArrayList<TaskLists> taskListses) {
@@ -319,7 +333,7 @@ public class NewTaskActivity extends Activity {
                 HttpEntity resEntity = response.getEntity();
                 if (resEntity != null) {
                     retSrc = EntityUtils.toString(resEntity);
-                    Log.e("retSrc", "完整資料：" + retSrc);
+//                    Log.e("retSrc", "完整資料：" + retSrc);
                 } else {
                     retSrc = "Did not work!";
                 }
@@ -344,7 +358,6 @@ public class NewTaskActivity extends Activity {
             childMap.put("scanOut", "掃出");
             childMap.put("finish", "結案");
             childList.add(childMap);
-            Log.e("task", "getData 做完");
         }
     }
 

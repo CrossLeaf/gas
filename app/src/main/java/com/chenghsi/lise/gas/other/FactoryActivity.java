@@ -1,17 +1,15 @@
 package com.chenghsi.lise.gas.other;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +27,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by MengHan on 2015/11/13.
@@ -56,11 +53,14 @@ public class FactoryActivity extends Activity {
     TextView tv_car16;
     TextView tv_car4;
 
+    ImageButton igbtn_check;
+    ImageButton igbtn_pay;
 
     private String url_fac = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=facylN";
     private String url_car = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcylN";
-    private String url_payment = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=payment&where=payment_status~0&where=payment_type~%E5%AD%98%E5%85%A5%E6%B0%A3";
+    private String url_payment = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=payment&where=payment_type~%E5%AD%98%E5%85%A5%E6%B0%A3";
     private String[] url = new String[2];
+    private String which_call;
 
     private int[] fac_list;
     private int[] car_list;
@@ -74,15 +74,21 @@ public class FactoryActivity extends Activity {
 
     //付款 field
     private String total_money;
-    private String paymentId;
+    private String saveout_id;
 
     int for_loop;
     private int flag;
+    private String facylNId;
+    private String carcylNId;
+
+    private Toast showToastMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_factory);
+        new AsyncFactoryDownload().execute(url_fac, url_car);
+        new PaymentFactoryDownload().execute(url_payment);
         //有exception可以讓畫面定格
         /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -92,22 +98,11 @@ public class FactoryActivity extends Activity {
 
             }
         });*/
-        init();
-        Toast.makeText(this, "Loading...", Toast.LENGTH_LONG).show();
 
-        new AsyncFactoryDownload().execute(url_fac, url_car);
-        new PaymentFactoryDownload().execute(url_payment);
-
-        numPick_fac50.setOnValueChangedListener(new NumChangeListener());
-        numPick_fac20.setOnValueChangedListener(new NumChangeListener());
-        numPick_fac16.setOnValueChangedListener(new NumChangeListener());
-        numPick_fac4.setOnValueChangedListener(new NumChangeListener());
-
-        numPick_car50.setOnValueChangedListener(new NumChangeListener());
-        numPick_car20.setOnValueChangedListener(new NumChangeListener());
-        numPick_car16.setOnValueChangedListener(new NumChangeListener());
-        numPick_car4.setOnValueChangedListener(new NumChangeListener());
-
+        fac_content = new String[4];
+        car_content = new String[4];
+        showToastMessage = Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT);
+//        showToastMessage.show();
     }
 
     private void init() {
@@ -131,6 +126,26 @@ public class FactoryActivity extends Activity {
         numPick_car16 = (NumberPicker) findViewById(R.id.numPick_car16);
         numPick_car4 = (NumberPicker) findViewById(R.id.numPick_car4);
 
+        igbtn_check = (ImageButton) findViewById(R.id.igbtn_check);
+        igbtn_pay = (ImageButton) findViewById(R.id.igbtn_pay);
+
+        tv_fac50.setText(fac_content[0]);
+        tv_fac20.setText(fac_content[1]);
+        tv_fac16.setText(fac_content[2]);
+        tv_fac4.setText(fac_content[3]);
+
+        tv_car50.setText(car_content[0]);
+        tv_car20.setText(car_content[1]);
+        tv_car16.setText(car_content[2]);
+        tv_car4.setText(car_content[3]);
+
+        fac_list = new int[]{0, 0, 0, 0};
+        car_list = new int[]{0, 0, 0, 0};
+        //存工廠id
+        fac_car_id[0] = facylNId;
+        //存車上id
+        fac_car_id[1] = carcylNId;
+
         numPick_fac50.setMaxValue(99);
         numPick_fac50.setMinValue(0);
         numPick_fac20.setMaxValue(99);
@@ -149,8 +164,18 @@ public class FactoryActivity extends Activity {
         numPick_car4.setMaxValue(99);
         numPick_car4.setMinValue(0);
 
-        fac_content = new String[4];
-        car_content = new String[4];
+        numPick_fac50.setOnValueChangedListener(new NumChangeListener());
+        numPick_fac20.setOnValueChangedListener(new NumChangeListener());
+        numPick_fac16.setOnValueChangedListener(new NumChangeListener());
+        numPick_fac4.setOnValueChangedListener(new NumChangeListener());
+
+        numPick_car50.setOnValueChangedListener(new NumChangeListener());
+        numPick_car20.setOnValueChangedListener(new NumChangeListener());
+        numPick_car16.setOnValueChangedListener(new NumChangeListener());
+        numPick_car4.setOnValueChangedListener(new NumChangeListener());
+
+        igbtn_check.setOnClickListener(new Btn_check());
+        igbtn_pay.setOnClickListener(new Btn_pay());
     }
 
     public class NumChangeListener implements NumberPicker.OnValueChangeListener {
@@ -190,69 +215,94 @@ public class FactoryActivity extends Activity {
         }
     }
 
+
     /*check button*/
-    public void btn_check(View view) {
+    class Btn_check implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Log.e("factory", "fac_content:" + fac_content[0]);
+            Log.e("factory", "fac_list:" + fac_list[0]);
+            Log.e("factory", "car_list:" + car_list[0]);
 
-        int fac_50 = Integer.parseInt(fac_content[0]) + fac_list[0];
-        fac_50 = fac_50 - car_list[0];
-        Log.e("factory", "50KG:" + fac_50);
-        tv_fac50.setText(String.valueOf(fac_50));
+            int fac_50 = Integer.parseInt(fac_content[0]) + fac_list[0];
+            fac_50 = fac_50 - car_list[0];
+            Log.e("factory", "50KG:" + fac_50);
+            tv_fac50.setText(String.valueOf(fac_50));
 
-        int fac_20 = Integer.parseInt(fac_content[1]) + fac_list[1];
-        fac_20 = fac_20 - car_list[1];
-        tv_fac20.setText(String.valueOf(fac_20));
+            int fac_20 = Integer.parseInt(fac_content[1]) + fac_list[1];
+            fac_20 = fac_20 - car_list[1];
+            tv_fac20.setText(String.valueOf(fac_20));
 
-        int fac_16 = Integer.parseInt(fac_content[2]) + fac_list[2];
-        fac_16 = fac_16 - car_list[2];
-        tv_fac16.setText(String.valueOf(fac_16));
+            int fac_16 = Integer.parseInt(fac_content[2]) + fac_list[2];
+            fac_16 = fac_16 - car_list[2];
+            tv_fac16.setText(String.valueOf(fac_16));
 
-        int fac_4 = Integer.parseInt(fac_content[3]) + fac_list[3];
-        fac_4 = fac_4 - car_list[3];
-        tv_fac4.setText(String.valueOf(fac_4));
+            int fac_4 = Integer.parseInt(fac_content[3]) + fac_list[3];
+            fac_4 = fac_4 - car_list[3];
+            tv_fac4.setText(String.valueOf(fac_4));
 
-        int car_50 = Integer.parseInt(car_content[0]) + car_list[0];
-        Log.e("factory", "50KG:" + car_50);
-        tv_car50.setText(String.valueOf(car_50));
+            int car_50 = Integer.parseInt(car_content[0]) + car_list[0];
+            Log.e("factory", "50KG:" + car_50);
+            tv_car50.setText(String.valueOf(car_50));
 
-        int car_20 = Integer.parseInt(car_content[1]) + car_list[1];
-        tv_car20.setText(String.valueOf(car_20));
+            int car_20 = Integer.parseInt(car_content[1]) + car_list[1];
+            tv_car20.setText(String.valueOf(car_20));
 
-        int car_16 = Integer.parseInt(car_content[2]) + car_list[2];
-        tv_car16.setText(String.valueOf(car_16));
+            int car_16 = Integer.parseInt(car_content[2]) + car_list[2];
+            tv_car16.setText(String.valueOf(car_16));
 
-        int car_4 = Integer.parseInt(car_content[3]) + car_list[3];
-        tv_car4.setText(String.valueOf(car_4));
+            int car_4 = Integer.parseInt(car_content[3]) + car_list[3];
+            tv_car4.setText(String.valueOf(car_4));
 
-        fac_car_content[0] = fac_list[0] + "," + fac_list[1] + "," + fac_list[2] + "," + fac_list[3];
-        fac_car_content[1] = car_list[0] + "," + car_list[1] + "," + car_list[2] + "," + car_list[3];
+            fac_car_content[0] = fac_list[0] + "," + fac_list[1] + "," + fac_list[2] + "," + fac_list[3];
+            fac_car_content[1] = car_list[0] + "," + car_list[1] + "," + car_list[2] + "," + car_list[3];
 
-        if (fac_car_content[0].equals("0,0,0,0") && fac_car_content[1].equals("0,0,0,0")) {
-            Toast.makeText(this, "請輸入數量", Toast.LENGTH_SHORT).show();
-        } else if (fac_car_content[0].equals("0,0,0,0")) {
-            for_loop = 1;
-            flag = 1;
-            new Update().start();
-            Log.e("factory", "flag = 1");
+            if (fac_car_content[0].equals("0,0,0,0") && fac_car_content[1].equals("0,0,0,0")) {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(FactoryActivity.this, "請輸入數量", Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            } else if (fac_car_content[0].equals("0,0,0,0")) {
+                for_loop = 1;
+                flag = 1;
+                new Update().start();
+                Log.e("factory", "flag = 1");
 
-        } else if (fac_car_content[1].equals("0,0,0,0")) {
-            for_loop = 1;
-            flag = 0;
-            new Update().start();
+            } else if (fac_car_content[1].equals("0,0,0,0")) {
+                for_loop = 1;
+                flag = 0;
+                new Update().start();
 
-        } else { //兩者都有輸入的情況
-            for_loop = 2;
-            flag = 0;
+            } else { //兩者都有輸入的情況
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(FactoryActivity.this, "注意上下同時有輸入\n請重新輸入", Toast.LENGTH_LONG);
+                showToastMessage.show();
+                Log.e("factory", "兩者都有輸入");
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+
+            }
         }
     }
 
+
     //TODO 付款
-    public void btn_pay(View view) {
-        Log.e("factory", "total pay:" + total_money);
-        Log.e("factory", "payment_id:" + paymentId);
-        Intent intent = new Intent(this, FactoryDialogActivity.class);
-        intent.putExtra("total_money", total_money);
-        intent.putExtra("payment_id", paymentId);
-        startActivity(intent);
+    class Btn_pay implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Log.e("factory", "total pay:" + total_money);
+            Log.e("factory", "payment_id:" + saveout_id);
+            if (!paymentList.isEmpty()) {
+                Intent intent = new Intent(FactoryActivity.this, FactoryDialogActivity.class);
+                intent.putExtra("total_money", total_money);
+                intent.putExtra("saveout_id", saveout_id);
+                startActivity(intent);
+            } else {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(FactoryActivity.this, "付款項目為空", Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            }
+        }
     }
 
     private class Update extends Thread {
@@ -276,11 +326,11 @@ public class FactoryActivity extends Activity {
                     HttpResponse response = httpclient.execute(httpget);
                     Log.e("retSrc", "讀取 JSON-2...");
                     HttpEntity resEntity = response.getEntity();
-                    if (for_loop == 2) {
+                    /*if (for_loop == 2) {
                         flag++;
                         Log.e("factory", "進入for-loop");
                         continue;
-                    }
+                    }*/
 
                     if (resEntity != null) {
                         String retSrc = EntityUtils.toString(resEntity);
@@ -301,19 +351,6 @@ public class FactoryActivity extends Activity {
 
     }
 
-    //TODO 11/30解決
-    Handler myHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    Log.e("factory", "getIntent");
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                    break;
-            }
-        }
-    };
 
     private class PaymentFactoryDownload extends AsyncTask<String, Integer, Void> {
 
@@ -328,32 +365,35 @@ public class FactoryActivity extends Activity {
         @Override
         protected Void doInBackground(String... urls) {
             try {
+                which_call = "PaymentFactoryDownload";
                 Log.e("factory", "付款按鈕downLoad");
                 JSONArray jsonArrayPayment = new JSONArray(getJSONData(urls[0]));
                 JSONArray payment;
                 paymentList = new ArrayList<>();
+                Log.e("factory", "陣列長度：" + jsonArrayPayment.length());
+
                 for (int i = 0; i < jsonArrayPayment.length(); i++) {
                     payment = jsonArrayPayment.getJSONArray(i);
-                    payment_id = payment.getString(Constant.PAYMENT_ID);
-                    Log.e("factory", "id");
-                    payment_type = payment.getString(Constant.PAYMENT_TYPE);
-                    Log.e("factory", "type");
-                    payment_status = payment.getString(Constant.PAYMENT_STATUS);
-                    Log.e("factory", "status");
-                    payment_content = payment.getString(Constant.PAYMENT_CONTENT);
-                    Log.e("factory", "content");
-                    payment_build_date = payment.getString(Constant.PAYMENT_BUILD_DATE);
-                    Log.e("factory", "date");
-                    payment_money_cash = payment.getString(Constant.PAYMENT_MONEY_CASH);
-                    Log.e("factory", "cash");
-                    PaymentList list = new PaymentList(payment_id, payment_type, payment_status,
-                            payment_content, payment_money_cash, payment_build_date);
-                    Log.e("factory", "list");
-                    paymentList.add(list);
-                    Log.e("factory", "add list");
+
+                    //假如尚未付款才存入ArrayList
+                    if (payment.getString(Constant.PAYMENT_STATUS).equals("0")) {
+                        payment_id = payment.getString(Constant.PAYMENT_ID);
+                        Log.e("factory", "id");
+                        payment_type = payment.getString(Constant.PAYMENT_TYPE);
+                        payment_status = payment.getString(Constant.PAYMENT_STATUS);
+                        payment_content = payment.getString(Constant.PAYMENT_CONTENT);
+                        payment_build_date = payment.getString(Constant.PAYMENT_BUILD_DATE);
+                        payment_money_cash = payment.getString(Constant.PAYMENT_MONEY_CASH);
+                        saveout_id = payment.getString(Constant.SAVEOUT_ID);
+                        PaymentList list = new PaymentList(payment_id, payment_type, payment_status,
+                                payment_content, payment_money_cash, payment_build_date, saveout_id);
+                        Log.e("factory", "list");
+                        paymentList.add(list);
+                        Log.e("factory", "add list");
+                    }
                 }
             } catch (Exception e) {
-                Log.e("factory", "資料抓取有誤");
+                Log.e("factory", "PaymentFactoryDownload 資料抓取有誤");
             }
             return null;
         }
@@ -365,14 +405,13 @@ public class FactoryActivity extends Activity {
             for (int i = 0; i < paymentList.size(); i++) {
                 int money_cash = Integer.parseInt(paymentList.get(i).getPayment_money_cash());
                 money += money_cash;
-                if (i==0){
-                    paymentId = paymentList.get(i).getPayment_id();
-                }else {
-                    paymentId += ","+paymentList.get(i).getPayment_id();
+                if (i == 0) {
+                    saveout_id = paymentList.get(i).getSaveout_id();
+                } else {
+                    saveout_id += "_" + paymentList.get(i).getSaveout_id();
                 }
             }
             total_money = String.valueOf(money);
-
         }
     }
 
@@ -387,7 +426,7 @@ public class FactoryActivity extends Activity {
         @Override
         protected Void doInBackground(String... urls) {
             try {
-
+                which_call = "AsyncFactoryDownload";
                 JSONArray jsonArrayFactory = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCar = new JSONArray(getJSONData(urls[1]));
                 JSONArray factory;
@@ -422,27 +461,37 @@ public class FactoryActivity extends Activity {
             fac_content = facylN_content.split(",");
             car_content = carcylN_content.split(",");
 
-            tv_fac50.setText(fac_content[0]);
-            tv_fac20.setText(fac_content[1]);
-            tv_fac16.setText(fac_content[2]);
-            tv_fac4.setText(fac_content[3]);
-
-            fac_list = new int[]{0, 0, 0, 0};
-            car_list = new int[]{0, 0, 0, 0};
-
-            tv_car50.setText(car_content[0]);
-            tv_car20.setText(car_content[1]);
-            tv_car16.setText(car_content[2]);
-            tv_car4.setText(car_content[3]);
-
-            //存工廠id
-            fac_car_id[0] = facylN_id;
-            //存車上id
-            fac_car_id[1] = carcylN_id;
+            Message message = new Message();
+            message.what = 1;
+            myHandler.sendMessage(message);
+            facylNId = facylN_id;
+            carcylNId = carcylN_id;
         }
+
 
     }
 
+    Handler myHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    Log.e("factory", "getIntent");
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                    break;
+                case 1:
+                    init();
+                    downLoad_init();
+                default:
+                    break;
+            }
+        }
+    };
+
+    public void downLoad_init() {
+
+    }
 
     //取得JSON資料
     private String getJSONData(String url) {
@@ -454,7 +503,7 @@ public class FactoryActivity extends Activity {
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
                 retSrc = EntityUtils.toString(resEntity);
-                Log.e("retSrc", "完整資料：" + retSrc);
+                Log.e("retSrc", which_call + "的完整資料：" + retSrc);
             } else {
                 retSrc = "Did not work!";
             }
@@ -468,5 +517,18 @@ public class FactoryActivity extends Activity {
         return retSrc;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("factory", "-----pause-----");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("factory", "-----stop-----");
+        showToastMessage.cancel();
+        finish();
+    }
 }
 

@@ -195,13 +195,13 @@
             <ImageButton
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:id="@+id/imageButton4"
+                android:id="@+id/igbtn_pay"
                 android:background="@drawable/pay_money"
                 android:elevation="8dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:onClick="btn_pay"/>
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -214,11 +214,11 @@
             <ImageButton
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:id="@+id/imageButton3"
+                android:id="@+id/igbtn_check"
                 android:background="@drawable/circle_red"
 
                 android:layout_gravity="end"
-                android:onClick="btn_check"/>
+                />
 
         </LinearLayout>
     </LinearLayout>

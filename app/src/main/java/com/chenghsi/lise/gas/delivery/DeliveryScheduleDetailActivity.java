@@ -359,4 +359,10 @@ public class DeliveryScheduleDetailActivity extends Activity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+
 }

@@ -119,4 +119,10 @@ public class NewDetailClientInfoActivity extends Activity {
             return retSrc;
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 }

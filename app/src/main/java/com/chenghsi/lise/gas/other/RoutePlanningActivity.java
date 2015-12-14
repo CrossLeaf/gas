@@ -96,7 +96,6 @@ public class RoutePlanningActivity extends Activity
     private String getAllAddress()
     {
         String str="";
-        //TODO 需要檢查
 //        boolean [] state = taskActivity.getTempState();
 //        String [] tempAddress = taskActivity.getTempAddress();
         boolean[] state = TaskActivity.tempState;

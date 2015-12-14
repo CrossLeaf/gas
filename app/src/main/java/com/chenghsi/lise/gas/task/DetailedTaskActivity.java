@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
 import com.chenghsi.lise.gas.Globals;
-import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
 
@@ -37,7 +36,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

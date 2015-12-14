@@ -24,7 +24,8 @@
             android:id="@+id/btn_meterReading"
             android:onClick="onClick_btn_meterReading"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:visibility="gone"/>
 
         <Button
             android:layout_width="match_parent"

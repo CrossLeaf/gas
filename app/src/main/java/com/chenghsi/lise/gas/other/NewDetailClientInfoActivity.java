@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.ListView;
 
 import com.chenghsi.lise.gas.Constant;
@@ -47,6 +48,15 @@ public class NewDetailClientInfoActivity extends Activity {
         lv_detail_client = (ListView) findViewById(R.id.lv_detail_client);
     }
 
+    //捕捉返回鍵
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            this.finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     class AsyncClientDownLoad extends AsyncTask<String, Integer, List<DetailClientInfoList>> {
 
         String order_day;
@@ -58,6 +68,7 @@ public class NewDetailClientInfoActivity extends Activity {
         @Override
         protected List<DetailClientInfoList> doInBackground(String... urls) {
             try {
+
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayDoddle = new JSONArray(getJSONData(urls[1]));
                 JSONArray order;
@@ -121,8 +132,15 @@ public class NewDetailClientInfoActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("detailClient", "------pause------");
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        finish();
+        Log.e("detailClient", "------stop------");
+//        finish();
     }
 }

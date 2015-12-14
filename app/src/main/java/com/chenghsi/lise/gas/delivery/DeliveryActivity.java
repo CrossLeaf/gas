@@ -101,7 +101,7 @@ public class DeliveryActivity extends AbstractList
 
                 ArrayList<String> result = new ArrayList<>();
                 result.add( item_customer.getString(Constant.CUSTOMER_NAME) );
-                result.add( item_customer.getString(Constant.CUSTOMER_EMAIL) ); //TODO phone
+                result.add( item_customer.getString(Constant.CUSTOMER_EMAIL) );
                 result.add( item_customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS) );
 
                 return result.toArray(new String[result.size()]);
@@ -115,7 +115,6 @@ public class DeliveryActivity extends AbstractList
         @Override
         public long getItemId(int position)
         {
-            // TODO Auto-generated method stub
             return position;
         }
 

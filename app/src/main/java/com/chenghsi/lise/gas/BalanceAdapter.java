@@ -10,6 +10,7 @@ import android.widget.CheckedTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.other.NewBalancingActivity;
 
@@ -25,8 +26,7 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
     private List<BalanceList> balance;
     private List<BalanceList> mOriginalValues;
     private MyFilter filter;
-    private String[] order_date_list;
-//    private List<Boolean> check_list;
+    //    private List<Boolean> check_list;
     int count = 0;
 
     public BalanceAdapter(Context context, List<BalanceList> balance) {
@@ -75,13 +75,14 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
         String cylinders = balance.getCylinders_list();
         String[] cylinder_list = cylinders.split(",");
         String order_id = balance.getId();
+        String[] order_date_list = balance.getOrder_date().split("-", 2);
+
         holder.checkText_name.setText(balance.getName());
         holder.tv_cylinder1.setText("50KG:" + cylinder_list[0]);
         holder.tv_cylinder2.setText("20KG:" + cylinder_list[1]);
         holder.tv_cylinder3.setText("16KG:" + cylinder_list[2]);
         holder.tv_cylinder4.setText("4KG:" + cylinder_list[3]);
-        order_date_list = balance.getOrder_date().split("-",2);
-        holder.order_date.setText(order_date_list[0]+"\n"+order_date_list[1]);
+        holder.order_date.setText(order_date_list[0]+"\n"+ order_date_list[1]);
         holder.should_money.setText(balance.getMoney());
         count++;
         Log.e("balance", "balance view:" + position + "\n count:" + count);
@@ -136,18 +137,18 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
             Log.e("tag", "constraint:"+constraint);
             if (mOriginalValues == null) {
                 synchronized (this) {
-                    mOriginalValues = new ArrayList<BalanceList>(balance);
+                    mOriginalValues = new ArrayList<>(balance);
                 }
             }
 
             if (constraint != null && constraint.toString().length() > 0) {
-                ArrayList<BalanceList> filteredItems = new ArrayList<BalanceList>();
+                ArrayList<BalanceList> filteredItems = new ArrayList<>();
                 for (int i = 0, l = mOriginalValues.size(); i < l; i++) {
                     BalanceList m = mOriginalValues.get(i);
                     Log.e("tag", "i:"+i);
                     Log.e("tag", "m = "+mOriginalValues.get(i));
 
-                    if (m.getName().contains(constraint)) {
+                    if (m.getName().contains(constraint) || convertDate(m.getOrder_date()).contains(constraint)) {
                         filteredItems.add(m);
                     }
                 }
@@ -175,6 +176,20 @@ public class BalanceAdapter extends BaseAdapter implements Filterable {
                 notifyDataSetInvalidated();
                 Log.e("tag", "notifyDataSetInvalidated");
             }
+        }
+
+        public String convertDate (String date){
+            String newDate = "";
+            try {
+                String[] date_arr = date.split("-");
+                for (String temp : date_arr){
+                    newDate+=temp;
+                }
+                Log.e("convertDate", "newDate:"+newDate);
+            }catch (Exception e){
+                Toast.makeText(myInflater.getContext(),"資料格式不對", Toast.LENGTH_SHORT ).show();
+            }
+            return newDate;
         }
     }
 }

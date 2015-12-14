@@ -49,27 +49,26 @@ public class NewTaskActivity extends Activity {
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
-    public static String user_name;
+    public String user_name;
     public static String user_id;
-    public String u_n;
-    public String u_i;
+
 
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
 
-    String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
-    //customer join phone --->customer_id
-    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     //今日抄表與訂單 url
     String url0 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
+    //customer join phone --->customer_id
+    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
 
+    String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
+    String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcyln&where=car_id~";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO if id or name null 回到登入畫面
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
-        new AsyncTaskDownLoad().execute(url0, url1, url2);
+        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -85,10 +84,11 @@ public class NewTaskActivity extends Activity {
         list_Task.setOnScrollListener(onScrollListener);
 
         Globals g = new Globals();
-        u_i = g.getUser_id();
-        u_n = g.getUser_name();
-        Log.e("exception test", "globals test:"+ u_i);
-        Log.e("exception test", "globals test:"+ u_n);
+        user_id = g.getUser_id();
+        user_name = g.getUser_name();
+
+        Log.e("exception test", "globals test:"+ user_id);
+        Log.e("exception test", "globals test:"+ user_name);
     }
 
     // Refreshing when pulling down
@@ -116,9 +116,7 @@ public class NewTaskActivity extends Activity {
         @Override
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
-
-            new AsyncTaskDownLoad().execute(url0, url1, url2);
-
+            new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
             adapter.notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -132,7 +130,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        new AsyncTaskDownLoad().execute(url0, url1, url2);
+        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
         Log.e("task", "----onResume----");
     }
 
@@ -181,18 +179,28 @@ public class NewTaskActivity extends Activity {
         private String staff_id;
         private String staff_name;
 
+//        private String car_id ;
+        private String carcyln_content ;
+
         @Override
         protected ArrayList<TaskLists> doInBackground(String... urls) {
             try {
-
+                String url_car = urls[3] + user_id;
                 taskListses = new ArrayList<>();
                 staffLists = new ArrayList<>();
                 JSONArray jsonArrayTask = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[1]));
                 JSONArray jsonArrayStaff = new JSONArray(getJSONData(urls[2]));
+                JSONArray jsonArrayCarcyln = new JSONArray(getJSONData(url_car));
+
                 JSONArray order_doddle;
                 JSONArray customer;
                 JSONArray staff;
+                JSONArray carcyln;
+
+                carcyln = jsonArrayCarcyln.getJSONArray(jsonArrayCarcyln.length()-1);
+                carcyln_content = carcyln.getString(Constant.CARCYLN_CONTENT);
+                Log.e("newTask", "carcyln_content:"+carcyln_content);
 
                 for (int j =0; j<jsonArrayStaff.length(); j++){
                     staff = jsonArrayStaff.getJSONArray(j);
@@ -235,7 +243,7 @@ public class NewTaskActivity extends Activity {
                                     customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                                     TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
                                             null, customer_name, doddle_address,null,
-                                            null, doddle_status, doddle_accept, doddle_customer_id, null,doddle_remark);
+                                            null, doddle_status, doddle_accept, doddle_customer_id, null,doddle_remark, null);
                                     taskListses.add(list);
                                     break;
                                 }
@@ -274,12 +282,12 @@ public class NewTaskActivity extends Activity {
                             if (order_customer_id.equals(null)) {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
                                         order_cylinders_list, null, null,null, order_should_money, order_status,
-                                        order_accept, null,order_gas_residual, order_remark);
+                                        order_accept, null,order_gas_residual, order_remark, carcyln_content);
                                 taskListses.add(list);
                             } else {
                                 TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
                                         order_cylinders_list, customer_name, customer_address,customer_settle_type,
-                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual,order_remark);
+                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual,order_remark, carcyln_content);
                                 taskListses.add(list);
 
 //                                Log.e("task", "name:" + customer_name);
@@ -296,8 +304,8 @@ public class NewTaskActivity extends Activity {
             return taskListses;
         }
 
-        //TODO 儲存電話號碼
-        /*private void storePhone(JSONArray jsonArrayCustomer, int node) {
+        /*儲存電話號碼
+        private void storePhone(JSONArray jsonArrayCustomer, int node) {
             JSONArray phone;
             try {
                 phone = jsonArrayCustomer.getJSONArray(node);

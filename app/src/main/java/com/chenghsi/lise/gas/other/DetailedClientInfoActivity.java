@@ -57,7 +57,6 @@ public class DetailedClientInfoActivity extends Activity
     {
         super.onResume();
 
-        // TODO Test data
         ((TextView)R_name.findViewById(R.id.text2)).setText("王先生");
         ((TextView)R_address.findViewById(R.id.text2)).setText("新北市信義區基隆路400號10樓之2");
 

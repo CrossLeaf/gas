@@ -44,6 +44,7 @@ public class DeliveryScheduleActivity extends Activity {
         Myear = prevYear;
         Mmonth = prevMonth;
         Mday = prevDay;
+        calendarView.setShowWeekNumber(false);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int year, int month, int dayOfMonth) {

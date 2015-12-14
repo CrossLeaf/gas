@@ -116,6 +116,7 @@ public class NewBalancingActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable arg0) {
+                if (adapter!=null)
                 NewBalancingActivity.this.adapter.getFilter().filter(arg0);
                 Log.e("tag", "afterTextChanged");
             }

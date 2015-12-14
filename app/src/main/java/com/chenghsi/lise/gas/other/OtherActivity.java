@@ -35,6 +35,7 @@ public class OtherActivity extends Activity
     //出入氣按鈕
     public void onClick_btn_barcodeScanning(View view)
     {
+
 //        barcodeScanning_Dialog();
         Intent intent = new Intent();
         intent.setClass(OtherActivity.this, FactoryActivity.class);
@@ -77,8 +78,8 @@ public class OtherActivity extends Activity
     public void barcodeScanning_Dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.barcodeScanning);
-        String[] scane = {"更新狀態",
-                "檢驗場條碼 刷出", "檢驗場條碼 刷入"};
+        String[] scane = {"檢驗場條碼 刷入",
+                "檢驗場條碼 刷出", "更新狀態"};
 
         builder.setItems(scane, new DialogInterface.OnClickListener() {
             @Override
@@ -86,14 +87,17 @@ public class OtherActivity extends Activity
                 switch (which){
                     case 0:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
+                        intent.putExtra("flag", 1);
                         startActivity(intent);
                         break;
                     case 1:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
+                        intent.putExtra("flag", 2);
                         startActivity(intent);
                         break;
                     case 2:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
+                        intent.putExtra("flag", 3);
                         startActivity(intent);
                         break;
                     /*case 3:

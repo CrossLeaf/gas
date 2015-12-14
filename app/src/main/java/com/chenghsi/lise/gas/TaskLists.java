@@ -18,12 +18,13 @@ public class TaskLists {
     private String order_should_money;
     private String order_gas_residual;
     private String order_remark;
+    private String carcyln_content;
 
 
     public TaskLists(String order_doddle_id, String order_prefer_time, String order_task,
                      String order_phone, String order_cylinders_list, String customer_name,
                      String customer_address, String customer_settle_type, String order_should_money, String order_doddle_status,
-                     String order_doddle_accept, String customer_id, String order_gas_residual, String order_remark) {
+                     String order_doddle_accept, String customer_id, String order_gas_residual, String order_remark, String carcyln_content) {
         setOrder_doddle_id(order_doddle_id);
         setOrder_cylinders_list(order_cylinders_list);
         setOrder_phone(order_phone);
@@ -38,6 +39,7 @@ public class TaskLists {
         setOrder_should_money(order_should_money);
         setOrder_gas_residual(order_gas_residual);
         setOrder_remark(order_remark);
+        setCarcyln_content(carcyln_content);
     }
 
     public String getOrder_doddle_id() {
@@ -152,5 +154,13 @@ public class TaskLists {
 
     public void setOrder_remark(String order_remark) {
         this.order_remark = order_remark;
+    }
+
+    public String getCarcyln_content() {
+        return carcyln_content;
+    }
+
+    public void setCarcyln_content(String carcyln_content) {
+        this.carcyln_content = carcyln_content;
     }
 }

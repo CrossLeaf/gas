@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
+import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.PaymentList;
 import com.chenghsi.lise.gas.R;
 
@@ -57,7 +58,7 @@ public class FactoryActivity extends Activity {
     ImageButton igbtn_pay;
 
     private String url_fac = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=facylN";
-    private String url_car = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcylN";
+    private String url_car = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcylN&where=car_id~";
     private String url_payment = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=payment&where=payment_type~%E5%AD%98%E5%85%A5%E6%B0%A3";
     private String[] url = new String[2];
     private String which_call;
@@ -89,6 +90,7 @@ public class FactoryActivity extends Activity {
         setContentView(R.layout.activity_factory);
         new AsyncFactoryDownload().execute(url_fac, url_car);
         new PaymentFactoryDownload().execute(url_payment);
+
         //有exception可以讓畫面定格
         /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -271,28 +273,26 @@ public class FactoryActivity extends Activity {
                 for_loop = 1;
                 flag = 0;
                 new Update().start();
-
             } else { //兩者都有輸入的情況
                 showToastMessage.cancel();
-                showToastMessage = Toast.makeText(FactoryActivity.this, "注意上下同時有輸入\n請重新輸入", Toast.LENGTH_LONG);
+                showToastMessage = Toast.makeText(FactoryActivity.this, "請重新輸入", Toast.LENGTH_LONG);
                 showToastMessage.show();
                 Log.e("factory", "兩者都有輸入");
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
-
             }
         }
     }
 
 
-    //TODO 付款
+    /*付款*/
     class Btn_pay implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             Log.e("factory", "total pay:" + total_money);
             Log.e("factory", "payment_id:" + saveout_id);
-            if (!paymentList.isEmpty()) {
+            if (paymentList!=null) {
                 Intent intent = new Intent(FactoryActivity.this, FactoryDialogActivity.class);
                 intent.putExtra("total_money", total_money);
                 intent.putExtra("saveout_id", saveout_id);
@@ -326,11 +326,6 @@ public class FactoryActivity extends Activity {
                     HttpResponse response = httpclient.execute(httpget);
                     Log.e("retSrc", "讀取 JSON-2...");
                     HttpEntity resEntity = response.getEntity();
-                    /*if (for_loop == 2) {
-                        flag++;
-                        Log.e("factory", "進入for-loop");
-                        continue;
-                    }*/
 
                     if (resEntity != null) {
                         String retSrc = EntityUtils.toString(resEntity);
@@ -375,7 +370,7 @@ public class FactoryActivity extends Activity {
                 for (int i = 0; i < jsonArrayPayment.length(); i++) {
                     payment = jsonArrayPayment.getJSONArray(i);
 
-                    //假如尚未付款才存入ArrayList
+                    //尚未付款才存入ArrayList
                     if (payment.getString(Constant.PAYMENT_STATUS).equals("0")) {
                         payment_id = payment.getString(Constant.PAYMENT_ID);
                         Log.e("factory", "id");
@@ -421,14 +416,15 @@ public class FactoryActivity extends Activity {
         String facylN_content;
         String carcylN_id;
         String carcylN_content;
-
+        Globals g = new Globals();
 
         @Override
         protected Void doInBackground(String... urls) {
             try {
                 which_call = "AsyncFactoryDownload";
+                String urlCar = urls[1]+g.getUser_id();
                 JSONArray jsonArrayFactory = new JSONArray(getJSONData(urls[0]));
-                JSONArray jsonArrayCar = new JSONArray(getJSONData(urls[1]));
+                JSONArray jsonArrayCar = new JSONArray(getJSONData(urlCar));
                 JSONArray factory;
                 JSONArray car;
 
@@ -445,6 +441,7 @@ public class FactoryActivity extends Activity {
                 carcylN_id = car.getString(Constant.CARCYLN_ID);
                 car_id = car.getString(Constant.CAR_ID);
                 carcylN_content = car.getString(Constant.CARCYLN_CONTENT);
+                Log.e("factory", "car_id:"+car_id);
                 Log.e("factory", "執行完畢");
 
 

@@ -187,7 +187,6 @@ public class DeliveryScheduleDetailActivity extends Activity {
         }
     };
 
-    //TODO 取消與確認 button
     public void btn_schedule(View view) {
         switch (view.getId()) {
             case R.id.btn_cancel:

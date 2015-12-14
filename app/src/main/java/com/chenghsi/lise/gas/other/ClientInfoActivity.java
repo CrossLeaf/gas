@@ -131,7 +131,7 @@ public class ClientInfoActivity extends AbstractList
                 result = new ArrayList<>();
                 result.add( item_customer.getString(Constant.CUSTOMER_NAME) );
                 result.add( item_customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS) );
-                result.add( "phone" ); // TODO
+                result.add( "phone" );
 
                 return result.toArray(new String[result.size()]);
             }

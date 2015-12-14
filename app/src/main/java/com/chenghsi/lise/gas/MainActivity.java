@@ -47,7 +47,6 @@ public class MainActivity extends TabActivity {
         super.onResume();
         Log.e("Main", "------Main resume----");
 
-        //TODO if id=null
         Globals g = new Globals();
         if (g.getUser_id() == null || g.getUser_name() == null ||
                 g.getUser_id().isEmpty() || g.getUser_name().isEmpty()) {

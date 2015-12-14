@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -60,6 +61,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -132,6 +134,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private String cylinders_number;
     private String cylinders_locate;
     private int flag;
+    private String customer_id;
+    private String car_id;
 
 
     ViewfinderView getViewfinderView() {
@@ -160,8 +164,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ambientLightManager = new AmbientLightManager(this);
 
         Intent intent = getIntent();
-        flag = intent.getIntExtra("flag", -1);
+        flag = intent.getIntExtra("flag",0)-1;
+        Log.e("tag", "flag="+flag);
         cylinders_locate = intent.getStringExtra("locate");
+
+        //車子ID
+        car_id = intent.getStringExtra("car_id");
+        //客戶ID
+        customer_id = intent.getStringExtra("customer_id");
 
         //menu的介面
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -293,7 +303,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
 
         historyManager = new HistoryManager(this); //LISE
-        renewListview(); //LISE
+//        renewListview(); //LISE
     }
 
     private int getCurrentOrientation() {
@@ -539,7 +549,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
     }
 
-    // TODO Put up our own UI for how to handle the decoded contents.
+    // Put up our own UI for how to handle the decoded contents.
     private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
 
         CharSequence displayContents = resultHandler.getDisplayContents();
@@ -551,17 +561,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             resultHandler.handleButtonPress(resultHandler.getDefaultButtonID());
             return;
         }
-        //TODO 判斷為掃入掃出or掃描
-        if (flag == 0) {    //掃入的動作
-            cylinders_number = rawResult.getText();
-            new Update().start();
-        } else if (flag == 1) {   //掃出的動作
-            cylinders_number = rawResult.getText();
-            new Update().start();
 
-        } else if (flag == 2) {     //更新狀態
-            //TODO 更新狀態
-        }
+        //TODO 掃描後更新資料
+        cylinders_number = rawResult.getText();
+        new Update().start();
 
         statusView.setVisibility(View.GONE);
         viewfinderView.setVisibility(View.GONE);
@@ -609,7 +612,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 metaTextViewLabel.setVisibility(View.VISIBLE);
             }
         }
-
+        /*掃描後右邊呈現資訊（掃描後得到的訊息）*/
         TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
         Log.e("tag", "what is displayContents:"+displayContents);
         contentsTextView.setText(displayContents);
@@ -619,9 +622,27 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
         supplementTextView.setText("");
         supplementTextView.setOnClickListener(null);
+        /*end*/
 
+        Button btn_cap_cancel = (Button) findViewById(R.id.btn_cap_cancel);
+        Button btn_cap_ok = (Button) findViewById(R.id.btn_cap_ok);
 
-        //TODO <LISE>
+        btn_cap_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btn_cap_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                restartPreviewAfterDelay(0L);
+            }
+        });
+
+        /*掃描後詢問是否要存入資料庫或修改
         metaHistoryItem = new HistoryItem(rawResult.getText());
         if (historyManager.isBarcodeExist(metaHistoryItem.barcode)) {
             //這裡看一下掃到什麼
@@ -635,7 +656,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             altBlgBuilder.show();
         }
         Toast.makeText(this, metaHistoryItem.capacity, Toast.LENGTH_SHORT).show();
-        //historyManager.addItem(metaHistoryItem);
+        historyManager.addItem(metaHistoryItem);*/
         //</LISE>
 
     }
@@ -831,8 +852,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                         //回傳鋼瓶號碼  cylinders_number
                         new Update().start();
 
-                        AlertDialog.Builder dlg_choice = AltDlgBuilder_choice();
-                        dlg_choice.show();
+//                        AlertDialog.Builder dlg_choice = AltDlgBuilder_choice();
+//                        dlg_choice.show();
                     }
                 });
         altBlgBuilder.setNegativeButton("否",
@@ -898,22 +919,36 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             String retSrc;
             String url = "";
             switch (flag) {
-                case 0: //掃入
-                    url = "";
+
+                case 0: //檢驗廠掃入
+                    Log.e("thread", "操作項目：掃入");
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=1" +
+                            "&cylinders_number="+cylinders_number+"&suppliers_id=6";
                     break;
-                case 1: //掃出
+                case 1: //檢驗廠掃出
+                    Log.e("thread", "操作項目：掃出");
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=0&cylinders_number="+cylinders_number;
                     break;
                 case 2: //更新狀態
+                    Log.e("thread", "操作項目：更新項目");
                     break;
-                case 3: //入檢驗廠
+                case 3: //任務掃入
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
+                            "&tb_where_name=cylinders_number&tb_where_val="+cylinders_number+
+                            "&tb_td=cylinders_type&tb_val=1_"+car_id;
                     break;
-                case 4: //出檢驗廠
+                case 4: //任務掃出
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
+                            "&tb_where_name=cylinders_number&tb_where_val="+cylinders_number+
+                            "&tb_td=cylinders_type&tb_val=2_"+customer_id;
                     break;
+
                 default:
                     break;
 
             }
             HttpGet httpget = new HttpGet(url);
+            Log.e("capture", "url:"+url);
             HttpClient httpclient = new DefaultHttpClient();
             try {
                 HttpResponse response = httpclient.execute(httpget);

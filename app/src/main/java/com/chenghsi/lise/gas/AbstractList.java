@@ -83,7 +83,6 @@ public abstract class AbstractList extends Activity
         {
             swipeRefreshLayout.setRefreshing(true);
 
-            // TODO something
             new Handler().postDelayed(new Runnable()
             {
                 @Override

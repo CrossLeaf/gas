@@ -76,7 +76,7 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         holder.tv_name.setText(clientList.getName());
         holder.tv_address.setText(add);
 
-        //TODO 電話號碼呈現
+        /*電話號碼呈現*/
         String[] phone_list ;
         phone_list = clientList.getPhone();
         for (String ph : clientList.getPhone()){
@@ -140,7 +140,6 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            //Todo
         }
     };
 
@@ -152,6 +151,7 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         return filter;
     }
 
+    /*搜尋類別實作*/
     public class MyFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -170,10 +170,12 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                 for (int i = 0, l = mOriginalValues.size(); i < l; i++) {
                     ClientInfoList m = mOriginalValues.get(i);
                     Log.e("tag", "i:" + i);
-                    Log.e("tag", "m = " + mOriginalValues.get(i));
-
-                    if (m.getName().contains(constraint)) {
-                        filteredItems.add(m);
+                    Log.e("tag", "m = " + mOriginalValues.get(i).toString());
+                    for (int j=1; j<m.getPhone().length; j++) {
+                        if (m.getName().contains(constraint) || m.getPhone()[j].contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
+                            filteredItems.add(m);
+                            break;
+                        }
                     }
                 }
                 result.count = filteredItems.size();

@@ -77,8 +77,10 @@ public class NewClientInfoActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable arg0) {
-                NewClientInfoActivity.this.adapter.getFilter().filter(arg0);
-                Log.e("tag", "afterTextChanged");
+                if (adapter != null){
+                    NewClientInfoActivity.this.adapter.getFilter().filter(arg0);
+                    Log.e("tag", "afterTextChanged");
+                }
             }
         });
 
@@ -90,7 +92,7 @@ public class NewClientInfoActivity extends Activity {
         String customer_name;
         String customer_address;
         String phone;
-        String[] customer_phone = new String[4];
+        String[] customer_phone = new String[5];
         String old_id;
         int count = 1;
 
@@ -106,9 +108,11 @@ public class NewClientInfoActivity extends Activity {
 
 //                    customer_phone = new String[4];
                     customer_phone[0] = "請選擇號碼";
+                    //下一筆資料
                     customer = jsonArrayCustomer.getJSONArray(i);
+                    //現在資料
                     oldCustomer = jsonArrayCustomer.getJSONArray(i - 1);
-                    //假如是最後一筆 直接存
+                    //假如整筆資料是最後一筆 直接存
                     if (i == jsonArrayCustomer.length() - 1) {
 //                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
 //                        Log.e("client", "old_id:" + old_id);
@@ -119,32 +123,31 @@ public class NewClientInfoActivity extends Activity {
                         customer_phone[count] = phone;
                         customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                         customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                    } else {    //不是最後一筆的話
+                    } else {    //如果不是整筆資料的最後一筆
                         old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
                         Log.e("client", "old_id:" + old_id);
                         customer_id = customer.getString(Constant.CUSTOMER_ID);
                         Log.e("client", "new_id:" + customer_id);
 
-                        //假如現在id等於下一筆id 為了將電話存在陣列上
+                        //假如現在id等於下一筆id 為了將電話存在陣列上 繼續迴圈
                         if (old_id.equals(customer_id)) {
                             phone = oldCustomer.getString(22);
                             Log.e("client", "if count:" + count);
-                            Log.e("client", "phone:" + phone);
+                            Log.e("client", "id:"+customer_id+"phone:" + phone);
                             customer_phone[count] = phone;
-                            Log.e("client", "cus_pho:" + customer_phone[count]);
                             count++;
                             continue;
+                        //假如現在id不等於下一筆id 儲存此筆資料
                         } else {
                             phone = oldCustomer.getString(22);
-                            Log.e("client", "phone:" + phone);
                             Log.e("client", "else count:" + count);
+                            Log.e("client", "id:"+old_id+"phone:" + phone);
                             customer_phone[count] = phone;
                             customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
                             Log.e("client", "name:" + customer_name);
                             customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                             Log.e("client", "address:" + customer_address);
                         }
-
                     }
                     count = 1;
                     int a = 0;
@@ -166,9 +169,14 @@ public class NewClientInfoActivity extends Activity {
                     for (int k = 0; k < j; k++) {
                         phone[k]=customer_phone[k];
                     }
+
+                   /* for (int k = 0; k < j; k++) {
+                        phone[k]=customer_phone[k];
+                    }*/
+
                     ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, phone);
                     clientList.add(clientInfoList);
-                    customer_phone = new String[4];
+                    customer_phone = new String[5];
                 }
 
                 return clientList;
@@ -215,7 +223,7 @@ public class NewClientInfoActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
+//        finish();
     }
 
 }

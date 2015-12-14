@@ -36,6 +36,7 @@
     <string name="title_activity_delivery">配送表清單</string>
     <string name="title_activity_detailed_task">任務詳細內容</string>
     <string name="title_activity_delivery_schedule">配送表紀錄</string>
+    <string name="title_activity_delivery_schedule_detail">新增配送</string>
     <string name="title_activity_history_bottle">寄借桶歷史紀錄</string>
     <string name="title_activity_history_order">客戶訂單歷史紀錄</string>
     <string name="title_activity_balancing">會計沖帳清單</string>
@@ -43,6 +44,7 @@
     <string name="title_activity_detailed_balancing">會計沖帳詳細內容</string>
     <string name="title_activity_gas_price">瓦斯價格</string>
     <string name="title_activity_meter_reading">月結抄表清單</string>
+    <string name="title_activity_saveout">出入氣</string>
 
     <string name="navigation_use_gps">使用GPS定位</string>
     <string name="navigation_use_network">使用網路定位</string>
@@ -54,7 +56,6 @@
 
     <string name="login_failure">登入錯誤</string>
     <string name="edit_here">請輸入</string>
-    <string name="title_activity_delivery_schedule_detail">新增配送</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

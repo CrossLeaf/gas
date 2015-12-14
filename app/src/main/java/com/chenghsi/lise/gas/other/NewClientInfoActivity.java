@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,6 +36,7 @@ import java.util.List;
  * Created by MengHan on 2015/11/12.
  */
 public class NewClientInfoActivity extends Activity {
+    protected Toolbar toolbar;
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
     private EditText edt_client;
     private ListView lv_client_info;
@@ -48,6 +50,17 @@ public class NewClientInfoActivity extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         new AsyncClientDownLoad().execute(url);
         setContentView(R.layout.activity_client_info);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_client_info);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         edt_client = (EditText) findViewById(R.id.edt_search_client);
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
         lv_client_info.setTextFilterEnabled(true);

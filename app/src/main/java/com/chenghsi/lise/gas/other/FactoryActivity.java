@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  * Created by MengHan on 2015/11/13.
  */
 public class FactoryActivity extends Activity {
-
+    protected Toolbar toolbar;
     NumberPicker numPick_fac50;
     NumberPicker numPick_fac20;
     NumberPicker numPick_fac16;
@@ -90,7 +91,16 @@ public class FactoryActivity extends Activity {
         setContentView(R.layout.activity_factory);
         new AsyncFactoryDownload().execute(url_fac, url_car);
         new PaymentFactoryDownload().execute(url_payment);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_saveout);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         //有exception可以讓畫面定格
         /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ListView;
 
 import com.chenghsi.lise.gas.Constant;
@@ -28,7 +30,7 @@ import java.util.List;
  * Created by MengHan on 2015/11/12.
  */
 public class NewDetailClientInfoActivity extends Activity {
-
+    protected Toolbar toolbar;
     String orderUrl = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=order&tbname2=customer&tbID1=customer_id&tbID2=customer_id&where=order.customer_id~";
     String doddleUrl = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=doddle&where=customer_id~";
     private ListView lv_detail_client;
@@ -39,6 +41,16 @@ public class NewDetailClientInfoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_detail_info);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_detailed_task);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         Intent intent = getIntent();
         String customer_id = intent.getStringExtra("customerId");
         orderUrl += customer_id;

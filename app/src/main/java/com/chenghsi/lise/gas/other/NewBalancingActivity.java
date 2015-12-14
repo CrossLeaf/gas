@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -45,7 +46,7 @@ import java.util.Map;
  * Created by MengHan on 2015/11/9.
  */
 public class NewBalancingActivity extends Activity {
-
+    protected Toolbar toolbar;
     ListView listResult;
     EditText edt_search;
     TextView tv_money;
@@ -72,17 +73,26 @@ public class NewBalancingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        listResult = (ListView) findViewById(R.id.listResult);
-        edt_search = (EditText) findViewById(R.id.edt_search);
-        tv_money = (TextView) findViewById(R.id.tv_money);
-        edt_receive = (EditText) findViewById(R.id.edt_receive);
-        btn_strike = (Button) findViewById(R.id.btn_strike);
-        spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
-        tv_money.setText("$0");
-        btn_strike.setOnClickListener(strikeOnClickListener);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_balancing);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         new BalanceAsyncDownload().execute(url);
 
+        init();
+
+        btn_strike.setOnClickListener(strikeOnClickListener);
+
         listResult.setTextFilterEnabled(true);
+
         /*付費方式*/
         money_pay = new String[]{"現金", "支票", "匯款"};
         order_payment = money_pay[0];
@@ -103,6 +113,7 @@ public class NewBalancingActivity extends Activity {
             }
         });
 
+        /*搜尋*/
         edt_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -123,7 +134,16 @@ public class NewBalancingActivity extends Activity {
         });
     }
     /*OnCreate 結束*/
+    private void init(){
+        listResult = (ListView) findViewById(R.id.listResult);
+        edt_search = (EditText) findViewById(R.id.edt_search);
+        tv_money = (TextView) findViewById(R.id.tv_money);
+        edt_receive = (EditText) findViewById(R.id.edt_receive);
+        btn_strike = (Button) findViewById(R.id.btn_strike);
+        spi_payMethod = (Spinner) findViewById(R.id.spi_payMethod);
 
+        tv_money.setText("$0");
+    }
     /*沖帳按鈕*/
     int count = 1;
     OnClickListener strikeOnClickListener = new OnClickListener() {
@@ -152,6 +172,7 @@ public class NewBalancingActivity extends Activity {
                 Log.e("balancing", "income_money_real:" + income_money_real);
                 Log.e("balancing", "order_payment:" + order_payment);
                 Log.e("balancing", "staff_id:" + staff_id);
+
                 new StrikeUpdate().start();
             }
         }
@@ -314,5 +335,4 @@ public class NewBalancingActivity extends Activity {
         Log.e("NewBalance", "------NewBalance STOP------");
         finish();
     }
-
 }

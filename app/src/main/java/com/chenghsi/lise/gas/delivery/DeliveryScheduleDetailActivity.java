@@ -3,6 +3,7 @@ package com.chenghsi.lise.gas.delivery;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,7 +27,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 public class DeliveryScheduleDetailActivity extends Activity {
-
+    protected Toolbar toolbar;
     Spinner spinner_month;
     Spinner spinner_day;
     Spinner spinner_clientName;
@@ -69,6 +70,16 @@ public class DeliveryScheduleDetailActivity extends Activity {
         setContentView(R.layout.activity_delivery_schedule_detail);
         new AsyncTaskDownLoad().execute(url);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        /*標題列toolbar*/
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_delivery_schedule_detail);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         init();
         numPick_50.setMaxValue(99);
         numPick_50.setMinValue(0);

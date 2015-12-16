@@ -106,20 +106,9 @@ public class FactoryActivity extends Activity {
             }
         });
 
-        //有exception可以讓畫面定格
-        /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
-
-                Log.e("Alert", "Lets See if it Works !!!");
-
-            }
-        });*/
-
         fac_content = new String[4];
         car_content = new String[4];
         showToastMessage = Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT);
-//        showToastMessage.show();
     }
 
     private void init() {

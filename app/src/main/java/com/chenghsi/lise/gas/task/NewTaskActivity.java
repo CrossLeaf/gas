@@ -38,7 +38,7 @@ import static android.support.v4.widget.SwipeRefreshLayout.*;
  * Created by MengHan on 2015/10/28.
  */
 public class NewTaskActivity extends Activity {
-
+    protected HttpClient httpclient;
     protected Toolbar toolbar;
 
     public ExpandableListView list_Task;   //下拉List控件
@@ -163,6 +163,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        httpclient.getConnectionManager().shutdown();
         Log.e("task", "----onPause----");
     }
 
@@ -353,7 +354,7 @@ public class NewTaskActivity extends Activity {
         private String getJSONData(String url) {
             String retSrc = "";
             HttpGet httpget = new HttpGet(url);
-            HttpClient httpclient = new DefaultHttpClient();
+            httpclient = new DefaultHttpClient();
             try {
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity resEntity = response.getEntity();

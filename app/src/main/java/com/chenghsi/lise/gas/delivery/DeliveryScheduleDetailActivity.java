@@ -1,14 +1,19 @@
 package com.chenghsi.lise.gas.delivery;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
@@ -40,9 +45,11 @@ public class DeliveryScheduleDetailActivity extends Activity {
     NumberPicker numPick_4;
     NumberPicker numPickHr;
     NumberPicker numPickMin;
+    Button btn_ok;
 
     int year, month, day;
 
+    private ArrayAdapter apt;
     private String[] customer_name;
     private String[] customer_address;
     private String[] customer_id;
@@ -51,6 +58,7 @@ public class DeliveryScheduleDetailActivity extends Activity {
     private String[] day_list;
     private String hr = "0";
     private String min = "0";
+
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
 
     private String cus_id;
@@ -74,45 +82,26 @@ public class DeliveryScheduleDetailActivity extends Activity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_delivery_schedule_detail);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        init();
-        numPick_50.setMaxValue(99);
-        numPick_50.setMinValue(0);
-        numPick_20.setMaxValue(99);
-        numPick_20.setMinValue(0);
-        numPick_16.setMaxValue(99);
-        numPick_16.setMinValue(0);
-        numPick_4.setMaxValue(99);
-        numPick_4.setMinValue(0);
-        numPickHr.setMaxValue(23);
-        numPickHr.setMinValue(0);
-        numPickMin.setMaxValue(59);
-        numPickMin.setMinValue(0);
 
-        tv_year.setText(year + "年");
-        numPick_50.setOnValueChangedListener(new NumChangeListener());
-        numPick_20.setOnValueChangedListener(new NumChangeListener());
-        numPick_16.setOnValueChangedListener(new NumChangeListener());
-        numPick_4.setOnValueChangedListener(new NumChangeListener());
-        numPickHr.setOnValueChangedListener(new NumChangeListener());
-        numPickMin.setOnValueChangedListener(new NumChangeListener());
+        Bundle bundle = this.getIntent().getExtras();
+        year = bundle.getInt("year");
+        month = bundle.getInt("month");
+        day = bundle.getInt("day");
 
-        spinner_clientName.setOnItemSelectedListener(nameSelectListener);
+        cly_day = year + "-" + month + "-" + day;
+        cylinder_list = new String[]{"0", "0", "0", "0"};
+        day_list = new String[31];
+        for (int i = 1; i < 32; i++) {
+            day_list[i - 1] = String.valueOf(i);
+        }
 
-        ArrayAdapter monAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, month_list);
-//        monAdapter.setDropDownViewResource(R.layout.spinner_text_size);
-        spinner_month.setAdapter(monAdapter);
-        spinner_month.setSelection(month - 1);
-        spinner_month.setOnItemSelectedListener(monSelectListener);
-        ArrayAdapter dayAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, day_list);
-        spinner_day.setAdapter(dayAdapter);
-        spinner_day.setSelection(day - 1);
-        spinner_day.setOnItemSelectedListener(daySelectListener);
+
 
     }
 
@@ -127,30 +116,57 @@ public class DeliveryScheduleDetailActivity extends Activity {
         spinner_clientName = (Spinner) findViewById(R.id.spinner_clientName);
         edt_add = (EditText) findViewById(R.id.edt_add);
         edt_remark = (EditText) findViewById(R.id.edt_remark);
+        tv_year = (TextView) findViewById(R.id.year);
         numPick_50 = (NumberPicker) findViewById(R.id.numPick_50);
         numPick_20 = (NumberPicker) findViewById(R.id.numPick_20);
         numPick_16 = (NumberPicker) findViewById(R.id.numPick_16);
         numPick_4 = (NumberPicker) findViewById(R.id.numPick_4);
         numPickHr = (NumberPicker) findViewById(R.id.numPickHr);
         numPickMin = (NumberPicker) findViewById(R.id.numPickMin);
-        tv_year = (TextView) findViewById(R.id.year);
+        btn_ok = (Button) findViewById(R.id.btn_ok);
+
+        numPick_50.setMaxValue(99);
+        numPick_50.setMinValue(0);
+        numPick_20.setMaxValue(99);
+        numPick_20.setMinValue(0);
+        numPick_16.setMaxValue(99);
+        numPick_16.setMinValue(0);
+        numPick_4.setMaxValue(99);
+        numPick_4.setMinValue(0);
+        numPickHr.setMaxValue(23);
+        numPickHr.setMinValue(0);
+        numPickMin.setMaxValue(59);
+        numPickMin.setMinValue(0);
 
         edt_add.clearFocus();
         edt_remark.clearFocus();
 
+        tv_year.setText(year + "年");
+        edt_add.setText(customer_address[0]);
+    }
 
-        Bundle bundle = this.getIntent().getExtras();
-        year = bundle.getInt("year");
-        month = bundle.getInt("month");
-        day = bundle.getInt("day");
+    private void listenerTask(){
+        numPick_50.setOnValueChangedListener(new NumChangeListener());
+        numPick_20.setOnValueChangedListener(new NumChangeListener());
+        numPick_16.setOnValueChangedListener(new NumChangeListener());
+        numPick_4.setOnValueChangedListener(new NumChangeListener());
+        numPickHr.setOnValueChangedListener(new NumChangeListener());
+        numPickMin.setOnValueChangedListener(new NumChangeListener());
 
-        cly_day = year + "-" + month + "-" + day;
+        btn_ok.setOnClickListener(okListener);
+        spinner_clientName.setOnItemSelectedListener(nameSelectListener);
 
-        cylinder_list = new String[]{"0", "0", "0", "0"};
-        day_list = new String[31];
-        for (int i = 1; i < 32; i++) {
-            day_list[i - 1] = String.valueOf(i);
-        }
+        ArrayAdapter monAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, month_list);
+//        monAdapter.setDropDownViewResource(R.layout.spinner_text_size);
+        spinner_month.setAdapter(monAdapter);
+        spinner_month.setSelection(month - 1);
+        spinner_month.setOnItemSelectedListener(monSelectListener);
+        ArrayAdapter dayAdapter = new ArrayAdapter<>(this, R.layout.spinner_text_size, day_list);
+        spinner_day.setAdapter(dayAdapter);
+        spinner_day.setSelection(day - 1);
+        spinner_day.setOnItemSelectedListener(daySelectListener);
+
+        spinner_clientName.setAdapter(apt);
 
     }
 
@@ -182,7 +198,7 @@ public class DeliveryScheduleDetailActivity extends Activity {
         }
     };
 
-    //客戶名稱 監聽事件
+    //客戶名稱spinner選擇 監聽事件
     private AdapterView.OnItemSelectedListener nameSelectListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -198,32 +214,42 @@ public class DeliveryScheduleDetailActivity extends Activity {
         }
     };
 
+    /*確定按鈕監聽事件*/
+    public  OnClickListener okListener = new OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            ms1_addr = edt_add.getText().toString();
+            cly_PS = edt_remark.getText().toString();
+            cly_50 = cylinder_list[0];
+            cly_20 = cylinder_list[1];
+            cly_16 = cylinder_list[2];
+            cly_4 = cylinder_list[3];
+            cly_time = hr + ":" + min;
+            Log.e("btn", cus_id);
+            Log.e("btn", cly_name);
+            Log.e("btn", cly_time);
+            Log.e("btn", ms1_addr);
+            Log.e("btn", cly_day);
+            Log.e("btn", cly_50);
+            Log.e("btn", cly_20);
+            Log.e("btn", cly_16);
+            Log.e("btn", cly_4);
+            Log.e("btn", cly_PS);
+            if (cly_20.equals("0") && cly_50.equals(cly_20) && cly_16.equals(cly_4) && cly_16.equals(cly_50)) {
+                Toast.makeText(DeliveryScheduleDetailActivity.this, "請至少輸入鋼瓶數量", Toast.LENGTH_LONG).show();
+            }else {
+                new DeliveryUpdate().start();
+                Toast.makeText(DeliveryScheduleDetailActivity.this, "新增成功", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    };
+
+    /*取消按鈕*/
     public void btn_schedule(View view) {
         switch (view.getId()) {
             case R.id.btn_cancel:
                 onBackPressed();
-                break;
-            case R.id.btn_ok:
-                ms1_addr = edt_add.getText().toString();
-                cly_PS = edt_remark.getText().toString();
-                cly_50 = cylinder_list[0];
-                cly_20 = cylinder_list[1];
-                cly_16 = cylinder_list[2];
-                cly_4 = cylinder_list[3];
-                cly_time = hr + ":" + min;
-                Log.e("btn", cus_id);
-                Log.e("btn", cly_name);
-                Log.e("btn", cly_time);
-                Log.e("btn", ms1_addr);
-                Log.e("btn", cly_day);
-                Log.e("btn", cly_50);
-                Log.e("btn", cly_20);
-                Log.e("btn", cly_16);
-                Log.e("btn", cly_4);
-                Log.e("btn", cly_PS);
-                new DeliveryUpdate().start();
-                Toast.makeText(this, "新增成功", Toast.LENGTH_SHORT).show();
-                finish();
                 break;
         }
     }
@@ -314,10 +340,12 @@ public class DeliveryScheduleDetailActivity extends Activity {
         @Override
         protected void onPostExecute(String[] cus_name) {
             super.onPostExecute(cus_name);
-            ArrayAdapter apt = new ArrayAdapter<>(DeliveryScheduleDetailActivity.this, android.R.layout.simple_spinner_dropdown_item, cus_name);
+            apt = new ArrayAdapter<>(DeliveryScheduleDetailActivity.this, android.R.layout.simple_spinner_dropdown_item, cus_name);
             apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner_clientName.setAdapter(apt);
-            edt_add.setText(customer_address[0]);
+
+            Message message = new Message();
+            message.what = 0;
+            myHandler.sendMessage(message);
         }
 
         @Override
@@ -367,6 +395,18 @@ public class DeliveryScheduleDetailActivity extends Activity {
             return null;
         }
     }
+
+    Handler myHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    init();
+                    listenerTask();
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onStop() {

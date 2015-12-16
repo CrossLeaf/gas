@@ -276,9 +276,11 @@ public class NewBalancingActivity extends Activity {
         @Override
         protected void onPostExecute(Void data) {
             super.onPostExecute(data);
+
             adapter = new BalanceAdapter(NewBalancingActivity.this, balance_list);
             listResult.setAdapter(adapter);
             listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String ord_id = balance_list.get(position).getId();

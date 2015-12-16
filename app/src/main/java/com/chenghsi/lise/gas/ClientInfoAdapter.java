@@ -118,7 +118,6 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
         return convertView;

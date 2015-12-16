@@ -37,7 +37,7 @@ public class OtherActivity extends Activity
     {
 
 //        barcodeScanning_Dialog();
-        Intent intent = new Intent();
+//        Intent intent = new Intent();
         intent.setClass(OtherActivity.this, FactoryActivity.class);
         startActivity(intent);
     }
@@ -62,7 +62,7 @@ public class OtherActivity extends Activity
 
     public void onClick_btn_clientInfo(View view)
     {
-        Intent intent = new Intent();
+//        Intent intent = new Intent();
         intent.setClass(OtherActivity.this, NewClientInfoActivity.class);
         startActivity(intent);
     }
@@ -103,22 +103,6 @@ public class OtherActivity extends Activity
                         intent.putExtra("flag", 3);
                         startActivity(intent);
                         break;
-                    /*case 3:
-                        intent.setClass(OtherActivity.this, CaptureActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 4:
-                        intent.setClass(OtherActivity.this, CaptureActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 5:
-                        intent.setClass(OtherActivity.this, CaptureActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 6:
-                        intent.setClass(OtherActivity.this, CaptureActivity.class);
-                        startActivity(intent);
-                        break;*/
                 }
             }
         });

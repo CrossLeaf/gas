@@ -33,6 +33,7 @@ public class NewDetailClientInfoActivity extends Activity {
     protected Toolbar toolbar;
     String orderUrl = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=order&tbname2=customer&tbID1=customer_id&tbID2=customer_id&where=order.customer_id~";
     String doddleUrl = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=doddle&where=customer_id~";
+
     private ListView lv_detail_client;
     private DetailClientInfoAdapter adapter;
     private List<DetailClientInfoList> clientList = new ArrayList<>();

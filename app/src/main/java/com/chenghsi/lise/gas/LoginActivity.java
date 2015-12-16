@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -29,6 +31,7 @@ public class LoginActivity extends Activity {
     private String staff_name;
     private String staff_id;
 
+    private boolean networkConnect;
     Toast showToastMessage;
 
     @Override
@@ -39,7 +42,6 @@ public class LoginActivity extends Activity {
         sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
         et_account = (EditText) findViewById(R.id.account);
         et_password = (EditText) findViewById(R.id.password);
-        new LoginThread().start();
 
     }
 
@@ -47,6 +49,7 @@ public class LoginActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.e("login", "------login resume-----");
+        new LoginThread().start();
         //呼叫讀取偏好資料
         readPref();
     }
@@ -98,21 +101,21 @@ public class LoginActivity extends Activity {
 
     //按鈕事件
     public void onClick_btn_login(View view) {
-        Log.e("login", "account, password:" + et_account.getText().toString().isEmpty() + et_password.getText().toString().isEmpty());
+//        Log.e("login", "account, password:" + et_account.getText().toString().isEmpty() + et_password.getText().toString().isEmpty());
         Log.e("login", "account text:" + et_account.getText().toString().equals(""));
-        if (verification()) {
-            /*Globals globals = (Globals)this.getApplicationContext();
-            globals.setUser_id(staff_id);
-            globals.setUser_name(staff_name);*/
+        if (verification() && networkConnect) {
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         } else {
-            if (showToastMessage!=null) {
+            if (!networkConnect) {
+                Toast.makeText(LoginActivity.this, "請檢查網路狀態", Toast.LENGTH_SHORT).show();
+                new LoginThread().start();
+            } else if (showToastMessage != null) {
                 showToastMessage.cancel();
                 showToastMessage = Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT);
                 showToastMessage.show();
-            }else {
+            } else {
                 showToastMessage = Toast.makeText(this, R.string.login_failure, Toast.LENGTH_SHORT);
                 showToastMessage.show();
             }
@@ -130,6 +133,7 @@ public class LoginActivity extends Activity {
                 HttpResponse response = httpclient.execute(httpget);
                 Log.e("retSrc", "讀取 JSON-2...");
                 HttpEntity resEntity = response.getEntity();
+                networkConnect = true;
                 if (resEntity != null) {
                     retSrc = EntityUtils.toString(resEntity);
                     Log.e("retSrc", retSrc);
@@ -138,6 +142,7 @@ public class LoginActivity extends Activity {
                 }
             } catch (Exception e) {
                 Log.e("retSrc", "讀取JSON Error...");
+                networkConnect = false;
             } finally {
                 httpclient.getConnectionManager().shutdown();
             }
@@ -162,7 +167,7 @@ public class LoginActivity extends Activity {
                     staff_id = jsonArray.getJSONArray(i).getString(0);  //staff_id
                     staff_name = jsonArray.getJSONArray(i).getString(3);  //staff_name
 
-                    Log.e("tag", "staff_id:"+staff_id);
+                    Log.e("tag", "staff_id:" + staff_id);
                     Log.e("tag", "人名：" + staff_name);
                     return true;
                 }
@@ -174,6 +179,16 @@ public class LoginActivity extends Activity {
     }
     /*驗證帳號密碼 結束*/
 
+    Handler myHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
 
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
 }

@@ -64,21 +64,8 @@ public class NewClientInfoActivity extends Activity {
         edt_client = (EditText) findViewById(R.id.edt_search_client);
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
         lv_client_info.setTextFilterEnabled(true);
-        lv_client_info.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.e("client", "position:" + position);
-                newClientList = new ArrayList<>(ClientInfoAdapter.clientInfoLists);
-                String customer_id = newClientList.get(position).getId();
-                String customer_name = newClientList.get(position).getName();
-//                Toast.makeText(NewClientInfoActivity.this, "id:" + customer_id, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("customerId", customer_id);
-                intent.putExtra("customerName", customer_name);
-                intent.setClass(NewClientInfoActivity.this, NewDetailClientInfoActivity.class);
-                startActivity(intent);
-            }
-        });
+        Log.e("client", "lv_client_info 初始化");
+
         edt_client.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -205,6 +192,21 @@ public class NewClientInfoActivity extends Activity {
             Log.e("client", "Do onPostExecute");
             adapter = new ClientInfoAdapter(NewClientInfoActivity.this, clientList);
             lv_client_info.setAdapter(adapter);
+            lv_client_info.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Log.e("client", "position:" + position);
+                    newClientList = new ArrayList<>(ClientInfoAdapter.clientInfoLists);
+                    String customer_id = newClientList.get(position).getId();
+                    String customer_name = newClientList.get(position).getName();
+//                Toast.makeText(NewClientInfoActivity.this, "id:" + customer_id, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("customerId", customer_id);
+                    intent.putExtra("customerName", customer_name);
+                    intent.setClass(NewClientInfoActivity.this, NewDetailClientInfoActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
 
         //取得JSON資料

@@ -79,7 +79,6 @@ public class DeliveryScheduleActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.e("deliverySchedule", "----onResume----");
-
 //        c.set(prevYear, prevMonth, prevDay);
         Myear = prevYear;
         Mmonth = prevMonth;

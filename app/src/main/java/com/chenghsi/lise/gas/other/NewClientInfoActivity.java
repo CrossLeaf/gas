@@ -70,9 +70,11 @@ public class NewClientInfoActivity extends Activity {
                 Log.e("client", "position:" + position);
                 newClientList = new ArrayList<>(ClientInfoAdapter.clientInfoLists);
                 String customer_id = newClientList.get(position).getId();
+                String customer_name = newClientList.get(position).getName();
 //                Toast.makeText(NewClientInfoActivity.this, "id:" + customer_id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("customerId", customer_id);
+                intent.putExtra("customerName", customer_name);
                 intent.setClass(NewClientInfoActivity.this, NewDetailClientInfoActivity.class);
                 startActivity(intent);
             }
@@ -118,8 +120,6 @@ public class NewClientInfoActivity extends Activity {
                 Log.e("client", "array執行成功");
 
                 for (int i = 1; i < jsonArrayCustomer.length(); i++) {
-
-//                    customer_phone = new String[4];
                     customer_phone[0] = "請選擇號碼";
                     //下一筆資料
                     customer = jsonArrayCustomer.getJSONArray(i);

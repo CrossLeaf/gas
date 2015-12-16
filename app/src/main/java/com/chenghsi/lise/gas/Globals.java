@@ -1,6 +1,7 @@
 package com.chenghsi.lise.gas;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 /**
@@ -10,8 +11,15 @@ public class Globals extends Application {
     private static String user_id;
     private static String user_name;
 
+
+
+    public Globals() {
+
+    }
+
+
     public String getUser_id() {
-        return user_id;
+        return user_id ;
     }
 
     public void setUser_id(String user_id) {
@@ -20,7 +28,8 @@ public class Globals extends Application {
     }
 
     public String getUser_name() {
-        return user_name;
+        return user_name ;
+
     }
 
     public void setUser_name(String user_name) {

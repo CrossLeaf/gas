@@ -1,6 +1,7 @@
 package com.chenghsi.lise.gas;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.InputType;
 import android.util.Log;
@@ -35,6 +36,7 @@ import java.util.Map;
  */
 public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
+    private SharedPreferences sp;
     private NewTaskActivity taskActivity;
     private List<StaffList> staffList;
     private ExpandableListView expListView;
@@ -78,9 +80,12 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         Log.e("extaskList", "staff_id:" + staff_id);
 
         inflater = LayoutInflater.from(taskActivity);
-        Globals g = new Globals();
+        sp = taskActivity.getSharedPreferences("LoginInfo", 0);
+        userName = sp.getString("staff_name", null);
+        staff_id = sp.getString("staff_id", null);
+        /*Globals g = (Globals) taskActivity.getApplicationContext();
         userName = g.getUser_name();
-        staff_id = g.getUser_id();
+        staff_id = g.getUser_id();*/
 
     }
 
@@ -223,7 +228,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 //            groupViewHolder.btn_accept.setText(taskLists.getOrder_doddle_accept());
             expListView.collapseGroup(groupPosition);
         }
-
 
         /*承接按鈕動作*/
         final GroupViewHolder finalGroupView = groupViewHolder;

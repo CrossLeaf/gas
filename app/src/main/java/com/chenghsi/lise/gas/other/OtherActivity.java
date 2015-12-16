@@ -85,16 +85,19 @@ public class OtherActivity extends Activity
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 switch (which){
+                    //掃入
                     case 0:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         intent.putExtra("flag", 1);
                         startActivity(intent);
                         break;
+                    //掃出
                     case 1:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         intent.putExtra("flag", 2);
                         startActivity(intent);
                         break;
+                    //更新狀態
                     case 2:
                         intent.setClass(OtherActivity.this, CaptureActivity.class);
                         intent.putExtra("flag", 3);

@@ -1,10 +1,8 @@
 package com.chenghsi.lise.gas;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +26,7 @@ public class LoginActivity extends Activity {
     String password;
     String retSrc = "";
 
-    private String userName;
+    private String staff_name;
     private String staff_id;
 
     Toast showToastMessage;
@@ -82,7 +80,8 @@ public class LoginActivity extends Activity {
         SharedPreferences.Editor edit = sp.edit();
         edit.putString("account", account);
         edit.putString("password", password);
-
+        edit.putString("staff_id", staff_id);
+        edit.putString("staff_name", staff_name);
         //確認儲存
         //使用apply()非同步更新作業
         edit.apply();
@@ -102,9 +101,9 @@ public class LoginActivity extends Activity {
         Log.e("login", "account, password:" + et_account.getText().toString().isEmpty() + et_password.getText().toString().isEmpty());
         Log.e("login", "account text:" + et_account.getText().toString().equals(""));
         if (verification()) {
-            Globals globals = new Globals();
+            /*Globals globals = (Globals)this.getApplicationContext();
             globals.setUser_id(staff_id);
-            globals.setUser_name(userName);
+            globals.setUser_name(staff_name);*/
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -161,10 +160,10 @@ public class LoginActivity extends Activity {
                 if (account.equals(jsonArray.getJSONArray(i).getString(9)) &&
                         password.equals(jsonArray.getJSONArray(i).getString(10))) {
                     staff_id = jsonArray.getJSONArray(i).getString(0);  //staff_id
-                    userName = jsonArray.getJSONArray(i).getString(3);  //staff_name
+                    staff_name = jsonArray.getJSONArray(i).getString(3);  //staff_name
 
-                    Log.e("tag", "人名：" + userName);
                     Log.e("tag", "staff_id:"+staff_id);
+                    Log.e("tag", "人名：" + staff_name);
                     return true;
                 }
             }

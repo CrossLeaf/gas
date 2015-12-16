@@ -2,10 +2,12 @@ package com.chenghsi.lise.gas.task;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,8 +15,6 @@ import android.widget.ExpandableListView;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.ExTaskListAdapter;
-import com.chenghsi.lise.gas.Globals;
-import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
 import com.chenghsi.lise.gas.TaskLists;
@@ -26,7 +26,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +38,8 @@ import static android.support.v4.widget.SwipeRefreshLayout.*;
  * Created by MengHan on 2015/10/28.
  */
 public class NewTaskActivity extends Activity {
+
+    protected Toolbar toolbar;
 
     public ExpandableListView list_Task;   //下拉List控件
     public ExTaskListAdapter adapter;
@@ -56,6 +57,8 @@ public class NewTaskActivity extends Activity {
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
 
+    SharedPreferences sp;
+
     //今日抄表與訂單 url
     String url0 = "http://198.245.55.221:8089/ProjectGAPP/php/show_order_dod.php";
     //customer join phone --->customer_id
@@ -68,9 +71,26 @@ public class NewTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
+
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
+        user_name = sp.getString("staff_name", null);
+        user_id = sp.getString("staff_id", null);
+        Log.e("exception test", "preference test:"+ user_id);
+        Log.e("exception test", "preference test:"+ user_name);
+
         new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_activity_task);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         // Initializing swipeRefreshLayout (the refreshing animation)
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
@@ -83,12 +103,12 @@ public class NewTaskActivity extends Activity {
         // Initializing listView
         list_Task.setOnScrollListener(onScrollListener);
 
-        Globals g = new Globals();
+        /*Globals g = (Globals) this.getApplicationContext();
         user_id = g.getUser_id();
         user_name = g.getUser_name();
 
         Log.e("exception test", "globals test:"+ user_id);
-        Log.e("exception test", "globals test:"+ user_name);
+        Log.e("exception test", "globals test:"+ user_name);*/
     }
 
     // Refreshing when pulling down
@@ -293,10 +313,8 @@ public class NewTaskActivity extends Activity {
 //                                Log.e("task", "name:" + customer_name);
 //                                Log.e("task", "customerSettleType:"+customer_settle_type);
                             }
-
                         }
                     }
-
                 return taskListses;
             } catch (Exception e) {
                 Log.e("task", "NewTask資料抓取有誤");

@@ -931,6 +931,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     break;
                 case 2: //更新狀態
                     Log.e("thread", "操作項目：更新項目");
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/try_get_cylinders.php?cylinders_number="+cylinders_number;
                     break;
                 case 3: //任務掃入
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +

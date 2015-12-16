@@ -2,6 +2,7 @@ package com.chenghsi.lise.gas.other;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,8 +26,6 @@ import android.widget.Toast;
 import com.chenghsi.lise.gas.BalanceAdapter;
 import com.chenghsi.lise.gas.BalanceList;
 import com.chenghsi.lise.gas.Constant;
-import com.chenghsi.lise.gas.Globals;
-import com.chenghsi.lise.gas.LoginActivity;
 import com.chenghsi.lise.gas.R;
 
 import org.apache.http.HttpEntity;
@@ -67,6 +66,7 @@ public class NewBalancingActivity extends Activity {
     private String staff_id;
     private String order_payment;
     private String income_money_real;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,8 @@ public class NewBalancingActivity extends Activity {
                 onBackPressed();
             }
         });
+
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
 
         new BalanceAsyncDownload().execute(url);
 
@@ -127,14 +129,15 @@ public class NewBalancingActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable arg0) {
-                if (adapter!=null)
-                NewBalancingActivity.this.adapter.getFilter().filter(arg0);
+                if (adapter != null)
+                    NewBalancingActivity.this.adapter.getFilter().filter(arg0);
                 Log.e("tag", "afterTextChanged");
             }
         });
     }
+
     /*OnCreate 結束*/
-    private void init(){
+    private void init() {
         listResult = (ListView) findViewById(R.id.listResult);
         edt_search = (EditText) findViewById(R.id.edt_search);
         tv_money = (TextView) findViewById(R.id.tv_money);
@@ -144,12 +147,14 @@ public class NewBalancingActivity extends Activity {
 
         tv_money.setText("$0");
     }
+
     /*沖帳按鈕*/
     int count = 1;
     OnClickListener strikeOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
             order_id = "";
+            int flag = 0;
             for (Map.Entry entry : isCheckedMap.entrySet()) {
                 if ((boolean) entry.getValue()) {
                     if (count == 1) {
@@ -158,15 +163,18 @@ public class NewBalancingActivity extends Activity {
                     } else {
                         order_id += "_" + entry.getKey();
                     }
+                    flag = 1;
                     Log.e("balancing", "order_id : " + entry.getKey() + " boolean : " + entry.getValue());
                 }
             }
-            if ("".equals(edt_receive.getText().toString().trim())) {
+            if (flag == 0) {
+                Toast.makeText(NewBalancingActivity.this, "請選擇沖帳項目", Toast.LENGTH_SHORT).show();
+            } else if ("".equals(edt_receive.getText().toString().trim())) {
                 Toast.makeText(NewBalancingActivity.this, "請輸入實收金額", Toast.LENGTH_SHORT).show();
             } else {
+
                 income_money_real = edt_receive.getText().toString();
-                Globals g = new Globals();
-                staff_id = g.getUser_id();
+                staff_id = sp.getString("staff_id", null);
 
                 Log.e("balancing", "order_id:" + order_id);
                 Log.e("balancing", "income_money_real:" + income_money_real);
@@ -180,8 +188,6 @@ public class NewBalancingActivity extends Activity {
 
     //沖帳 後台 update
     private class StrikeUpdate extends Thread {
-
-
         @Override
         public void run() {
             String url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_income.php?order_id=" + order_id +
@@ -333,6 +339,6 @@ public class NewBalancingActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Log.e("NewBalance", "------NewBalance STOP------");
-        finish();
+//        finish();
     }
 }

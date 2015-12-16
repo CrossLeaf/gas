@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chenghsi.lise.gas.DetailTaskDownLoad;
-import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
 
@@ -114,6 +114,7 @@ public class DetailedTaskActivity extends Activity {
 
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=order&where=customer_id~";
     private int cc = 1;
+    private SharedPreferences sp;
 
 //    private int flag;
 
@@ -202,6 +203,7 @@ public class DetailedTaskActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("detail", "------resume-----");
         ((TextView) R_name.findViewById(R.id.text2)).setText(clientName);
         ((TextView) R_address.findViewById(R.id.text2)).setText(address);
 
@@ -230,9 +232,9 @@ public class DetailedTaskActivity extends Activity {
         partner[0] = "請選擇夥伴";
         partner_id[0] = "0";
         order_staff_help = partner[0];
-        //從Globals拿id
-        Globals g = new Globals();
-        String staffId = g.getUser_id();
+        //從SharedPreferences拿id
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
+        String staffId = sp.getString("staff_id", null);
         int k = 1;
         for (int i = 0; i < partnerList.size(); i++) {
             if (staffId.equals(partnerList.get(i).getStaff_id())) {
@@ -332,7 +334,6 @@ public class DetailedTaskActivity extends Activity {
             }
         });
         /*付費方式結束*/
-
     }
     /*OnResume 結束*/
 
@@ -608,9 +609,17 @@ public class DetailedTaskActivity extends Activity {
             super.handleMessage(msg);
         }
     };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("detail", "------pause-----");
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
+        Log.e("detail", "------stop-----");
+//        finish();
     }
 }

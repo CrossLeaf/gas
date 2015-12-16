@@ -2,6 +2,7 @@ package com.chenghsi.lise.gas.other;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
-import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.PaymentList;
 import com.chenghsi.lise.gas.R;
 
@@ -63,7 +63,7 @@ public class FactoryActivity extends Activity {
     private String url_payment = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=payment&where=payment_type~%E5%AD%98%E5%85%A5%E6%B0%A3";
     private String[] url = new String[2];
     private String which_call;
-
+    private String staff_id;
     private int[] fac_list;
     private int[] car_list;
     private String[] fac_car_id = new String[2];
@@ -84,11 +84,15 @@ public class FactoryActivity extends Activity {
     private String carcylNId;
 
     private Toast showToastMessage;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_factory);
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
+        staff_id = sp.getString("staff_id", null);
+
         new AsyncFactoryDownload().execute(url_fac, url_car);
         new PaymentFactoryDownload().execute(url_payment);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -101,6 +105,7 @@ public class FactoryActivity extends Activity {
                 onBackPressed();
             }
         });
+
         //有exception可以讓畫面定格
         /*Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -426,13 +431,12 @@ public class FactoryActivity extends Activity {
         String facylN_content;
         String carcylN_id;
         String carcylN_content;
-        Globals g = new Globals();
 
         @Override
         protected Void doInBackground(String... urls) {
             try {
                 which_call = "AsyncFactoryDownload";
-                String urlCar = urls[1]+g.getUser_id();
+                String urlCar = urls[1]+staff_id;
                 JSONArray jsonArrayFactory = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCar = new JSONArray(getJSONData(urlCar));
                 JSONArray factory;
@@ -535,7 +539,7 @@ public class FactoryActivity extends Activity {
         super.onStop();
         Log.e("factory", "-----stop-----");
         showToastMessage.cancel();
-        finish();
+//        finish();
     }
 }
 

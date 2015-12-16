@@ -71,29 +71,54 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ClientInfoList clientList = (ClientInfoList) getItem(position);
+        final ClientInfoList clientList = (ClientInfoList) getItem(position);
         String add = _toAddress(clientList.getAddress());
         holder.tv_name.setText(clientList.getName());
         holder.tv_address.setText(add);
 
         /*電話號碼呈現*/
-        String[] phone_list ;
+        String[] phone_list;
         phone_list = clientList.getPhone();
-        for (String ph : clientList.getPhone()){
-            Log.e("client", "phone num:"+ph);
+        for (String ph : clientList.getPhone()) {
+            Log.e("client", "phone num:" + ph);
         }
 
         clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
-        clientPhones.setFocusable(false);
         ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phone_list);
         apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientPhones.setAdapter(apt);
         //電話撥號
-        clientPhones.setOnTouchListener(new View.OnTouchListener() {
+        /*clientPhones.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.e("detail", "touch phone:"+clientList.getPhone());
                 clientPhones.setOnItemSelectedListener(spnListener);
                 return false;
+            }
+        });*/
+
+        clientPhones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+                String tel = parent.getSelectedItem().toString();
+
+                Log.e("detail", "電話號碼:" + tel);
+
+                if (tel.equals("請選擇號碼")) {
+                    Log.e("callphone", "點到號碼");
+                } else {
+                    Log.e("callphone", "打電話出去");
+                    Log.e("detail", "撥打的電話號碼:" + tel);
+                    Uri uri = Uri.parse("tel:" + tel);
+                    Intent intent = new Intent(action, uri);
+                    context.startActivity(intent);
+                    parent.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
         return convertView;
@@ -110,38 +135,6 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    //電話 spinner 點按動作
-    private Spinner.OnItemSelectedListener spnListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            //取得選項內容
-            String tel = parent.getSelectedItem().toString();
-            if (tel.equals("請選擇號碼")) {
-                Log.e("callphone", "點到號碼");
-            }else {
-                Log.e("callphone", "打電話出去");
-                Uri uri = Uri.parse("tel:" + tel);
-                Intent intent = new Intent(action, uri);
-                context.startActivity(intent);
-            }
-
-            /*if (tel == null || tel.equals("")) {
-                Log.e("callphone", "電話欄位為空");
-            } else if (tel.equals("請選擇號碼")) {
-                Log.e("callphone", "點到號碼");
-//                Toast.makeText(DetailedTaskActivity.this, "請選擇電話號碼", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.e("callphone", "打電話出去");
-                Uri uri = Uri.parse("tel:" + tel);
-                Intent intent = new Intent(action, uri);
-                context.startActivity(intent);
-            }*/
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
 
     @Override
     public Filter getFilter() {
@@ -171,7 +164,7 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                     ClientInfoList m = mOriginalValues.get(i);
                     Log.e("tag", "i:" + i);
                     Log.e("tag", "m = " + mOriginalValues.get(i).toString());
-                    for (int j=1; j<m.getPhone().length; j++) {
+                    for (int j = 1; j < m.getPhone().length; j++) {
                         if (m.getName().contains(constraint) || m.getPhone()[j].contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
                             filteredItems.add(m);
                             break;
@@ -220,6 +213,6 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         } catch (Exception e) {
             return null;
         }
-
     }
+
 }

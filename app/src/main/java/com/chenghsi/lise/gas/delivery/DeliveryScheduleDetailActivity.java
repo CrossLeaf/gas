@@ -366,13 +366,12 @@ public class DeliveryScheduleDetailActivity extends Activity {
         } catch (Exception e) {
             return null;
         }
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
+//        finish();
     }
 
 }

@@ -41,8 +41,12 @@ public class NewDetailClientInfoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_detail_info);
+        Intent intent = getIntent();
+        String customer_id = intent.getStringExtra("customerId");
+        String customer_name = intent.getStringExtra("customerName");
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.title_activity_detailed_task);
+        toolbar.setTitle("客戶訂單歷史紀錄--"+customer_name);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
@@ -51,8 +55,7 @@ public class NewDetailClientInfoActivity extends Activity {
                 onBackPressed();
             }
         });
-        Intent intent = getIntent();
-        String customer_id = intent.getStringExtra("customerId");
+
         orderUrl += customer_id;
         doddleUrl+=customer_id;
         Log.e("client", orderUrl);

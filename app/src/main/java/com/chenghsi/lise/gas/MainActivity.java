@@ -2,6 +2,7 @@ package com.chenghsi.lise.gas;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
@@ -14,6 +15,8 @@ import com.chenghsi.lise.gas.task.NewTaskActivity;
 
 
 public class MainActivity extends TabActivity {
+
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +49,11 @@ public class MainActivity extends TabActivity {
     protected void onResume() {
         super.onResume();
         Log.e("Main", "------Main resume----");
-
-        Globals g = new Globals();
-        if (g.getUser_id() == null || g.getUser_name() == null ||
-                g.getUser_id().isEmpty() || g.getUser_name().isEmpty()) {
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
+        String user_name = sp.getString("staff_name", null);
+        String user_id = sp.getString("staff_id", null);
+        if (user_id == null || user_name == null ||
+                user_id.isEmpty() || user_name.isEmpty()) {
             Intent intent = new Intent();
             intent.setClass(this, LoginActivity.class);
             startActivity(intent);

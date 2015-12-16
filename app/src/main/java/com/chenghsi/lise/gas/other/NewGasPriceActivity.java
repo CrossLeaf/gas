@@ -165,6 +165,6 @@ public class NewGasPriceActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
+//        finish();
     }
 }

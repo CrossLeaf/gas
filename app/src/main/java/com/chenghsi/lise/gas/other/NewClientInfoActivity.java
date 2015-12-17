@@ -124,32 +124,6 @@ public class NewClientInfoActivity extends Activity {
         String old_id;
         int count = 1;
 
-        /*public void store(){
-            count = 1;
-            int a = 0;
-            int j = 0;
-            for (String str : customer_phone) {
-                Log.e("client", "a：" + a);
-                if (customer_phone[a] == null) {
-                    customer_phone[a] = "";
-                    Log.e("client", "customer_phone[" + a + "]=null");
-                    break;
-                } else {
-                    j++;
-                }
-                a++;
-                Log.e("client", "phone：" + str);
-            }
-            String phone[] = new String[j];
-
-            for (int k = 0; k < j; k++) {
-                phone[k] = customer_phone[k];
-            }
-
-            ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, phone);
-            clientList.add(clientInfoList);
-            customer_phone = new String[5];
-        }*/
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
             try {
@@ -177,8 +151,11 @@ public class NewClientInfoActivity extends Activity {
                     }
                     /*假如前一筆ID不等於現在ID，則儲存前一筆ID*/
                     if (i != 0 && !customer_id.equals((jsonArrayCustomer.getJSONArray(i-1)).getString(Constant.CUSTOMER_ID))) {
-                        customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                        customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                        oldCustomer = jsonArrayCustomer.getJSONArray(i-1);
+                        //此兩筆為前一筆資料
+                        customer_id = oldCustomer.getString(Constant.CUSTOMER_ID);
+                        customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
+                        customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
 
                         ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, hashMap.get(customer_id));
                         clientList.add(clientInfoList);
@@ -190,6 +167,7 @@ public class NewClientInfoActivity extends Activity {
 
                  /*可以將最後一筆拿出FOR迴圈儲存*/
                 customer = jsonArrayCustomer.getJSONArray(jsonArrayCustomer.length()-1);
+                customer_id = customer.getString(Constant.CUSTOMER_ID);
                 customer_name = customer.getString(Constant.CUSTOMER_NAME);
                 customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                 ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, hashMap.get(customer_id));

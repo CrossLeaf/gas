@@ -52,7 +52,7 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int i) {
-        return clientInfoLists.indexOf(getItem(i));
+        return i;
     }
 
     @Override

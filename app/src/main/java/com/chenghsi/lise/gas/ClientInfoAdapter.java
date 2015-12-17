@@ -77,10 +77,10 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         holder.tv_address.setText(add);
 
         /*電話號碼呈現*/
-        String[] phone_list;
+        ArrayList<String> phone_list;
         phone_list = clientList.getPhone();
         for (String ph : clientList.getPhone()) {
-            Log.e("client", "phone num:" + ph);
+            Log.e("client", "arrayList 呈現的 phone num:" + ph);
         }
 
         clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
@@ -163,8 +163,8 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                     ClientInfoList m = mOriginalValues.get(i);
                     Log.e("tag", "i:" + i);
                     Log.e("tag", "m = " + mOriginalValues.get(i).toString());
-                    for (int j = 1; j < m.getPhone().length; j++) {
-                        if (m.getName().contains(constraint) || m.getPhone()[j].contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
+                    for (int j = 1; j < m.getPhone().size(); j++) {
+                        if (m.getName().contains(constraint) || m.getPhone().get(j).contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
                             filteredItems.add(m);
                             break;
                         }

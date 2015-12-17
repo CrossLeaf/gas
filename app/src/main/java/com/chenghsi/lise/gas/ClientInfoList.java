@@ -1,5 +1,7 @@
 package com.chenghsi.lise.gas;
 
+import java.util.ArrayList;
+
 /**
  * Created by MengHan on 2015/11/12.
  */
@@ -7,9 +9,9 @@ public class ClientInfoList {
     String id;
     String name;
     String address;
-    String[] phone;
+    ArrayList<String> phone;
 
-    public ClientInfoList(String id, String name, String address, String[]phone) {
+    public ClientInfoList(String id, String name, String address, ArrayList<String>phone) {
         setId(id);
         setName(name);
         setAddress(address);
@@ -40,11 +42,11 @@ public class ClientInfoList {
         this.address = address;
     }
 
-    public String[] getPhone() {
+    public ArrayList<String> getPhone() {
         return phone;
     }
 
-    public void setPhone(String[] phone) {
+    public void setPhone(ArrayList<String> phone) {
         this.phone = phone;
     }
 }

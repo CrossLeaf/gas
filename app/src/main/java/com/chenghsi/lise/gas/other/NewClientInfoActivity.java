@@ -66,7 +66,7 @@ public class NewClientInfoActivity extends Activity {
         edt_client = (EditText) findViewById(R.id.edt_search_client);
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
 //        lv_client_info.setTextFilterEnabled(true);
-        lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+//        lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         Log.e("client", "lv_client_info 初始化");
 
@@ -94,8 +94,6 @@ public class NewClientInfoActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-//        lv_client_info.setFocusable(true);
-//        lv_client_info.setFocusableInTouchMode(true);
         lv_client_info.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -103,7 +101,6 @@ public class NewClientInfoActivity extends Activity {
                 newClientList = new ArrayList<>(ClientInfoAdapter.clientInfoLists);
                 String customer_id = newClientList.get(position).getId();
                 String customer_name = newClientList.get(position).getName();
-                Toast.makeText(NewClientInfoActivity.this, "id:" + customer_id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("customerId", customer_id);
                 intent.putExtra("customerName", customer_name);

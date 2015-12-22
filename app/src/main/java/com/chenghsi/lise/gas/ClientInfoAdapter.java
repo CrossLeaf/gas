@@ -84,6 +84,8 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         }
 
         clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
+        //屏蔽子控鍵焦點
+        clientPhones.setFocusable(false);
         ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phone_list);
         apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientPhones.setAdapter(apt);

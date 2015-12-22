@@ -65,7 +65,7 @@ public class NewClientInfoActivity extends Activity {
 
         edt_client = (EditText) findViewById(R.id.edt_search_client);
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
-        lv_client_info.setTextFilterEnabled(true);
+//        lv_client_info.setTextFilterEnabled(true);
         lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         Log.e("client", "lv_client_info 初始化");
@@ -312,7 +312,6 @@ public class NewClientInfoActivity extends Activity {
             Log.e("client", "Do onPostExecute");
             adapter = new ClientInfoAdapter(NewClientInfoActivity.this, clientList);
             lv_client_info.setAdapter(adapter);
-
         }
 
         //取得JSON資料
@@ -343,7 +342,6 @@ public class NewClientInfoActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-//        finish();
     }
 
 }

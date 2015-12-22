@@ -161,13 +161,13 @@ public class FactoryActivity extends Activity {
         numPick_fac4.setMaxValue(99);
         numPick_fac4.setMinValue(0);
 
-        numPick_car50.setMaxValue(99);
+        numPick_car50.setMaxValue(Integer.parseInt(fac_content[0]));
         numPick_car50.setMinValue(0);
-        numPick_car20.setMaxValue(99);
+        numPick_car20.setMaxValue(Integer.parseInt(fac_content[1]));
         numPick_car20.setMinValue(0);
-        numPick_car16.setMaxValue(99);
+        numPick_car16.setMaxValue(Integer.parseInt(fac_content[2]));
         numPick_car16.setMinValue(0);
-        numPick_car4.setMaxValue(99);
+        numPick_car4.setMaxValue(Integer.parseInt(fac_content[3]));
         numPick_car4.setMinValue(0);
 
         numPick_fac50.setOnValueChangedListener(new NumChangeListener());
@@ -278,13 +278,15 @@ public class FactoryActivity extends Activity {
                 flag = 0;
                 new Update().start();
             } else { //兩者都有輸入的情況
-                showToastMessage.cancel();
+                for_loop = 2;
+                new Update().start();
+                /*showToastMessage.cancel();
                 showToastMessage = Toast.makeText(FactoryActivity.this, "請重新輸入", Toast.LENGTH_LONG);
                 showToastMessage.show();
                 Log.e("factory", "兩者都有輸入");
                 Intent intent = getIntent();
                 finish();
-                startActivity(intent);
+                startActivity(intent);*/
             }
         }
     }
@@ -296,7 +298,7 @@ public class FactoryActivity extends Activity {
         public void onClick(View view) {
             Log.e("factory", "total pay:" + total_money);
             Log.e("factory", "payment_id:" + saveout_id);
-            if (paymentList!=null) {
+            if (paymentList != null) {
                 Intent intent = new Intent(FactoryActivity.this, FactoryDialogActivity.class);
                 intent.putExtra("total_money", total_money);
                 intent.putExtra("saveout_id", saveout_id);
@@ -310,6 +312,7 @@ public class FactoryActivity extends Activity {
     }
 
     private class Update extends Thread {
+        HttpClient httpclient;
 
         @Override
         public void run() {
@@ -323,28 +326,31 @@ public class FactoryActivity extends Activity {
                     "&car_id=" + car_id + "&facylN_content=" + fac_car_content[1] + "&inout_type=-1";
 
             Log.e("retSrc", "Update url:" + url[flag]);
-            for (int i = 0; i < for_loop; i++) {
-                HttpGet httpget = new HttpGet(url[flag]);
-                HttpClient httpclient = new DefaultHttpClient();
-                try {
-                    HttpResponse response = httpclient.execute(httpget);
-                    Log.e("retSrc", "讀取 JSON-2...");
-                    HttpEntity resEntity = response.getEntity();
+            for (int i = 0; i < 2; i++) {
+                if (flag == i || for_loop == 2) {
+                    HttpGet httpget = new HttpGet(url[i]);
+                    httpclient = new DefaultHttpClient();
+                    try {
+                        HttpResponse response = httpclient.execute(httpget);
+                        Log.e("retSrc", "讀取 JSON-2...");
+                        HttpEntity resEntity = response.getEntity();
 
-                    if (resEntity != null) {
-                        String retSrc = EntityUtils.toString(resEntity);
-                        Log.e("factory retSrc:", retSrc);
+                        if (resEntity != null) {
+                            String retSrc = EntityUtils.toString(resEntity);
+                            Log.e("factory retSrc:", retSrc);
+                        }
+
+
+                    } catch (Exception e) {
+                        Log.e("retSrc", "讀取JSON Error...");
                     }
-
-
-                } catch (Exception e) {
-                    Log.e("retSrc", "讀取JSON Error...");
                 }
-                Message message = new Message();
-                message.what = 0;
-                myHandler.sendMessage(message);
-                httpclient.getConnectionManager().shutdown();
             }
+
+            Message message = new Message();
+            message.what = 0;
+            myHandler.sendMessage(message);
+            httpclient.getConnectionManager().shutdown();
         }
 
 
@@ -425,7 +431,7 @@ public class FactoryActivity extends Activity {
         protected Void doInBackground(String... urls) {
             try {
                 which_call = "AsyncFactoryDownload";
-                String urlCar = urls[1]+staff_id;
+                String urlCar = urls[1] + staff_id;
                 JSONArray jsonArrayFactory = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCar = new JSONArray(getJSONData(urlCar));
                 JSONArray factory;
@@ -444,7 +450,7 @@ public class FactoryActivity extends Activity {
                 carcylN_id = car.getString(Constant.CARCYLN_ID);
                 car_id = car.getString(Constant.CAR_ID);
                 carcylN_content = car.getString(Constant.CARCYLN_CONTENT);
-                Log.e("factory", "car_id:"+car_id);
+                Log.e("factory", "car_id:" + car_id);
                 Log.e("factory", "執行完畢");
 
 

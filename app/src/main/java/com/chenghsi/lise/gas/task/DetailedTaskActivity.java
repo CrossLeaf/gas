@@ -180,7 +180,7 @@ public class DetailedTaskActivity extends Activity {
 //        ((TextView) R_allowance.findViewById(R.id.text)).setText(R.string.allowance);
         ((TextView) R_receive.findViewById(R.id.text)).setText(R.string.should_receive);
         ((TextView) R_clientPhones.findViewById(R.id.title)).setText(R.string.phone);
-        ((TextView) R_staff.findViewById(R.id.title)).setText("選擇夥伴");
+        ((TextView) R_staff.findViewById(R.id.title)).setText("夥伴");
 
         gas_residual = (EditText) R_remnant.findViewById(R.id.text2);
         gas_residual.setText(order_gas_residual);
@@ -229,7 +229,7 @@ public class DetailedTaskActivity extends Activity {
         partnerList = NewTaskActivity.partnerList;
         String partner[] = new String[partnerList.size()];
         partner_id = new String[partnerList.size()];
-        partner[0] = "請選擇夥伴";
+        partner[0] = "請選擇其他夥伴";
         partner_id[0] = "0";
         order_staff_help = partner[0];
         //從SharedPreferences拿id
@@ -245,6 +245,7 @@ public class DetailedTaskActivity extends Activity {
             Log.e("detailTask", "夥伴們：" + partner[k]);
             k++;
         }
+
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, partner);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         staffChoice.setAdapter(arrayAdapter);
@@ -337,7 +338,7 @@ public class DetailedTaskActivity extends Activity {
     }
     /*OnResume 結束*/
 
-    //電話監聽事件
+    /*電話監聽事件*/
     private Spinner.OnItemSelectedListener spnListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -360,8 +361,9 @@ public class DetailedTaskActivity extends Activity {
         public void onNothingSelected(AdapterView<?> parent) {
         }
     };
+    /*電話監聽事件結束*/
 
-    //選擇夥伴監聽事件
+    /*選擇夥伴監聽事件*/
     private Spinner.OnItemSelectedListener partnerListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -377,12 +379,15 @@ public class DetailedTaskActivity extends Activity {
 
         }
     };
+    /*選擇夥伴監聽事件結束*/
 
     /*瓦斯數量調整*/
+
     //計算點擊上or下
     int j = 0;
 
     int cylinder_temp = 0;
+
     //計算目前為陣列的哪個
     int which;
 
@@ -468,7 +473,7 @@ public class DetailedTaskActivity extends Activity {
         } else {
             order_gas_residual = gas_residual.getText().toString();
         }
-        if ("".equals(receive.getText().toString().trim())) {
+        if (receive.getText().toString().trim().equals("") || receive.getText().toString().trim().equals("0")) {
             Toast.makeText(this, "請輸入實收金額", Toast.LENGTH_SHORT).show();
         } else {
             income_money_real = receive.getText().toString();
@@ -495,21 +500,25 @@ public class DetailedTaskActivity extends Activity {
 
     /*賒銷*/
     public void btn_money_credit(View view) {
-        order_money_credit = "1";
-        for (int k = 0; k < cylinders_list.length; k++) {
-            if (k == 0) {
-                order_cylinders_list = cylinders_list[k];
-            } else {
-                order_cylinders_list += "," + cylinders_list[k];
+        if (receive.getText().toString().trim().equals("") || receive.getText().toString().trim().equals("0")){
+            order_money_credit = "1";
+            for (int k = 0; k < cylinders_list.length; k++) {
+                if (k == 0) {
+                    order_cylinders_list = cylinders_list[k];
+                } else {
+                    order_cylinders_list += "," + cylinders_list[k];
+                }
             }
+            if (!order_gas_residual.equals("0")) {
+                order_gas_residual = gas_residual.getText().toString();
+            }
+            new Update().start();
+            Toast.makeText(DetailedTaskActivity.this, "Loading...", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(DetailedTaskActivity.this, "注意！有輸入實收", Toast.LENGTH_SHORT).show();
         }
-        if (order_gas_residual.equals("0")) {
-        } else {
-            order_gas_residual = gas_residual.getText().toString();
-        }
-        new Update().start();
-        Toast.makeText(DetailedTaskActivity.this, "Loading...", Toast.LENGTH_LONG).show();
     }
+
 
     private class Update extends Thread {
 

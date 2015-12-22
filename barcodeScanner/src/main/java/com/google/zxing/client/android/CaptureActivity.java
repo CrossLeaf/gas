@@ -62,6 +62,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -113,6 +114,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private Result savedResultToShow;
     private ViewfinderView viewfinderView;
     private TextView statusView;
+    private EditText edt_barcode;
+    private Button btn_barcode;
     private View resultView;
     private Result lastResult;
     private boolean hasSurface;
@@ -164,8 +167,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ambientLightManager = new AmbientLightManager(this);
 
         Intent intent = getIntent();
-        flag = intent.getIntExtra("flag",0)-1;
-        Log.e("tag", "flag="+flag);
+        flag = intent.getIntExtra("flag", 0) - 1;
+        Log.e("tag", "flag=" + flag);
         cylinders_locate = intent.getStringExtra("locate");
 
         //車子ID
@@ -197,12 +200,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         resultView = findViewById(R.id.result_view);
         statusView = (TextView) findViewById(R.id.status_view);
+        edt_barcode = (EditText) findViewById(R.id.edt_barcode);
+        btn_barcode = (Button) findViewById(R.id.btn_barcode);
 
         handler = null;
         lastResult = null;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         //<LISE>
     /*if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
       setRequestedOrientation(getCurrentOrientation());
@@ -304,6 +308,18 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         historyManager = new HistoryManager(this); //LISE
 //        renewListview(); //LISE
+        btn_barcode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!edt_barcode.getText().toString().trim().equals("")) {
+                    cylinders_number = edt_barcode.getText().toString().trim();
+                    new Update().start();
+                    Toast.makeText(CaptureActivity.this, "新增完畢", Toast.LENGTH_SHORT).show();
+                }
+                edt_barcode.setText("");
+
+            }
+        });
     }
 
     private int getCurrentOrientation() {
@@ -566,11 +582,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         cylinders_number = rawResult.getText();
         new Update().start();
 
+        btn_barcode.setVisibility(View.GONE);
+        edt_barcode.setVisibility(View.GONE);
         statusView.setVisibility(View.GONE);
         viewfinderView.setVisibility(View.GONE);
         resultView.setVisibility(View.VISIBLE);
 
         ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
+
         if (barcode == null) {
             barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
                     R.drawable.launcher_icon));
@@ -603,7 +622,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 }
             }
 
-            Log.e("tag", "what is metadataText:"+metadataText);
+            Log.e("tag", "what is metadataText:" + metadataText);
 
             if (metadataText.length() > 0) {
                 metadataText.setLength(metadataText.length() - 1);
@@ -614,7 +633,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
         /*掃描後右邊呈現資訊（掃描後得到的訊息）*/
         TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
-        Log.e("tag", "what is displayContents:"+displayContents);
+        Log.e("tag", "what is displayContents:" + displayContents);
         contentsTextView.setText(displayContents);
         int scaledSize = Math.max(22, 32 - displayContents.length() / 4);
         contentsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
@@ -799,6 +818,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         resultView.setVisibility(View.GONE);
         statusView.setText(R.string.msg_default_status);
         statusView.setVisibility(View.VISIBLE);
+        edt_barcode.setVisibility(View.VISIBLE);
+        btn_barcode.setVisibility(View.VISIBLE);
         viewfinderView.setVisibility(View.VISIBLE);
         lastResult = null;
     }
@@ -923,25 +944,25 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 case 0: //檢驗廠掃入
                     Log.e("thread", "操作項目：掃入");
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=1" +
-                            "&cylinders_number="+cylinders_number+"&suppliers_id=6";
+                            "&cylinders_number=" + cylinders_number + "&suppliers_id=6";
                     break;
                 case 1: //檢驗廠掃出
                     Log.e("thread", "操作項目：掃出");
-                    url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=0&cylinders_number="+cylinders_number;
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=0&cylinders_number=" + cylinders_number;
                     break;
                 case 2: //更新狀態
                     Log.e("thread", "操作項目：更新項目");
-                    url = "http://198.245.55.221:8089/ProjectGAPP/php/try_get_cylinders.php?cylinders_number="+cylinders_number;
+                    url = "http://198.245.55.221:8089/ProjectGAPP/php/getData_from_xml.php?card_no=" + cylinders_number;
                     break;
                 case 3: //任務掃入
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
-                            "&tb_where_name=cylinders_number&tb_where_val="+cylinders_number+
-                            "&tb_td=cylinders_type&tb_val=1_"+car_id;
+                            "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
+                            "&tb_td=cylinders_type&tb_val=1_" + car_id;
                     break;
                 case 4: //任務掃出
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
-                            "&tb_where_name=cylinders_number&tb_where_val="+cylinders_number+
-                            "&tb_td=cylinders_type&tb_val=2_"+customer_id;
+                            "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
+                            "&tb_td=cylinders_type&tb_val=2_" + customer_id;
                     break;
 
                 default:
@@ -949,7 +970,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
             }
             HttpGet httpget = new HttpGet(url);
-            Log.e("capture", "url:"+url);
+            Log.e("capture", "url:" + url);
             HttpClient httpclient = new DefaultHttpClient();
             try {
                 HttpResponse response = httpclient.execute(httpget);

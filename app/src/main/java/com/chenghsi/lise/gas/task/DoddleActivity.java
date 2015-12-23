@@ -52,7 +52,8 @@ public class DoddleActivity extends Activity {
             try {
                 JSONArray jsonArrayDoddle = new JSONArray(getJSONData(urls[0]));
                 JSONArray doddleArray;
-                for (int i=0; i<jsonArrayDoddle.length(); i++){
+                //目前是當作有抄表任務時，也會在doddle新增一筆當日的抄表所以要扣掉當日抄表項目
+                for (int i=0; i<jsonArrayDoddle.length()-1; i++){
                     doddleArray = jsonArrayDoddle.getJSONArray(i);
                     doddle_time = doddleArray.getString(Constant.DODDLE_TIME);
                     doddle_this_phase_degree = doddleArray.getString(Constant.DODDLE_THIS_PHASE_DEGREE);

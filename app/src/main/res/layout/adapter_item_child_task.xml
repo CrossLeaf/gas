@@ -19,12 +19,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/edt_degree"
-        android:inputType="number"
-        android:phoneNumber="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:background="@android:drawable/edit_text"
         android:layout_weight="1"
-        android:hint="抄錶度數"/>
+        android:hint="抄錶度數"
+        android:inputType="number"/>
 
     <Button
         android:layout_width="0dp"

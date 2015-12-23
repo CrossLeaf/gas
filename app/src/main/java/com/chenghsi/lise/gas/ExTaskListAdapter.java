@@ -3,6 +3,7 @@ package com.chenghsi.lise.gas;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +45,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     private List<Map<String, String>> childList;
     /*使用者id & name*/
     private static String userName;
-    private static String staff_id;
+    private static String userId;
 
     private String action = Intent.ACTION_CALL;
 
@@ -64,6 +66,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     String carcyln_content;
 
     int flag;
+    int count = 1;
+    int xx = 1;
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -76,16 +80,17 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         this.childList = childList;
         this.staffList = staffList;
 
-        Log.e("extaskList", "userName:" + userName);
-        Log.e("extaskList", "staff_id:" + staff_id);
+        Globals globals = new Globals();
+        String staff_id = globals.getUser_id();
+        String staff_name = globals.getUser_name();
 
         inflater = LayoutInflater.from(taskActivity);
         sp = taskActivity.getSharedPreferences("LoginInfo", 0);
-        userName = sp.getString("staff_name", null);
-        staff_id = sp.getString("staff_id", null);
-        /*Globals g = (Globals) taskActivity.getApplicationContext();
-        userName = g.getUser_name();
-        staff_id = g.getUser_id();*/
+        userName = sp.getString("staff_name", staff_name);
+        userId = sp.getString("staff_id", staff_id);
+
+        Log.e("extask", "userName:" + userName);
+        Log.e("extask", "userId:" + userId);
 
     }
 
@@ -99,6 +104,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         TextView money;
         Button btn_accept;
         ImageButton img_btn_call;
+        ImageView imageView;
 
         public GroupViewHolder(View convertView) {
             appointment = (TextView) convertView.findViewById(R.id.tv_appointment);
@@ -110,10 +116,12 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             btn_accept = (Button) convertView.findViewById(R.id.btn_accept);
             money = (TextView) convertView.findViewById(R.id.tv_money);
             img_btn_call = (ImageButton) convertView.findViewById(R.id.img_btn_call);
+            imageView = (ImageView) convertView.findViewById(R.id.imageView);
         }
     }
 
     private class ChildViewHolder {
+
         Button btn_scanIn;
         Button btn_scanOut;
         Button btn_finish;
@@ -128,7 +136,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    int count = 1;
 
     @Override
     public int getGroupCount() {
@@ -171,7 +178,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-
     @Override
     public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
@@ -180,21 +186,25 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
+            Log.e("extask", "first xx = " + xx);
+            xx++;
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
+            Log.e("extask", "xx = "+ xx);
+            xx++;
         }
-//        Log.e("task", "group size:" + groupList.size());
+//        Log.e("extask", "group size:" + groupList.size());
 
         ArrayList<TaskLists> list = groupList.get(0);
-//        Log.e("task", "getView call 次數：" + count);
+        Log.e("extask", "getView call 次數：" + count);
         count++;
-//        Log.e("task", "list size:" + list.size());
+//        Log.e("extask", "list size:" + list.size());
         final TaskLists taskLists = list.get(groupPosition);
 
         String add = _toAddress(taskLists.getCustomer_address());
         String cylinders = convertCylinders(taskLists.getOrder_cylinders_list());
         final String callPhone = taskLists.getOrder_phone();
-//        Log.e("task", "phone" + callPhone);
+//        Log.e("extask", "phone" + callPhone);
         groupViewHolder.appointment.setText(taskLists.getOrder_prefer_time());
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
@@ -211,15 +221,18 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.btn_accept.setFocusable(false);
 
         /*按鈕文字初始化*/
-        if (taskLists.getOrder_doddle_status().equals("")) {
+        if (taskLists.getOrder_doddle_status().equals("")) {    //為承接
 //            taskLists.setOrder_doddle_status("");
+            groupViewHolder.imageView.setImageResource(R.drawable.circle);
             groupViewHolder.btn_accept.setText("承接");
             expListView.collapseGroup(groupPosition);
-        } else if (taskLists.getOrder_doddle_status().equals("1") && taskLists.getOrder_doddle_accept().equals(staff_id)) {
+        } else if (taskLists.getOrder_doddle_status().equals("1") && taskLists.getOrder_doddle_accept().equals(userId)) {
+            groupViewHolder.imageView.setImageResource(R.drawable.red);
             groupViewHolder.btn_accept.setText(userName);
             isCollapse = expListView.expandGroup(groupPosition);
         } else {
             taskLists.setOrder_doddle_status("1");
+            groupViewHolder.imageView.setImageResource(R.drawable.red);
             for (int i = 0; i < staffList.size(); i++) {
                 String staff_id = staffList.get(i).getStaff_id();
                 if (staff_id.equals(taskLists.getOrder_doddle_accept()))
@@ -231,7 +244,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         /*承接按鈕動作*/
         final GroupViewHolder finalGroupView = groupViewHolder;
-
         groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,17 +251,17 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     flag = 0;
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
                         finalGroupView.btn_accept.setText(userName);
-                        taskLists.setOrder_doddle_accept(staff_id);
+                        taskLists.setOrder_doddle_accept(userId);
                         taskLists.setOrder_doddle_status("1");
                         //展開expandable listView
                         isCollapse = expListView.expandGroup(groupPosition);
                         up_order_id = taskLists.getOrder_doddle_id();
                         up_order_accept = taskLists.getOrder_doddle_accept();
                         up_order_status = taskLists.getOrder_doddle_status();
-                        Log.e("task", "承接：" + taskLists.getOrder_doddle_status());
+                        Log.e("exTask", "承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else if (taskLists.getOrder_doddle_status().equals("1") &&
-                            taskLists.getOrder_doddle_accept().equals(staff_id)) {
+                            taskLists.getOrder_doddle_accept().equals(userId)) {
                         taskLists.setOrder_doddle_status("");
                         finalGroupView.btn_accept.setText("承接");
                         taskLists.setOrder_doddle_accept("");
@@ -259,28 +271,28 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                         up_order_status = taskLists.getOrder_doddle_status();
 
                         isCollapse = expListView.collapseGroup(groupPosition);
-                        Log.e("task", "取消承接：" + taskLists.getOrder_doddle_status());
+                        Log.e("extask", "取消承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else {
-                        Log.e("task", "已有人承接");
-                        Log.e("task", "ELSE status:" + taskLists.getOrder_doddle_status());
-                        Log.e("task", "ELSE accept:" + taskLists.getOrder_doddle_accept());
+                        Log.e("extask", "已有人承接");
+                        Log.e("extask", "ELSE status:" + taskLists.getOrder_doddle_status());
+                        Log.e("extask", "ELSE accept:" + taskLists.getOrder_doddle_accept());
                     }
                 } else { //抄表承接動作
                     flag = 1;
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
                         finalGroupView.btn_accept.setText(userName);
-                        taskLists.setOrder_doddle_accept(staff_id);
+                        taskLists.setOrder_doddle_accept(userId);
                         taskLists.setOrder_doddle_status("1");
                         //展開expandable listView
                         isCollapse = expListView.expandGroup(groupPosition);
                         up_doddle_id = taskLists.getOrder_doddle_id();
                         up_doddle_accept = taskLists.getOrder_doddle_accept();
                         up_doddle_status = taskLists.getOrder_doddle_status();
-                        Log.e("task", "承接：" + taskLists.getOrder_doddle_status());
+                        Log.e("extask", "承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else if (taskLists.getOrder_doddle_status().equals("1") &&
-                            taskLists.getOrder_doddle_accept().equals(staff_id)) {
+                            taskLists.getOrder_doddle_accept().equals(userId)) {
                         taskLists.setOrder_doddle_status("");
                         finalGroupView.btn_accept.setText("承接");
                         taskLists.setOrder_doddle_accept("");
@@ -290,12 +302,12 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                         up_doddle_status = taskLists.getOrder_doddle_status();
 
                         isCollapse = expListView.collapseGroup(groupPosition);
-                        Log.e("task", "取消承接：" + taskLists.getOrder_doddle_status());
+                        Log.e("extask", "取消承接：" + taskLists.getOrder_doddle_status());
                         new Update().start();
                     } else {
-                        Log.e("task", "已有人承接");
-                        Log.e("task", "ELSE status:" + taskLists.getOrder_doddle_status());
-                        Log.e("task", "ELSE accept:" + taskLists.getOrder_doddle_accept());
+                        Log.e("extask", "已有人承接");
+                        Log.e("extask", "ELSE status:" + taskLists.getOrder_doddle_status());
+                        Log.e("extask", "ELSE accept:" + taskLists.getOrder_doddle_accept());
                     }
                 }
             }
@@ -329,19 +341,31 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
-
         ArrayList<TaskLists> list = groupList.get(0);
         final TaskLists taskLists = list.get(groupPosition);
+
+        /*抄錶度數 取得焦點*/
+        for (int i = 0; i < 2; i++) {
+            childViewHolder.edt_degree.setFocusable(true);
+        }
+        Log.e("extask", "Group Count:" + getGroupCount());
         if (taskLists.getOrder_task().equals("抄錶")) {
             //抄錶的子項目
             childViewHolder.btn_scanIn.setVisibility(View.GONE);
             childViewHolder.btn_scanOut.setVisibility(View.GONE);
             childViewHolder.edt_degree.setVisibility(View.VISIBLE);
-            childViewHolder.edt_degree.setInputType(InputType.TYPE_CLASS_NUMBER);
+            //TODO
+            Log.e("android version", "android version:" + Build.VERSION.RELEASE);
+            if (!Build.VERSION.RELEASE.contains("4.2")) {
+                Log.e("android version", "android version not 4.2");
+                childViewHolder.edt_degree.setInputType(InputType.TYPE_CLASS_NUMBER);
+            } else {
+                Log.e("android version", "android version = 4.2");
+            }
+//            childViewHolder.edt_degree.setFocusable(true);
             childViewHolder.edt_degree.requestFocus();//让EditText获得焦点，但是获得焦点并不会自动弹出键盘
 
         } else {
-
             //設定子項目的文字和可見度
             childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
             childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
@@ -361,7 +385,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 Intent intent = new Intent();
                 intent.setClass(taskActivity, CaptureActivity.class);
                 intent.putExtra("flag", flag + 2);
-                intent.putExtra("car_id", staff_id);
+                intent.putExtra("car_id", userId);
                 Log.e("flag", String.valueOf(flag + 2));
                 taskActivity.startActivity(intent);
             }
@@ -390,10 +414,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 if (taskLists.getOrder_task().equals("抄錶")) {    //抄錶結案
                     flag = 4;
 
-                    if (childViewHolder.edt_degree.getText().toString().equals("")){
-                        Toast.makeText(taskActivity, "請輸入抄錶度數",Toast.LENGTH_SHORT).show();
+                    if (childViewHolder.edt_degree.getText().toString().equals("")) {
+                        Toast.makeText(taskActivity, "請輸入抄錶度數", Toast.LENGTH_SHORT).show();
                         return;
-                    }else {
+                    } else {
                         up_doddle_id = taskLists.getOrder_doddle_id();
                         up_degree = childViewHolder.edt_degree.getText().toString();
                         new Update().start();
@@ -405,10 +429,10 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     String[] car_content_list = car_content.split(",");
                     String[] up_cylinders_list = taskLists.getOrder_cylinders_list().split(",");
                     carcyln_content = convertAndCountCylinders(car_content_list, up_cylinders_list);
-                    Log.e("task", "flag:" + flag + " status:" + carcyln_content);
+                    Log.e("extask", "flag:" + flag + " status:" + carcyln_content);
                 }
                 new Update().start();
-                Log.e("tag", "結案：" + groupPosition);
+                Log.e("extask", "結案：" + groupPosition);
                 groupList.get(0).remove(groupPosition);
                 notifyDataSetChanged();
             }
@@ -416,6 +440,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         return convertView;
     }
+
 
     private class Update extends Thread {
         String url[];

@@ -7,16 +7,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
 
-//import com.chenghsi.lise.gas.delivery.DeliveryActivity;
 import com.chenghsi.lise.gas.delivery.DeliveryScheduleActivity;
 import com.chenghsi.lise.gas.other.OtherActivity;
 import com.chenghsi.lise.gas.task.NewTaskActivity;
-//import com.chenghsi.lise.gas.task.TaskActivity;
 
 
 public class MainActivity extends TabActivity {
 
     SharedPreferences sp;
+    public static String staff_name;
+    public static String staff_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +43,18 @@ public class MainActivity extends TabActivity {
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
 
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.e("Main", "------Main resume----");
+        LoginActivity loginActivity = new LoginActivity();
         sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
-        String user_name = sp.getString("staff_name", null);
-        String user_id = sp.getString("staff_id", null);
+        staff_name = loginActivity.staff_name;
+        staff_id = loginActivity.staff_id;
+        String user_name = sp.getString("staff_name", staff_name);
+        String user_id = sp.getString("staff_id", staff_id);
         if (user_id == null || user_name == null ||
                 user_id.isEmpty() || user_name.isEmpty()) {
             Intent intent = new Intent();
@@ -60,7 +63,6 @@ public class MainActivity extends TabActivity {
             Log.e("Main", "startActivity");
             MainActivity.this.finish();
         }
-
     }
 
     @Override

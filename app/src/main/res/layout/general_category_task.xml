@@ -17,19 +17,19 @@
             android:layout_weight="1"
             android:text="@string/gas"/>
 
-        <Button
+        <!--<Button
             android:id="@+id/btn_maintain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/maintain"/>
+            android:text="@string/maintain"/>-->
 
-        <Button
+        <!--<Button
             android:id="@+id/btn_others"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/other"/>
+            android:text="@string/other"/>-->
     </LinearLayout>
 
     <RelativeLayout

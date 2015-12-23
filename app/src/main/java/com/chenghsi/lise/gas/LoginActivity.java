@@ -28,8 +28,8 @@ public class LoginActivity extends Activity {
     String password;
     String retSrc = "";
 
-    private String staff_name;
-    private String staff_id;
+    String staff_name;
+    String staff_id;
 
     private boolean networkConnect;
     Toast showToastMessage;
@@ -78,6 +78,11 @@ public class LoginActivity extends Activity {
     private void restorePref() {
         account = et_account.getText().toString();
         password = et_password.getText().toString();
+
+        //全域儲存方式
+        Globals globals = new Globals();
+        globals.setUser_name(staff_name);
+        globals.setUser_id(staff_id);
 
         //取得偏好編輯模式
         SharedPreferences.Editor edit = sp.edit();

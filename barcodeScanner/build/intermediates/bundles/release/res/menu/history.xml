@@ -20,4 +20,4 @@
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="2"
         android:showAsAction="withText|ifRoom"/>
-</menu><!-- From: file:/Users/MengHan/Desktop/丞希%20data/瓦斯行專案/Gas/barcodeScanner/src/main/res/menu/history.xml -->
+</menu><!-- From: file:/Users/MengHan/Desktop/Chenghsi/瓦斯行專案/Gas/barcodeScanner/src/main/res/menu/history.xml -->

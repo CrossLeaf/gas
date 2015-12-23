@@ -581,13 +581,18 @@ public class DetailedTaskActivity extends Activity {
                 HttpEntity resEntity = response.getEntity();
                 if (resEntity != null) {
                     retSrc = EntityUtils.toString(resEntity);
+                    Log.e("detail", "show update:"+retSrc);
                     //將字串中的數字取出
-                    Pattern p = Pattern.compile("[0-9]");
+                    String subStr =retSrc.substring(12);
+                    Log.e("detail", "subStr:"+subStr);
+                    totalPay = subStr.trim();
+                    /*正則表示式*/
+                    /*Pattern p = Pattern.compile("[0-9]");
                     Matcher m = p.matcher(retSrc);
                     totalPay = "";
                     while (m.find()) {
                         totalPay += m.group();
-                    }
+                    }*/
                     Log.e("retSrc", "完整資料：" + retSrc);
                 } else {
                     retSrc = "Did not work!";

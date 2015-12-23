@@ -25,4 +25,4 @@
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="3"
         android:showAsAction="withText"/>
-</menu><!-- From: file:/Users/MengHan/Desktop/丞希%20data/瓦斯行專案/Gas/barcodeScanner/src/main/res/menu/capture.xml --><!-- From: file:/Users/MengHan/Desktop/丞希%20data/瓦斯行專案/Gas/barcodeScanner/build/intermediates/bundles/debug/res/menu/capture.xml -->
+</menu><!-- From: file:/Users/MengHan/Desktop/Chenghsi/瓦斯行專案/Gas/barcodeScanner/src/main/res/menu/capture.xml --><!-- From: file:/Users/MengHan/Desktop/Chenghsi/瓦斯行專案/Gas/barcodeScanner/build/intermediates/bundles/debug/res/menu/capture.xml -->

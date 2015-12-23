@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.chenghsi.lise.gas.Constant;
 import com.chenghsi.lise.gas.ExTaskListAdapter;
+import com.chenghsi.lise.gas.Globals;
 import com.chenghsi.lise.gas.R;
 import com.chenghsi.lise.gas.StaffList;
 import com.chenghsi.lise.gas.TaskLists;
@@ -65,22 +67,28 @@ public class NewTaskActivity extends Activity {
     String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
 
     String url2 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=staff";
+
     String url3 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=carcyln&where=car_id~";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_new_task);
         Log.e("task", "----TaskOnCreate----");
 
-        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
-        user_name = sp.getString("staff_name", null);
-        user_id = sp.getString("staff_id", null);
-        Log.e("exception test", "preference test:"+ user_id);
-        Log.e("exception test", "preference test:"+ user_name);
+        Globals globals = new Globals();
+        String staff_id = globals.getUser_id();
+        String staff_name = globals.getUser_name();
 
-        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
-        list_Task = (ExpandableListView) findViewById(R.id.expListView);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
+        user_name = sp.getString("staff_name", staff_name);
+        user_id = sp.getString("staff_id", staff_id);
+        Log.e("task", "preference test:" + user_id);
+        Log.e("task", "preference test:" + user_name);
+
+//        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_task);
@@ -91,6 +99,9 @@ public class NewTaskActivity extends Activity {
                 onBackPressed();
             }
         });
+
+        list_Task = (ExpandableListView) findViewById(R.id.expListView);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         // Initializing swipeRefreshLayout (the refreshing animation)
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
@@ -123,7 +134,7 @@ public class NewTaskActivity extends Activity {
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
             // Enable refreshing event if at the top of listView
-            if (firstVisibleItem == 0) {
+            if (firstVisibleItem == -1) {
                 swipeRefreshLayout.setEnabled(true);
             } else {
                 swipeRefreshLayout.setEnabled(false);
@@ -135,6 +146,7 @@ public class NewTaskActivity extends Activity {
     private OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh() {
+            Log.e("task", "call onRefreshListener...");
             swipeRefreshLayout.setRefreshing(true);
             new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
             adapter.notifyDataSetChanged();
@@ -151,6 +163,7 @@ public class NewTaskActivity extends Activity {
     protected void onResume() {
         super.onResume();
         new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
+        Toast.makeText(this, "Loading...", Toast.LENGTH_LONG).show();
         Log.e("task", "----onResume----");
     }
 
@@ -163,6 +176,7 @@ public class NewTaskActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        //TODO 須在鍵盤開啟，切換頁面時隱藏鍵盤
         httpclient.getConnectionManager().shutdown();
         Log.e("task", "----onPause----");
     }
@@ -200,8 +214,8 @@ public class NewTaskActivity extends Activity {
         private String staff_id;
         private String staff_name;
 
-//        private String car_id ;
-        private String carcyln_content ;
+        //        private String car_id ;
+        private String carcyln_content;
 
         @Override
         protected ArrayList<TaskLists> doInBackground(String... urls) {
@@ -219,11 +233,11 @@ public class NewTaskActivity extends Activity {
                 JSONArray staff;
                 JSONArray carcyln;
 
-                carcyln = jsonArrayCarcyln.getJSONArray(jsonArrayCarcyln.length()-1);
+                carcyln = jsonArrayCarcyln.getJSONArray(jsonArrayCarcyln.length() - 1);
                 carcyln_content = carcyln.getString(Constant.CARCYLN_CONTENT);
-                Log.e("newTask", "carcyln_content:"+carcyln_content);
+                Log.e("newTask", "carcyln_content:" + carcyln_content);
 
-                for (int j =0; j<jsonArrayStaff.length(); j++){
+                for (int j = 0; j < jsonArrayStaff.length(); j++) {
                     staff = jsonArrayStaff.getJSONArray(j);
                     staff_id = staff.getString(0);
                     staff_name = staff.getString(3);
@@ -233,89 +247,89 @@ public class NewTaskActivity extends Activity {
 
                 for (int i = 0; i < jsonArrayTask.length(); i++) {
                     order_doddle = jsonArrayTask.getJSONArray(i);  //取得陣列中的每個陣列
-                        //判斷是否為抄表
-                        if (order_doddle.getInt(0) == -1) {
+                    //判斷是否為抄表
+                    if (order_doddle.getInt(0) == -1) {
 //                            Log.e("task", "抄表作業" + "i:" + i);
-                            for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
-                                order_doddle = jsonArrayTask.getJSONArray(j);
-                                if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
-                                    continue;
-                                }
-                                doddle_id = order_doddle.getString(Constant.DODDLE_ID);
-                                doddle_time = order_doddle.getString(Constant.DODDLE_TIME);
-                                doddle_address = order_doddle.getString(Constant.DODDLE_ADDRESS);
-                                doddle_customer_id = order_doddle.getString(Constant.DODDLE_CUSTOMER_ID);
-                                doddle_accept = order_doddle.getString(Constant.DODDLE_ACCEPT);
-                                doddle_status = order_doddle.getString(Constant.DODDLE_STATUS);
-                                doddle_remark = order_doddle.getString(Constant.DODDLE_REMARK);
-//                                Log.e("task", "基本資料抓取完畢");
-
-                                for (int k = 0; k < jsonArrayCustomer.length(); k++) {
-                                    customer = jsonArrayCustomer.getJSONArray(k);
-//                                    Log.e("task", "客戶ID：" + doddle_customer_id);
-//                                    Log.e("task", "要比對的ID:" + customer.getString(Constant.CUSTOMER_ID));
-                                    if (!(doddle_customer_id.equals(customer.getString(Constant.CUSTOMER_ID)))) {
-//                                        Log.e("task", "ID不同");
-                                        continue;
-                                    }
-
-                                    customer_phone = customer.getString(22);
-                                    customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                                    customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                                    TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
-                                            null, customer_name, doddle_address,null,
-                                            null, doddle_status, doddle_accept, doddle_customer_id, null,doddle_remark, null);
-                                    taskListses.add(list);
-                                    break;
-                                }
-                            }
-                            break;
-
-                        } else {    //取出訂單 in 簡易任務
-                            if (order_doddle.getString(Constant.ORDER_STATUS).equals(ORDER_FINISH)) {
+                        for (int j = i + 1; j < jsonArrayTask.length(); j++) {   //取出抄表的簡易任務
+                            order_doddle = jsonArrayTask.getJSONArray(j);
+                            if (order_doddle.getString(Constant.DODDLE_STATUS).equals(DODDLE_FINISH)) {
                                 continue;
                             }
-                            order_id = order_doddle.getString(Constant.ORDER_ID);
-                            order_day = order_doddle.getString(Constant.ORDER_DAY);
-                            order_task = order_doddle.getString(Constant.ORDER_TASK);
-                            order_phone = order_doddle.getString(Constant.ORDER_PHONE);
-                            order_cylinders_list = order_doddle.getString(Constant.ORDER_CYLINDERS_LIST);
-                            order_customer_id = order_doddle.getString(Constant.ORDER_CUSTOMER_ID);
-                            order_should_money = order_doddle.getString(Constant.ORDER_SHOULD_MONEY);
-                            order_status = order_doddle.getString(Constant.ORDER_STATUS);
-                            order_accept = order_doddle.getString(Constant.ORDER_ACCEPT);
-                            order_gas_residual = order_doddle.getString(Constant.ORDER_GAS_RESIDUAL);
-                            order_remark = order_doddle.getString(Constant.ORDER_REMARK);
-//                            Log.e("task", "order_customer_id:" + order_customer_id);
-                            for (int j = 0; j < jsonArrayCustomer.length(); j++) {
-                                customer = jsonArrayCustomer.getJSONArray(j);
-                                if (order_customer_id.equals(customer.getString(0))) {
-                                    //儲存電話方法
-//                                    storePhone(jsonArrayCustomer, j);
-                                    customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                                    customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                                    customer_settle_type  = customer.getString(Constant.CUSTOMER_SETTLE_TYPE);
-                                    break;
+                            doddle_id = order_doddle.getString(Constant.DODDLE_ID);
+                            doddle_time = order_doddle.getString(Constant.DODDLE_TIME);
+                            doddle_address = order_doddle.getString(Constant.DODDLE_ADDRESS);
+                            doddle_customer_id = order_doddle.getString(Constant.DODDLE_CUSTOMER_ID);
+                            doddle_accept = order_doddle.getString(Constant.DODDLE_ACCEPT);
+                            doddle_status = order_doddle.getString(Constant.DODDLE_STATUS);
+                            doddle_remark = order_doddle.getString(Constant.DODDLE_REMARK);
+//                                Log.e("task", "基本資料抓取完畢");
+
+                            for (int k = 0; k < jsonArrayCustomer.length(); k++) {
+                                customer = jsonArrayCustomer.getJSONArray(k);
+//                                    Log.e("task", "客戶ID：" + doddle_customer_id);
+//                                    Log.e("task", "要比對的ID:" + customer.getString(Constant.CUSTOMER_ID));
+                                if (!(doddle_customer_id.equals(customer.getString(Constant.CUSTOMER_ID)))) {
+//                                        Log.e("task", "ID不同");
+                                    continue;
                                 }
 
+                                customer_phone = customer.getString(22);
+                                customer_name = customer.getString(Constant.CUSTOMER_NAME);
+                                customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                                TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
+                                        null, customer_name, doddle_address, null,
+                                        null, doddle_status, doddle_accept, doddle_customer_id, null, doddle_remark, null);
+                                taskListses.add(list);
+                                break;
                             }
-                            //判斷是否有此客戶id
-                            if (order_customer_id.equals(null)) {
-                                TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
-                                        order_cylinders_list, null, null,null, order_should_money, order_status,
-                                        order_accept, null,order_gas_residual, order_remark, carcyln_content);
-                                taskListses.add(list);
-                            } else {
-                                TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
-                                        order_cylinders_list, customer_name, customer_address,customer_settle_type,
-                                        order_should_money, order_status, order_accept, order_customer_id,order_gas_residual,order_remark, carcyln_content);
-                                taskListses.add(list);
+                        }
+                        break;
+
+                    } else {    //取出訂單 in 簡易任務
+                        if (order_doddle.getString(Constant.ORDER_STATUS).equals(ORDER_FINISH)) {
+                            continue;
+                        }
+                        order_id = order_doddle.getString(Constant.ORDER_ID);
+                        order_day = order_doddle.getString(Constant.ORDER_DAY);
+                        order_task = order_doddle.getString(Constant.ORDER_TASK);
+                        order_phone = order_doddle.getString(Constant.ORDER_PHONE);
+                        order_cylinders_list = order_doddle.getString(Constant.ORDER_CYLINDERS_LIST);
+                        order_customer_id = order_doddle.getString(Constant.ORDER_CUSTOMER_ID);
+                        order_should_money = order_doddle.getString(Constant.ORDER_SHOULD_MONEY);
+                        order_status = order_doddle.getString(Constant.ORDER_STATUS);
+                        order_accept = order_doddle.getString(Constant.ORDER_ACCEPT);
+                        order_gas_residual = order_doddle.getString(Constant.ORDER_GAS_RESIDUAL);
+                        order_remark = order_doddle.getString(Constant.ORDER_REMARK);
+//                            Log.e("task", "order_customer_id:" + order_customer_id);
+                        for (int j = 0; j < jsonArrayCustomer.length(); j++) {
+                            customer = jsonArrayCustomer.getJSONArray(j);
+                            if (order_customer_id.equals(customer.getString(0))) {
+                                //儲存電話方法
+//                                    storePhone(jsonArrayCustomer, j);
+                                customer_name = customer.getString(Constant.CUSTOMER_NAME);
+                                customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                                customer_settle_type = customer.getString(Constant.CUSTOMER_SETTLE_TYPE);
+                                break;
+                            }
+
+                        }
+                        //判斷是否有此客戶id
+                        if (order_customer_id.equals(null)) {
+                            TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
+                                    order_cylinders_list, null, null, null, order_should_money, order_status,
+                                    order_accept, null, order_gas_residual, order_remark, carcyln_content);
+                            taskListses.add(list);
+                        } else {
+                            TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
+                                    order_cylinders_list, customer_name, customer_address, customer_settle_type,
+                                    order_should_money, order_status, order_accept, order_customer_id, order_gas_residual, order_remark, carcyln_content);
+                            taskListses.add(list);
 
 //                                Log.e("task", "name:" + customer_name);
 //                                Log.e("task", "customerSettleType:"+customer_settle_type);
-                            }
                         }
                     }
+                }
                 return taskListses;
             } catch (Exception e) {
                 Log.e("task", "NewTask資料抓取有誤");
@@ -342,6 +356,7 @@ public class NewTaskActivity extends Activity {
             adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList, staffLists);
             list_Task.setAdapter(adapter);
             list_Task.setOnGroupClickListener(new OnItemClickListener());
+//            adapter.notifyDataSetChanged();
             partnerList = staffLists;
         }
 
@@ -420,7 +435,7 @@ public class NewTaskActivity extends Activity {
                     bundle.putString("orderStatus", taskLists.getOrder_doddle_status());
                     bundle.putString("orderRemark", taskLists.getOrder_remark());
 
-                    Log.e("bundle", "customerSettleType:"+taskLists.getCustomer_settle_type());
+                    Log.e("bundle", "customerSettleType:" + taskLists.getCustomer_settle_type());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

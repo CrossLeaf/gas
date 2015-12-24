@@ -67,7 +67,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     int flag;
     int count = 1;
-    int xx = 1;
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -186,12 +185,8 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
-            Log.e("extask", "first xx = " + xx);
-            xx++;
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
-            Log.e("extask", "xx = "+ xx);
-            xx++;
         }
 //        Log.e("extask", "group size:" + groupList.size());
 

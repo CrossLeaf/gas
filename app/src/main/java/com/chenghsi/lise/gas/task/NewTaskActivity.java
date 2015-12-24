@@ -1,6 +1,7 @@
 package com.chenghsi.lise.gas.task;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -47,8 +49,8 @@ public class NewTaskActivity extends Activity {
     public ExTaskListAdapter adapter;
     //新增了夥伴List
     public static ArrayList<StaffList> partnerList;
-
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SimpleSwipeRefreshLayout simpleSwipeRefreshLayout;
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
@@ -75,6 +77,9 @@ public class NewTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_new_task);
+//        View header = getLayoutInflater().inflate(R.layout.header, null);
+//
+//        list_Task.addHeaderView(header);
         Log.e("task", "----TaskOnCreate----");
 
         Globals globals = new Globals();
@@ -84,6 +89,7 @@ public class NewTaskActivity extends Activity {
         sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
         user_name = sp.getString("staff_name", staff_name);
         user_id = sp.getString("staff_id", staff_id);
+
         Log.e("task", "preference test:" + user_id);
         Log.e("task", "preference test:" + user_name);
 
@@ -103,16 +109,21 @@ public class NewTaskActivity extends Activity {
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
+//        swipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
+//        swipeRefreshLayout.setViewGroup(list_Task);
+//        swipeRefreshLayout = (SimpleSwipeRefreshLayout) swipeRefreshLayout;
+
         // Initializing swipeRefreshLayout (the refreshing animation)
-        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+        simpleSwipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
+        simpleSwipeRefreshLayout.setViewGroup(list_Task);
+        swipeRefreshLayout.setOnRefreshListener(simpleSwipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light);
 
-        // Initializing listView
-        list_Task.setOnScrollListener(onScrollListener);
+
 
         /*Globals g = (Globals) this.getApplicationContext();
         user_id = g.getUser_id();
@@ -132,9 +143,9 @@ public class NewTaskActivity extends Activity {
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+            View firstView = view.getChildAt(firstVisibleItem);
             // Enable refreshing event if at the top of listView
-            if (firstVisibleItem == -1) {
+            if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0)) {
                 swipeRefreshLayout.setEnabled(true);
             } else {
                 swipeRefreshLayout.setEnabled(false);
@@ -143,7 +154,7 @@ public class NewTaskActivity extends Activity {
     };
 
     // What to do if refreshing
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    /*private SimpleSwipeRefreshLayout onRefreshListener = new SimpleSwipeRefreshLayout() {
         @Override
         public void onRefresh() {
             Log.e("task", "call onRefreshListener...");
@@ -157,7 +168,7 @@ public class NewTaskActivity extends Activity {
                 }
             }, 3000);
         }
-    };
+    };*/
 
     @Override
     protected void onResume() {
@@ -179,6 +190,51 @@ public class NewTaskActivity extends Activity {
         //TODO 須在鍵盤開啟，切換頁面時隱藏鍵盤
         httpclient.getConnectionManager().shutdown();
         Log.e("task", "----onPause----");
+    }
+
+
+    private class SimpleSwipeRefreshLayout extends SwipeRefreshLayout implements OnRefreshListener {
+
+        private View view;
+
+        public SimpleSwipeRefreshLayout(Context context) {
+            super(context);
+        }
+
+        public SimpleSwipeRefreshLayout(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        private void setViewGroup(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public boolean canChildScrollUp() {
+            Log.e("refresh", "--canChildScrollUp--");
+            if (view != null && view instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) view;
+                return absListView.getChildCount() > 0
+                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+                        .getTop() < absListView.getPaddingTop());
+            }
+            return super.canChildScrollUp();
+        }
+
+        @Override
+        public void onRefresh() {
+            Log.e("task", "call onRefreshListener...");
+
+            swipeRefreshLayout.setRefreshing(true);
+            new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
+            adapter.notifyDataSetChanged();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }, 3000);
+        }
     }
 
     public class AsyncTaskDownLoad extends AsyncTask<String, Integer, ArrayList<TaskLists>> {
@@ -334,7 +390,7 @@ public class NewTaskActivity extends Activity {
             } catch (Exception e) {
                 Log.e("task", "NewTask資料抓取有誤");
             }
-            return taskListses;
+            return null;
         }
 
         /*儲存電話號碼
@@ -350,14 +406,18 @@ public class NewTaskActivity extends Activity {
         @Override
         protected void onPostExecute(ArrayList<TaskLists> taskListses) {
             super.onPostExecute(taskListses);
-            listses = taskListses;
-            getData(taskListses);
-            Log.e("task", "總列表size：" + listses.size());
-            adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList, staffLists);
-            list_Task.setAdapter(adapter);
-            list_Task.setOnGroupClickListener(new OnItemClickListener());
+            if (taskListses != null) {
+                listses = taskListses;
+                getData(taskListses);
+                Log.e("task", "總列表size：" + listses.size());
+                adapter = new ExTaskListAdapter(NewTaskActivity.this, list_Task, groupList, childList, staffLists);
+                list_Task.setAdapter(adapter);
+                list_Task.setOnGroupClickListener(new OnItemClickListener());
+                // Initializing listView
+                list_Task.setOnScrollListener(onScrollListener);
 //            adapter.notifyDataSetChanged();
-            partnerList = staffLists;
+                partnerList = staffLists;
+            }
         }
 
         @Override

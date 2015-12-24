@@ -42,6 +42,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.nfc.tech.IsoDep;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -74,9 +75,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -139,7 +143,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private int flag;
     private String customer_id;
     private String car_id;
-
+    private ArrayList<String> cylinders_list;
+    private boolean asyncDone = false;
+    private Toast showToastMessage;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -160,6 +166,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.capture);
+        String url = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=cylinders";
+        new Cylinders_list().execute(url);
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -169,8 +177,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Intent intent = getIntent();
         flag = intent.getIntExtra("flag", 0) - 1;
         Log.e("tag", "flag=" + flag);
-        cylinders_locate = intent.getStringExtra("locate");
 
+        //鋼瓶所在地
+        cylinders_locate = intent.getStringExtra("locate");
         //車子ID
         car_id = intent.getStringExtra("car_id");
         //客戶ID
@@ -308,18 +317,35 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         historyManager = new HistoryManager(this); //LISE
 //        renewListview(); //LISE
-        btn_barcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!edt_barcode.getText().toString().trim().equals("")) {
-                    cylinders_number = edt_barcode.getText().toString().trim();
-                    new Update().start();
-                    Toast.makeText(CaptureActivity.this, "新增完畢", Toast.LENGTH_SHORT).show();
-                }
-                edt_barcode.setText("");
+        if (asyncDone){
+            showToastMessage.cancel();
+            showToastMessage = Toast.makeText(this,"資料載入異常，請再試一次", Toast.LENGTH_LONG);
+            showToastMessage.show();
+        }else {
+            btn_barcode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!edt_barcode.getText().toString().trim().equals("")) {
+                        cylinders_number = edt_barcode.getText().toString().trim();
+                        for (int i = 0; i < cylinders_list.size(); i++) {
+                            if (cylinders_number.equals(cylinders_list.get(i))) {
+                                new Update().start();
+                                showToastMessage.cancel();
+                                showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
+                                showToastMessage.show();
+                            } else {
+                                showToastMessage.cancel();
+                                showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
+                                showToastMessage.show();
+                            }
+                        }
 
-            }
-        });
+                    }
+                    edt_barcode.setText("");
+
+                }
+            });
+        }
     }
 
     private int getCurrentOrientation() {
@@ -579,8 +605,20 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
 
         //TODO 掃描後更新資料
+
         cylinders_number = rawResult.getText();
-        new Update().start();
+        for (int i = 0; i < cylinders_list.size(); i++) {
+            if (cylinders_number.equals(cylinders_list.get(i))) {
+                new Update().start();
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            } else {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
+                showToastMessage.show();
+            }
+        }
 
         btn_barcode.setVisibility(View.GONE);
         edt_barcode.setVisibility(View.GONE);
@@ -939,16 +977,25 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         public void run() {
             String retSrc;
             String url = "";
+            String url1 = "";
+            int urlLen = 1;
+            metaHistoryItem.barcode = cylinders_number;
             switch (flag) {
 
                 case 0: //檢驗廠掃入
                     Log.e("thread", "操作項目：掃入");
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=1" +
                             "&cylinders_number=" + cylinders_number + "&suppliers_id=6";
+                    metaHistoryItem.location = "檢驗廠";
+                    historyManager.addItem(metaHistoryItem);
                     break;
                 case 1: //檢驗廠掃出
                     Log.e("thread", "操作項目：掃出");
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/IO_inspect.php?IO_val=0&cylinders_number=" + cylinders_number;
+                    url1 = "http://198.245.55.221:8089/ProjectGAPP/php/getData_from_xml.php?card_no=" + cylinders_number;
+                    urlLen = 2;
+                    metaHistoryItem.location = "公司";
+                    historyManager.addItem(metaHistoryItem);
                     break;
                 case 2: //更新狀態
                     Log.e("thread", "操作項目：更新項目");
@@ -958,19 +1005,75 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
                             "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
                             "&tb_td=cylinders_type&tb_val=1_" + car_id;
+                    metaHistoryItem.location = "公司";
+                    historyManager.addItem(metaHistoryItem);
                     break;
                 case 4: //任務掃出
                     url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_other.php?tb_name=cylinders" +
                             "&tb_where_name=cylinders_number&tb_where_val=" + cylinders_number +
                             "&tb_td=cylinders_type&tb_val=2_" + customer_id;
+                    metaHistoryItem.location = "客戶";
+                    historyManager.addItem(metaHistoryItem);
                     break;
 
                 default:
                     break;
-
             }
+
+            for (int i = 0; i < urlLen; i++) {
+                HttpGet httpget = new HttpGet(url);
+                Log.e("capture", "url:" + url);
+                HttpClient httpclient = new DefaultHttpClient();
+                try {
+                    HttpResponse response = httpclient.execute(httpget);
+                    url = url1; //將url換成下一個
+                    HttpEntity resEntity = response.getEntity();
+                    if (resEntity != null) {
+                        retSrc = EntityUtils.toString(resEntity);
+                        Log.e("retSrc", "完整資料：" + retSrc);
+                    } else {
+                        retSrc = "Did not work!";
+                        Log.e("retSrc", "完整資料：" + retSrc);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("retSrc", "讀取JSON Error...");
+                } finally {
+
+                    httpclient.getConnectionManager().shutdown();
+                }
+            }
+        }
+    }
+
+    /*載入cylinders列表*/
+    private class Cylinders_list extends AsyncTask<String, Void, ArrayList<String>> {
+
+        @Override
+        protected ArrayList<String> doInBackground(String... urls) {
+            try {
+                cylinders_list = new ArrayList<>();
+                String cylinder;
+                JSONArray jsonArrayCylinder = new JSONArray(getJSONData(urls[0]));
+                for (int i = 0; i<jsonArrayCylinder.length(); i++) {
+                    cylinder = jsonArrayCylinder.getJSONArray(i).getString(2);
+                    cylinders_list.add(cylinder);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return cylinders_list;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> strings) {
+            super.onPostExecute(strings);
+            asyncDone = true;
+        }
+
+        private String getJSONData(String url) {
+            String retSrc = "";
             HttpGet httpget = new HttpGet(url);
-            Log.e("capture", "url:" + url);
             HttpClient httpclient = new DefaultHttpClient();
             try {
                 HttpResponse response = httpclient.execute(httpget);
@@ -979,15 +1082,19 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     retSrc = EntityUtils.toString(resEntity);
                     Log.e("retSrc", "完整資料：" + retSrc);
                 } else {
-                    retSrc = "Did not work!";
-                    Log.e("retSrc", "完整資料：" + retSrc);
+                    throw new IOException("Did not work!");
                 }
 
             } catch (Exception e) {
-                Log.e("retSrc", "讀取JSON Error...");
+                Log.e("retSrc", String.valueOf(e));
+                return null;
             } finally {
                 httpclient.getConnectionManager().shutdown();
             }
+            return retSrc;
+
         }
+
+
     }
 }

@@ -115,4 +115,22 @@ public class Constant {
     public static int SAVEOUT_ID = 9;
 
 
+    // The corresponding index for database table: "cylinders"
+    public static int cylinders_id=0;
+    public static int cylinders_container_id=1;
+    public static int cylinders_number=2;
+    public static int cylinders_net_weight=3;
+    public static int cylinders_purchase_price=4;
+    public static int cylinders_capacity=5;
+    public static int cylinders_type=6;
+    public static int cylinders_buy_time=7;
+    public static int cylinders_out_company_pressure_time=8;
+    public static int cylinders_periodic_inspection_time=9;
+    public static int cylinders_next_inspection_time=10;
+    public static int cylinders_scrapped_time=11;
+    public static int cylinders_inspection_company=12;
+    public static int cylinders_remark=13;
+    public static int suppliers_id=14;
+
+
 }

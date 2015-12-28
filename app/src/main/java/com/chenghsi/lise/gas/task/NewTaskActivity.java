@@ -50,7 +50,7 @@ public class NewTaskActivity extends Activity {
     //新增了夥伴List
     public static ArrayList<StaffList> partnerList;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SimpleSwipeRefreshLayout simpleSwipeRefreshLayout;
+//    private SimpleSwipeRefreshLayout simpleSwipeRefreshLayout;
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
@@ -114,9 +114,9 @@ public class NewTaskActivity extends Activity {
 //        swipeRefreshLayout = (SimpleSwipeRefreshLayout) swipeRefreshLayout;
 
         // Initializing swipeRefreshLayout (the refreshing animation)
-        simpleSwipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
-        simpleSwipeRefreshLayout.setViewGroup(list_Task);
-        swipeRefreshLayout.setOnRefreshListener(simpleSwipeRefreshLayout);
+//        simpleSwipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
+//        simpleSwipeRefreshLayout.setViewGroup(list_Task);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         swipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
@@ -154,7 +154,7 @@ public class NewTaskActivity extends Activity {
     };
 
     // What to do if refreshing
-    /*private SimpleSwipeRefreshLayout onRefreshListener = new SimpleSwipeRefreshLayout() {
+    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh() {
             Log.e("task", "call onRefreshListener...");
@@ -168,7 +168,7 @@ public class NewTaskActivity extends Activity {
                 }
             }, 3000);
         }
-    };*/
+    };
 
     @Override
     protected void onResume() {

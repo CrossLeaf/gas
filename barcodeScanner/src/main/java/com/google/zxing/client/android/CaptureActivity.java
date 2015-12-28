@@ -318,23 +318,45 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         historyManager = new HistoryManager(this); //LISE
 //        renewListview(); //LISE
         if (asyncDone){
-            showToastMessage.cancel();
-            showToastMessage = Toast.makeText(this,"資料載入異常，請再試一次", Toast.LENGTH_LONG);
-            showToastMessage.show();
+            if (showToastMessage != null) {
+                showToastMessage.cancel();
+                showToastMessage = Toast.makeText(this, "等待資料載入", Toast.LENGTH_LONG);
+                showToastMessage.show();
+            }else {
+                showToastMessage = Toast.makeText(this, "等待資料載入", Toast.LENGTH_LONG);
+                showToastMessage.show();
+            }
         }else {
             btn_barcode.setOnClickListener(new View.OnClickListener() {
+                boolean hasCylinder = false;
                 @Override
                 public void onClick(View v) {
-                    if (!edt_barcode.getText().toString().trim().equals("")) {
+                    if (!(edt_barcode.getText().toString().trim().equals(""))) {
                         cylinders_number = edt_barcode.getText().toString().trim();
                         for (int i = 0; i < cylinders_list.size(); i++) {
                             if (cylinders_number.equals(cylinders_list.get(i))) {
-                                new Update().start();
+                                hasCylinder = true;
+                                break;
+                            }
+                        }
+
+                        if (hasCylinder){
+                            metaHistoryItem = new HistoryItem(cylinders_number);
+                            new Update().start();
+                            if (showToastMessage != null) {
                                 showToastMessage.cancel();
                                 showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
                                 showToastMessage.show();
-                            } else {
+                            }else {
+                                showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
+                                showToastMessage.show();
+                            }
+                        }else {
+                            if (showToastMessage != null) {
                                 showToastMessage.cancel();
+                                showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
+                                showToastMessage.show();
+                            }else {
                                 showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
                                 showToastMessage.show();
                             }
@@ -342,7 +364,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
                     }
                     edt_barcode.setText("");
-
                 }
             });
         }
@@ -609,14 +630,26 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         cylinders_number = rawResult.getText();
         for (int i = 0; i < cylinders_list.size(); i++) {
             if (cylinders_number.equals(cylinders_list.get(i))) {
+                metaHistoryItem = new HistoryItem(cylinders_number);
                 new Update().start();
-                showToastMessage.cancel();
-                showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
-                showToastMessage.show();
+                if (showToastMessage !=null) {
+                    showToastMessage.cancel();
+                    showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
+                    showToastMessage.show();
+                }else {
+                    showToastMessage = Toast.makeText(CaptureActivity.this, "更新資料", Toast.LENGTH_SHORT);
+                    showToastMessage.show();
+                }
+                break;
             } else {
-                showToastMessage.cancel();
-                showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
-                showToastMessage.show();
+                if (showToastMessage !=null) {
+                    showToastMessage.cancel();
+                    showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
+                    showToastMessage.show();
+                }else {
+                    showToastMessage = Toast.makeText(CaptureActivity.this, "無此資料", Toast.LENGTH_SHORT);
+                    showToastMessage.show();
+                }
             }
         }
 
@@ -1058,6 +1091,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 for (int i = 0; i<jsonArrayCylinder.length(); i++) {
                     cylinder = jsonArrayCylinder.getJSONArray(i).getString(2);
                     cylinders_list.add(cylinder);
+                    Log.e("capture cylinder", "cylinder number:"+cylinder);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

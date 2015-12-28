@@ -65,11 +65,10 @@ public class NewClientInfoActivity extends Activity {
 
         edt_client = (EditText) findViewById(R.id.edt_search_client);
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
-//        lv_client_info.setTextFilterEnabled(true);
-//        lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        lv_client_info.setTextFilterEnabled(true);
+        lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         Log.e("client", "lv_client_info 初始化");
-
         edt_client.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -134,7 +133,7 @@ public class NewClientInfoActivity extends Activity {
                 for (int i =0; i<jsonArrayCustomer.length(); i++){
                     customer = jsonArrayCustomer.getJSONArray(i);
                     customer_id = customer.getString(Constant.CUSTOMER_ID);
-                    String phone = customer.getString(22);
+                    String phone = customer.getString(24);
                     if (hashMap.isEmpty() || !hashMap.containsKey(customer_id)){
                         phone_arrayList = new ArrayList<>();
                         phone_arrayList.add("請選擇號碼");

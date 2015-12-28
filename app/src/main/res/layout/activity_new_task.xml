@@ -28,8 +28,6 @@
                 android:childDivider="@color/transparent"
                 android:groupIndicator="@color/transparent"
                 android:listSelector="@color/transparent"/>
-            <!--android:fastScrollEnabled="true"-->
-
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -60,7 +60,7 @@ public class NewTaskActivity extends Activity {
 
     private static final String ORDER_FINISH = "2";
     private static final String DODDLE_FINISH = "2";
-
+    Toast showToastMessage;
     SharedPreferences sp;
 
     //今日抄表與訂單 url
@@ -77,9 +77,6 @@ public class NewTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_new_task);
-//        View header = getLayoutInflater().inflate(R.layout.header, null);
-//
-//        list_Task.addHeaderView(header);
         Log.e("task", "----TaskOnCreate----");
 
         Globals globals = new Globals();
@@ -93,9 +90,6 @@ public class NewTaskActivity extends Activity {
         Log.e("task", "preference test:" + user_id);
         Log.e("task", "preference test:" + user_name);
 
-//        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_task);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
@@ -108,29 +102,40 @@ public class NewTaskActivity extends Activity {
 
         list_Task = (ExpandableListView) findViewById(R.id.expListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-
-//        swipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
-//        swipeRefreshLayout.setViewGroup(list_Task);
-//        swipeRefreshLayout = (SimpleSwipeRefreshLayout) swipeRefreshLayout;
-
-        // Initializing swipeRefreshLayout (the refreshing animation)
-//        simpleSwipeRefreshLayout = new SimpleSwipeRefreshLayout(this);
-//        simpleSwipeRefreshLayout.setViewGroup(list_Task);
-        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-        swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_light,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light);
+    }
 
 
 
-        /*Globals g = (Globals) this.getApplicationContext();
-        user_id = g.getUser_id();
-        user_name = g.getUser_name();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setEnabled(false);
+        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
+        showToastMessage = Toast.makeText(this, "Loading...", Toast.LENGTH_LONG);
+        showToastMessage.show();
+            swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+            swipeRefreshLayout.setColorSchemeResources(
+                    android.R.color.holo_red_light,
+                    android.R.color.holo_blue_light,
+                    android.R.color.holo_green_light,
+                    android.R.color.holo_orange_light);
+            Log.e("task", "----onResume----");
+    }
 
-        Log.e("exception test", "globals test:"+ user_id);
-        Log.e("exception test", "globals test:"+ user_name);*/
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("task", "----onStop----");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //TODO 須在鍵盤開啟，切換頁面時隱藏鍵盤
+        showToastMessage.cancel();
+        httpclient.getConnectionManager().shutdown();
+        swipeRefreshLayout.setEnabled(false);
+        Log.e("task", "----onPause----");
     }
 
     // Refreshing when pulling down
@@ -145,7 +150,7 @@ public class NewTaskActivity extends Activity {
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             View firstView = view.getChildAt(firstVisibleItem);
             // Enable refreshing event if at the top of listView
-            if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0)) {
+            if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0) ) {
                 swipeRefreshLayout.setEnabled(true);
             } else {
                 swipeRefreshLayout.setEnabled(false);
@@ -160,7 +165,7 @@ public class NewTaskActivity extends Activity {
             Log.e("task", "call onRefreshListener...");
             swipeRefreshLayout.setRefreshing(true);
             new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
-            adapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -169,73 +174,6 @@ public class NewTaskActivity extends Activity {
             }, 3000);
         }
     };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
-        Toast.makeText(this, "Loading...", Toast.LENGTH_LONG).show();
-        Log.e("task", "----onResume----");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.e("task", "----onStop----");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //TODO 須在鍵盤開啟，切換頁面時隱藏鍵盤
-        httpclient.getConnectionManager().shutdown();
-        Log.e("task", "----onPause----");
-    }
-
-
-    private class SimpleSwipeRefreshLayout extends SwipeRefreshLayout implements OnRefreshListener {
-
-        private View view;
-
-        public SimpleSwipeRefreshLayout(Context context) {
-            super(context);
-        }
-
-        public SimpleSwipeRefreshLayout(Context context, AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        private void setViewGroup(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public boolean canChildScrollUp() {
-            Log.e("refresh", "--canChildScrollUp--");
-            if (view != null && view instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) view;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                        .getTop() < absListView.getPaddingTop());
-            }
-            return super.canChildScrollUp();
-        }
-
-        @Override
-        public void onRefresh() {
-            Log.e("task", "call onRefreshListener...");
-
-            swipeRefreshLayout.setRefreshing(true);
-            new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
-            adapter.notifyDataSetChanged();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }, 3000);
-        }
-    }
 
     public class AsyncTaskDownLoad extends AsyncTask<String, Integer, ArrayList<TaskLists>> {
 
@@ -329,7 +267,7 @@ public class NewTaskActivity extends Activity {
                                     continue;
                                 }
 
-                                customer_phone = customer.getString(22);
+                                customer_phone = customer.getString(24);
                                 customer_name = customer.getString(Constant.CUSTOMER_NAME);
                                 customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
                                 TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
@@ -393,16 +331,6 @@ public class NewTaskActivity extends Activity {
             return null;
         }
 
-        /*儲存電話號碼
-        private void storePhone(JSONArray jsonArrayCustomer, int node) {
-            JSONArray phone;
-            try {
-                phone = jsonArrayCustomer.getJSONArray(node);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }*/
-
         @Override
         protected void onPostExecute(ArrayList<TaskLists> taskListses) {
             super.onPostExecute(taskListses);
@@ -418,6 +346,7 @@ public class NewTaskActivity extends Activity {
 //            adapter.notifyDataSetChanged();
                 partnerList = staffLists;
             }
+            swipeRefreshLayout.setEnabled(true);
         }
 
         @Override

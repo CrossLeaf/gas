@@ -23,7 +23,8 @@
         android:background="@android:drawable/edit_text"
         android:layout_weight="1"
         android:hint="抄錶度數"
-        android:inputType="number"/>
+        android:inputType="number"
+        />
 
     <Button
         android:layout_width="0dp"

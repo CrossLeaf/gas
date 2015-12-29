@@ -32,6 +32,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class NewTaskActivity extends Activity {
     //新增了夥伴List
     public static ArrayList<StaffList> partnerList;
     private SwipeRefreshLayout swipeRefreshLayout;
-//    private SimpleSwipeRefreshLayout simpleSwipeRefreshLayout;
+    //    private SimpleSwipeRefreshLayout simpleSwipeRefreshLayout;
     ArrayList<ArrayList<TaskLists>> groupList;
     List<Map<String, String>> childList;
 
@@ -105,7 +107,6 @@ public class NewTaskActivity extends Activity {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -113,13 +114,13 @@ public class NewTaskActivity extends Activity {
         new AsyncTaskDownLoad().execute(url0, url1, url2, url3);
         showToastMessage = Toast.makeText(this, "Loading...", Toast.LENGTH_LONG);
         showToastMessage.show();
-            swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-            swipeRefreshLayout.setColorSchemeResources(
-                    android.R.color.holo_red_light,
-                    android.R.color.holo_blue_light,
-                    android.R.color.holo_green_light,
-                    android.R.color.holo_orange_light);
-            Log.e("task", "----onResume----");
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+        swipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_red_light,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light);
+        Log.e("task", "----onResume----");
     }
 
     @Override
@@ -150,7 +151,7 @@ public class NewTaskActivity extends Activity {
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             View firstView = view.getChildAt(firstVisibleItem);
             // Enable refreshing event if at the top of listView
-            if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0) ) {
+            if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0)) {
                 swipeRefreshLayout.setEnabled(true);
             } else {
                 swipeRefreshLayout.setEnabled(false);
@@ -227,6 +228,9 @@ public class NewTaskActivity extends Activity {
                 JSONArray staff;
                 JSONArray carcyln;
 
+                TaskLists task_list;
+                int index = 0;
+
                 carcyln = jsonArrayCarcyln.getJSONArray(jsonArrayCarcyln.length() - 1);
                 carcyln_content = carcyln.getString(Constant.CARCYLN_CONTENT);
                 Log.e("newTask", "carcyln_content:" + carcyln_content);
@@ -240,6 +244,7 @@ public class NewTaskActivity extends Activity {
                 }
 
                 for (int i = 0; i < jsonArrayTask.length(); i++) {
+                    Log.e("task", "index:"+index);
                     order_doddle = jsonArrayTask.getJSONArray(i);  //取得陣列中的每個陣列
                     //判斷是否為抄表
                     if (order_doddle.getInt(0) == -1) {
@@ -270,15 +275,20 @@ public class NewTaskActivity extends Activity {
                                 customer_phone = customer.getString(24);
                                 customer_name = customer.getString(Constant.CUSTOMER_NAME);
                                 customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                                TaskLists list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
+                                task_list = new TaskLists(doddle_id, doddle_time, "抄錶", customer_phone,
                                         null, customer_name, doddle_address, null,
                                         null, doddle_status, doddle_accept, doddle_customer_id, null, doddle_remark, null);
-                                taskListses.add(list);
+                                taskListses.add(task_list);
+                                if (taskListses.size()-1>0 && doddle_accept.equals(user_id)) {
+                                    Collections.swap(taskListses, index, taskListses.size() - 1);
+                                    Log.e("task", "第:" + (taskListses.size() - 1));
+                                }
+                                if (doddle_accept.equals(user_id))
+                                    index++;
                                 break;
                             }
                         }
                         break;
-
                     } else {    //取出訂單 in 簡易任務
                         if (order_doddle.getString(Constant.ORDER_STATUS).equals(ORDER_FINISH)) {
                             continue;
@@ -309,19 +319,28 @@ public class NewTaskActivity extends Activity {
                         }
                         //判斷是否有此客戶id
                         if (order_customer_id.equals(null)) {
-                            TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
+                            task_list = new TaskLists(order_id, order_day, order_task, order_phone,
                                     order_cylinders_list, null, null, null, order_should_money, order_status,
                                     order_accept, null, order_gas_residual, order_remark, carcyln_content);
-                            taskListses.add(list);
                         } else {
-                            TaskLists list = new TaskLists(order_id, order_day, order_task, order_phone,
+                            task_list = new TaskLists(order_id, order_day, order_task, order_phone,
                                     order_cylinders_list, customer_name, customer_address, customer_settle_type,
                                     order_should_money, order_status, order_accept, order_customer_id, order_gas_residual, order_remark, carcyln_content);
-                            taskListses.add(list);
 
 //                                Log.e("task", "name:" + customer_name);
 //                                Log.e("task", "customerSettleType:"+customer_settle_type);
                         }
+
+                        taskListses.add(task_list);
+                        if (taskListses.size()-1>0 && order_accept.equals(user_id)) {
+                            Collections.swap(taskListses, index, taskListses.size() - 1);
+                            Log.e("task", "第:" + (taskListses.size() - 1));
+                        }
+
+                        if (order_accept.equals(user_id)) {
+                            index++;
+                        }
+
                     }
                 }
                 return taskListses;

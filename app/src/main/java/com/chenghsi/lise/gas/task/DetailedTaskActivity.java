@@ -525,7 +525,7 @@ public class DetailedTaskActivity extends Activity {
         @Override
         public void run() {
 
-            String url = "";
+            String url ;
             if (order_money_credit.equals("0")) {
                 Log.e("detailTask", "呼叫 現銷");
                 url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_cash_credit.php?order_id=" + order_id +

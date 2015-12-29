@@ -45,7 +45,7 @@ public class NewClientInfoActivity extends Activity {
     private ClientInfoAdapter adapter;
     private List<ClientInfoList> clientList = new ArrayList<>();
     private List<ClientInfoList> newClientList;
-
+    Toast showToastMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +122,8 @@ public class NewClientInfoActivity extends Activity {
 
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
+            showToastMessage = Toast.makeText(NewClientInfoActivity.this, "Loading...", Toast.LENGTH_LONG);
+            showToastMessage.show();
             try {
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 JSONArray customer;
@@ -308,6 +310,7 @@ public class NewClientInfoActivity extends Activity {
             Log.e("client", "Do onPostExecute");
             adapter = new ClientInfoAdapter(NewClientInfoActivity.this, clientList);
             lv_client_info.setAdapter(adapter);
+            showToastMessage.cancel();
         }
 
         //取得JSON資料

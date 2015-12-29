@@ -52,6 +52,7 @@ public class LoginActivity extends Activity {
         new LoginThread().start();
         //呼叫讀取偏好資料
         readPref();
+
     }
 
     @Override
@@ -101,6 +102,8 @@ public class LoginActivity extends Activity {
         password = sp.getString("password", "");
         et_account.setText(account);
         et_password.setText(password);
+        et_account.setSelection(et_account.getText().length());
+        et_password.setSelection(et_password.getText().length());
 
     }
 

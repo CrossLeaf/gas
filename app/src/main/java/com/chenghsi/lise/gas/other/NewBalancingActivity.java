@@ -111,7 +111,6 @@ public class NewBalancingActivity extends Activity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                Log.e("balancing", "--------終於看到沒選的--------");
             }
         });
 

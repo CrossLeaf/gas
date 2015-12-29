@@ -388,6 +388,7 @@ public class NewTaskActivity extends Activity {
             childMap.put("scanIn", "掃入");
             childMap.put("scanOut", "掃出");
             childMap.put("finish", "結案");
+            childMap.put("doddle", "抄錶");
             childList.add(childMap);
         }
     }

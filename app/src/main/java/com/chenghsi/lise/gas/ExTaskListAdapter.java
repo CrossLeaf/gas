@@ -3,7 +3,6 @@ package com.chenghsi.lise.gas;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -45,19 +44,21 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
     private NewTaskActivity taskActivity;
     private List<StaffList> staffList;
     private ExpandableListView expListView;
+    public static List<ArrayList<TaskLists>> groupList;
     private List<Map<String, String>> childList;
+    private List<String> edt_list;
+
     /*使用者id & name*/
     private static String userName;
     private static String userId;
-
+    //撥打電話action
     private String action = Intent.ACTION_CALL;
 
     private LayoutInflater inflater;
 
     public static int counter;
-    public static List<ArrayList<TaskLists>> groupList;
     public static boolean isCollapse;
-    private HashMap<String, String> doddleHash = new HashMap<>();
+    private HashMap<Integer, String> doddleHash;
 
     //回傳api
     String up_order_id;
@@ -71,6 +72,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
     int flag;
     int count = 1;
+    boolean hasFocus = false;
 
     public ExTaskListAdapter(NewTaskActivity taskActivity, ExpandableListView expListView,
                              List<ArrayList<TaskLists>> groupList,
@@ -128,13 +130,14 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         Button btn_scanIn;
         Button btn_scanOut;
         Button btn_finish;
-        EditText edt_degree;
+        Button btn_doddle;
 
-        public ChildViewHolder(View convertView) {
+        public ChildViewHolder(View convertView, final int groupPosition) {
             btn_scanIn = (Button) convertView.findViewById(R.id.btn_scanIn);
             btn_scanOut = (Button) convertView.findViewById(R.id.btn_scanOut);
             btn_finish = (Button) convertView.findViewById(R.id.btn_finish);
-            edt_degree = (EditText) convertView.findViewById(R.id.edt_degree);
+            btn_doddle = (Button) convertView.findViewById(R.id.btn_doddle);
+
 
         }
     }
@@ -189,14 +192,15 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.adapter_item_task, parent, false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
+            doddleHash = new HashMap<>();
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
+            Log.e("extask", "getView call 次數：" + count);
+            count++;
         }
 //        Log.e("extask", "group size:" + groupList.size());
 
         ArrayList<TaskLists> list = groupList.get(0);
-        Log.e("extask", "getView call 次數：" + count);
-        count++;
 //        Log.e("extask", "list size:" + list.size());
         final TaskLists taskLists = list.get(groupPosition);
 
@@ -237,7 +241,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 if (staff_id.equals(taskLists.getOrder_doddle_accept()))
                     groupViewHolder.btn_accept.setText(staffList.get(i).getStaff_name());
             }
-//            groupViewHolder.btn_accept.setText(taskLists.getOrder_doddle_accept());
             expListView.collapseGroup(groupPosition);
         }
 
@@ -339,14 +342,13 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.adapter_item_child_task, null);
-            childViewHolder = new ChildViewHolder(convertView);
-//            childViewHolder.edt_degree.addTextChangedListener(new addTextChangedListener(cus_id));
+            childViewHolder = new ChildViewHolder(convertView, groupPosition);
+//            childViewHolder.btn_doddle.addTextChangedListener(new addTextChangedListener(cus_id));
             convertView.setTag(childViewHolder);
 
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
-
 
 
         Log.e("extask", "Group Count:" + getGroupCount());
@@ -355,37 +357,112 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             //抄錶的子項目
             childViewHolder.btn_scanIn.setVisibility(View.GONE);
             childViewHolder.btn_scanOut.setVisibility(View.GONE);
-            childViewHolder.edt_degree.setVisibility(View.VISIBLE);
-
-            if (doddleHash.get(cus_id) != null) {
-                childViewHolder.edt_degree.setText(doddleHash.get(cus_id));
-            }else{
-                childViewHolder.edt_degree.setText("");
-            }
-            /*Log.e("android version", "android version:" + Build.VERSION.RELEASE);
-            if (!Build.VERSION.RELEASE.contains("4.2")) {
-                Log.e("android version", "android version not 4.2");
-
+            childViewHolder.btn_finish.setVisibility(View.GONE);
+            childViewHolder.btn_doddle.setVisibility(View.VISIBLE);
+            childViewHolder.btn_doddle.setInputType(InputType.TYPE_CLASS_NUMBER);
+            childViewHolder.btn_doddle.requestFocus();    //让EditText获得焦点，但是获得焦点并不会自动弹出键盘
+            String str = childList.get(childPosition).get("doddle");
+            if (doddleHash.get(childPosition) != null) {
+                childViewHolder.btn_doddle.setText(doddleHash.get(childPosition));
             } else {
-                Log.e("android version", "android version = 4.2");
+                childViewHolder.btn_doddle.setText(str);
+            }
+            childViewHolder.btn_doddle.setSelection(childViewHolder.btn_doddle.getText().length());
+            Log.e("eee1", "t or f" + hasFocus);
+            /*if (hasFocus) {
+                Log.e("eee2", "t or f"+hasFocus);
+                //設定游標位置
+//            childViewHolder.btn_doddle.setFocusable(true);
+                childViewHolder.btn_doddle.setInputType(InputType.TYPE_CLASS_NUMBER);
+                childViewHolder.btn_doddle.requestFocus();    //让EditText获得焦点，但是获得焦点并不会自动弹出键盘
             }*/
+            /*childViewHolder.btn_doddle.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN || motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        hasFocus = true;
+                        Log.e("eee3", "t or f"+hasFocus);
+                    }else {
+                        hasFocus = false;
+                        Log.e("eee4", "t or f"+hasFocus);
+                    }
+                    if(motionEvent.getAction() == MotionEvent.ACTION_SCROLL) {
+                        hasFocus = false;
+                        Log.e("eee4", "t or f" + hasFocus);
+                    }
 
-            childViewHolder.edt_degree.setFocusable(true);
-            childViewHolder.edt_degree.setInputType(InputType.TYPE_CLASS_NUMBER);
-            childViewHolder.edt_degree.requestFocus();//让EditText获得焦点，但是获得焦点并不会自动弹出键盘
-            childViewHolder.edt_degree.addTextChangedListener(new addTextChangedListener(cus_id));
-//            doddleHash.put(cus_id, childViewHolder.edt_degree.getText().toString());
+//                        childViewHolder.btn_doddle.setFocusable(false);//EditText 失去焦点
+//                        doddleHash.put(cus_id, childViewHolder.btn_doddle.getText().toString());
+
+
+                    return false;
+                }
+            });*/
+
+            childViewHolder.btn_doddle.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                    Log.e("extask", "groupPosition:" + groupPosition);
+                    doddleHash.put(groupPosition, editable.toString());
+                }
+            });
+            if(doddleHash.get(groupPosition) != null){
+                childViewHolder.btn_doddle.setText(doddleHash.get(groupPosition));
+            }
+            //監聽輸入的文字並儲存至hashmap
+//            childViewHolder.btn_doddle.addTextChangedListener(new addTextChangedListener(childViewHolder, cus_id));
+            //監聽焦點變化
+            /*childViewHolder.btn_doddle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (hasFocus) {
+                        hasFocus = true;
+                        Log.e("extask", "取得焦點 焦點項目："+ childPosition);
+                        Log.e("extask", "內文：" + childViewHolder.btn_doddle.getText().toString());
+                        EditText edt = (EditText) view;
+                        String str = edt.getText().toString();
+                        Log.e("extask", "focus change text:"+str);
+                        doddleHash.put(cus_id, str);
+//                        expListView.smoothScrollToPositionFromTop(childPosition, 10);
+
+                    }else {
+                        Log.e("extask", "失去焦點");
+                        hasFocus = false;
+//                        childViewHolder.btn_doddle.clearFocus();
+//                        if (doddleHash.get(cus_id) != null) {
+//                            childViewHolder.btn_doddle.setText(doddleHash.get(cus_id));
+//                        } else {
+//                            childViewHolder.btn_doddle.setText("");
+//                        }
+//                        childViewHolder.btn_doddle.setText(doddleHash.get(cus_id));
+//                        doddleHash.put(cus_id,childViewHolder.btn_doddle.getText().toString());
+                    }
+                }
+            });*/
+
+//            doddleHash.put(cus_id, childViewHolder.btn_doddle.getText().toString());
         } else {
             //設定子項目的文字和可見度
             childViewHolder.btn_scanIn.setText(childList.get(childPosition).get("scanIn"));
             childViewHolder.btn_scanOut.setText(childList.get(childPosition).get("scanOut"));
+            childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
             childViewHolder.btn_scanIn.setVisibility(View.VISIBLE);
             childViewHolder.btn_scanOut.setVisibility(View.VISIBLE);
-            childViewHolder.edt_degree.setVisibility(View.GONE);
-
+            childViewHolder.btn_doddle.setVisibility(View.GONE);
         }
 
-        childViewHolder.btn_finish.setText(childList.get(childPosition).get("finish"));
+
 
         /*掃入監聽事件*/
         childViewHolder.btn_scanIn.setOnClickListener(new View.OnClickListener() {
@@ -423,13 +500,13 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
 
                 if (taskLists.getOrder_task().equals("抄錶")) {    //抄錶結案
                     flag = 4;
-
+                    //TODO 這裡之後可能要修改 cus_id
                     if (doddleHash.get(cus_id).equals("")) {
                         Toast.makeText(taskActivity, "請輸入抄錶度數", Toast.LENGTH_SHORT).show();
                         return;
                     } else {
                         up_doddle_id = taskLists.getOrder_doddle_id();
-                        up_degree = childViewHolder.edt_degree.getText().toString();
+                        up_degree = childViewHolder.btn_doddle.getText().toString();
                         new Update().start();
                     }
                 } else {
@@ -575,25 +652,33 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         return carcyln_content;
     }
 
-    private class addTextChangedListener implements TextWatcher {
-        String cus_id;
-        public addTextChangedListener(String cus_id) {
-            this.cus_id = cus_id;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            doddleHash.put(cus_id, editable.toString());
-        }
-    }
+//    private class addTextChangedListener implements TextWatcher {
+//        ChildViewHolder holder = null;
+//        String cus_id;
+//        public addTextChangedListener(ChildViewHolder holder , String cus_id) {
+//            this.holder = holder;
+//            this.cus_id = cus_id;
+//        }
+//
+//        @Override
+//        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//        }
+//
+//        @Override
+//        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//            Log.e("extask", "onTextChanged:"+charSequence);
+//            doddleHash.put(cus_id, charSequence.toString());
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable editable) {
+//            Log.e("extask", "text cus_id:" + cus_id);
+//            Log.e("extask", "text :" + editable.toString());
+////            doddleHash.put(cus_id, editable.toString());
+////            int position = (int) holder.btn_doddle.getTag();
+////            doddleHash.put(position, editable.toString().trim());
+//
+//        }
+//    }
 }

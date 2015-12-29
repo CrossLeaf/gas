@@ -67,7 +67,8 @@ public class NewClientInfoActivity extends Activity {
         lv_client_info = (ListView) findViewById(R.id.lv_client_info);
         lv_client_info.setTextFilterEnabled(true);
         lv_client_info.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
+        showToastMessage = Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT);
+        showToastMessage.show();
         Log.e("client", "lv_client_info 初始化");
         edt_client.addTextChangedListener(new TextWatcher() {
             @Override
@@ -122,8 +123,6 @@ public class NewClientInfoActivity extends Activity {
 
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
-            showToastMessage = Toast.makeText(NewClientInfoActivity.this, "Loading...", Toast.LENGTH_LONG);
-            showToastMessage.show();
             try {
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
                 JSONArray customer;
@@ -310,7 +309,6 @@ public class NewClientInfoActivity extends Activity {
             Log.e("client", "Do onPostExecute");
             adapter = new ClientInfoAdapter(NewClientInfoActivity.this, clientList);
             lv_client_info.setAdapter(adapter);
-            showToastMessage.cancel();
         }
 
         //取得JSON資料

@@ -40,6 +40,8 @@ import java.util.List;
 public class NewClientInfoActivity extends Activity {
     protected Toolbar toolbar;
     String url = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
+    String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
+    //TODO 新增一客戶url
     private EditText edt_client;
     private ListView lv_client_info;
     private ClientInfoAdapter adapter;
@@ -50,7 +52,7 @@ public class NewClientInfoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        new AsyncClientDownLoad().execute(url);
+        new AsyncClientDownLoad().execute(url,url1);
         setContentView(R.layout.activity_client_info);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -124,15 +126,16 @@ public class NewClientInfoActivity extends Activity {
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
             try {
-                JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[0]));
+                JSONArray jsonArrayCustomerAndPhone = new JSONArray(getJSONData(urls[0]));
+                JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[1]));
                 JSONArray customer;
                 JSONArray oldCustomer;
                 Log.e("client", "array執行成功");
 
                 HashMap<String, ArrayList<String>> hashMap = new HashMap<>();
                 int count_clientList = 1;
-                for (int i =0; i<jsonArrayCustomer.length(); i++){
-                    customer = jsonArrayCustomer.getJSONArray(i);
+                for (int i =0; i<jsonArrayCustomerAndPhone.length(); i++){
+                    customer = jsonArrayCustomerAndPhone.getJSONArray(i);
                     customer_id = customer.getString(Constant.CUSTOMER_ID);
                     String phone = customer.getString(24);
                     if (hashMap.isEmpty() || !hashMap.containsKey(customer_id)){
@@ -147,8 +150,8 @@ public class NewClientInfoActivity extends Activity {
                         Log.e("client", "Phone:"+phone);
                     }
                     /*假如前一筆ID不等於現在ID，則儲存前一筆ID*/
-                    if (i != 0 && !customer_id.equals((jsonArrayCustomer.getJSONArray(i-1)).getString(Constant.CUSTOMER_ID))) {
-                        oldCustomer = jsonArrayCustomer.getJSONArray(i-1);
+                    if (i != 0 && !customer_id.equals((jsonArrayCustomerAndPhone.getJSONArray(i-1)).getString(Constant.CUSTOMER_ID))) {
+                        oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i-1);
                         //此兩筆為前一筆資料
                         customer_id = oldCustomer.getString(Constant.CUSTOMER_ID);
                         customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
@@ -163,7 +166,7 @@ public class NewClientInfoActivity extends Activity {
                 }
 
                  /*可以將最後一筆拿出FOR迴圈儲存*/
-                customer = jsonArrayCustomer.getJSONArray(jsonArrayCustomer.length()-1);
+                customer = jsonArrayCustomerAndPhone.getJSONArray(jsonArrayCustomerAndPhone.length()-1);
                 customer_id = customer.getString(Constant.CUSTOMER_ID);
                 customer_name = customer.getString(Constant.CUSTOMER_NAME);
                 customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
@@ -171,11 +174,11 @@ public class NewClientInfoActivity extends Activity {
                 clientList.add(clientInfoList);
 
                 /*爛寫法XD*/
-                /*for (int i = 0; i < jsonArrayCustomer.length(); i++) {
+                /*for (int i = 0; i < jsonArrayCustomerAndPhone.length(); i++) {
                     //下一筆資料
-                    customer = jsonArrayCustomer.getJSONArray(i+1);
+                    customer = jsonArrayCustomerAndPhone.getJSONArray(i+1);
                     //現在資料
-                    oldCustomer = jsonArrayCustomer.getJSONArray(i);
+                    oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i);
                     Log.e("client", "i:" + i);
 
                     old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
@@ -190,7 +193,7 @@ public class NewClientInfoActivity extends Activity {
                         Log.e("client", "id:" + customer_id + "phone:" + phone);
                         customer_phone[count] = phone;
                         count++;
-                        if (i+1 == jsonArrayCustomer.length()){
+                        if (i+1 == jsonArrayCustomerAndPhone.length()){
                             phone = customer.getString(22);
                             customer_phone[count] = phone;
                             customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
@@ -201,7 +204,7 @@ public class NewClientInfoActivity extends Activity {
                         }
                         //假如現在id不等於下一筆id 儲存此筆資料
                     } else {
-                        if (i + 1 == jsonArrayCustomer.length()) {
+                        if (i + 1 == jsonArrayCustomerAndPhone.length()) {
                             phone = customer.getString(22);
                             customer_phone[count] = phone;
                             customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
@@ -224,16 +227,16 @@ public class NewClientInfoActivity extends Activity {
 
 
                 /*舊方法*/
-                /*for (int i = 1; i < jsonArrayCustomer.length(); i++) {
+                /*for (int i = 1; i < jsonArrayCustomerAndPhone.length(); i++) {
                     customer_phone[0] = "請選擇號碼";
                     //下一筆資料
-                    customer = jsonArrayCustomer.getJSONArray(i);
+                    customer = jsonArrayCustomerAndPhone.getJSONArray(i);
                     //現在資料
-                    oldCustomer = jsonArrayCustomer.getJSONArray(i - 1);
+                    oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i - 1);
                     Log.e("client", "i:" + i);
 
                     //假如整筆資料是最後一筆 直接存
-                    if (i == jsonArrayCustomer.length() + 1) {
+                    if (i == jsonArrayCustomerAndPhone.length() + 1) {
 //                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
 //                        Log.e("client", "old_id:" + old_id);
                         customer_id = customer.getString(Constant.CUSTOMER_ID);

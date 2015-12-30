@@ -27,8 +27,11 @@ public class Constant {
     public static int ORDER_CUSTOMER_ID = 19;
     public static int ORDER_PRODUCT_ITEM_ID = 20;
     public static int ORDER_DAY = 21;
-
+    public static int ORDER_ADDRESS = 22;
+    public static int DELIVERY_TF = 23;
     public static int ORDER_CUSTOMER_NAME = 24;
+    public static int ORDER_STAFF_HELP = 25;
+
 
     // The corresponding index for database table: "customer"
     public static int CUSTOMER_ID = 0;

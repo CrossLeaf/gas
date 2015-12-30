@@ -213,7 +213,9 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
         groupViewHolder.address.setText(add);
-
+        if (callPhone.equals("") ){
+            groupViewHolder.img_btn_call.setVisibility(View.GONE);
+        }
         groupViewHolder.phones.setText(callPhone);
         groupViewHolder.money.setText("應付金額：" + taskLists.getOrder_should_money());
         if (taskLists.getOrder_task().equals("抄錶")) {

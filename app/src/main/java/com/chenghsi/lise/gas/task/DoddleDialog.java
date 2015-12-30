@@ -120,8 +120,9 @@ public class DoddleDialog extends Activity {
     private void doddle_prev_degree(String degree){
         try {
             JSONArray jsonArray = new JSONArray(degree);
-            JSONArray doddleArray = jsonArray.getJSONArray(jsonArray.length()-2);
-            doddle_prev_degree = doddleArray.getString(Constant.DODDLE_THIS_PHASE_DEGREE);
+            JSONArray doddleArray = jsonArray.getJSONArray(jsonArray.length()-1);
+            doddle_prev_degree = doddleArray.getString(Constant.DODDLE_PRE_PHASE_DEGREE);
+            Log.e("doddleDialog","doddle_prev_degree:" + doddle_prev_degree );
             Message message = new Message();
             message.what = 0;
             myHandler.sendMessage(message);
@@ -149,5 +150,4 @@ public class DoddleDialog extends Activity {
             showToast.cancel();
         }
     }
-
 }

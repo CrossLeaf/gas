@@ -233,9 +233,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.btn_accept.setText("承接");
             expListView.collapseGroup(groupPosition);
         } else if (taskLists.getOrder_doddle_status().equals("1") && taskLists.getOrder_doddle_accept().equals(userId)) {
-            //是承接者自己換至最頂
-
-
             groupViewHolder.imageView.setImageResource(R.drawable.red);
             groupViewHolder.btn_accept.setText(userName);
             isCollapse = expListView.expandGroup(groupPosition);

@@ -329,11 +329,11 @@ public class NewTaskActivity extends Activity {
                         order_remark = order_doddle.getString(Constant.ORDER_REMARK);
                         order_address = order_doddle.getString(Constant.ORDER_ADDRESS);
                         order_customer_name = order_doddle.getString(Constant.ORDER_CUSTOMER_NAME);
-                        Log.e("task", "order_customer_id:" + order_customer_id);
+//                        Log.e("task", "order_customer_id:" + order_customer_id);
 
                         for (int j = 0; j < jsonArrayCustomerPhone.length(); j++) {
                             customerAndPhone = jsonArrayCustomerPhone.getJSONArray(j);
-                            Log.e("task", "customer_id:" + customerAndPhone.getString(0));
+//                            Log.e("task", "customer_id:" + customerAndPhone.getString(0));
                             if (order_customer_id.equals(customerAndPhone.getString(0))) {
                                 //儲存電話方法
 //                                    storePhone(jsonArrayCustomerPhone, j);

@@ -105,7 +105,7 @@ public class DetailedTaskActivity extends Activity {
     private String income_money_real;
     private String order_payment;
     private String order_staff_help;
-
+    private String staffId;
     //系統撥打電話動作
     private String callAction;
 
@@ -234,7 +234,7 @@ public class DetailedTaskActivity extends Activity {
         order_staff_help = partner[0];
         //從SharedPreferences拿id
         sp = getSharedPreferences("LoginInfo", this.MODE_PRIVATE);
-        String staffId = sp.getString("staff_id", null);
+        staffId = sp.getString("staff_id", null);
         int k = 1;
         for (int i = 0; i < partnerList.size(); i++) {
             if (staffId.equals(partnerList.get(i).getStaff_id())) {
@@ -531,14 +531,16 @@ public class DetailedTaskActivity extends Activity {
                 url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_cash_credit.php?order_id=" + order_id +
                         "&order_money_credit=" + order_money_credit + "&order_cylinders_list=" + order_cylinders_list +
                         "&order_gas_residual=" + order_gas_residual + "&income_money_real=" + income_money_real +
-                        "&order_payment=" + java.net.URLEncoder.encode(order_payment) + "&order_staff_help=" + order_staff_help;
+                        "&order_payment=" + java.net.URLEncoder.encode(order_payment) + "&order_staff_help=" + order_staff_help+
+                        "&staff_id="+staffId;
             } else {
                 Log.e("detailTask", "呼叫 賒銷");
                 url = "http://198.245.55.221:8089/ProjectGAPP/php/upd_cash_credit.php?order_id=" + order_id +
                         "&order_money_credit=" + order_money_credit + "&order_cylinders_list=" + order_cylinders_list +
                         "&order_gas_residual=" + order_gas_residual + "&order_payment=" + java.net.URLEncoder.encode(order_payment) +
-                        "&order_staff_help=" + order_staff_help;
+                        "&order_staff_help=" + order_staff_help+"&staff_id="+staffId;
             }
+
             Log.e("detailTask", "update url:" + url);
             String retSrc;
             HttpGet httpget = new HttpGet(url);

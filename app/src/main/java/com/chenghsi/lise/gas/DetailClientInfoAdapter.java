@@ -63,6 +63,7 @@ public class DetailClientInfoAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         DetailClientInfoList clientList = (DetailClientInfoList) getItem(position);
+
         order_day_list = clientList.getOrder_time().split("-", 2);
         holder.tv_order_day.setText(order_day_list[0] + "\n" + order_day_list[1]);
         holder.tv_order_task.setText(clientList.getOrder_task());
@@ -73,7 +74,10 @@ public class DetailClientInfoAdapter extends BaseAdapter {
         holder.tv_4.setText(cylinders_list[3]);
         holder.tv_doddle_this_phase_degree.setText(clientList.getDoddle_this_phase_degree());
         tv_do_de.setText("度數");
+
+
         return convertView;
+
     }
 
     private class ViewHolder {

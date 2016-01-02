@@ -34,6 +34,8 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
     private String action = Intent.ACTION_CALL;
     private Context context;
 
+    private ArrayList<String> phone_list;
+
     public ClientInfoAdapter(Context context, List<ClientInfoList> clientInfoLists) {
         myInflater = LayoutInflater.from(context);
         this.clientInfoLists = clientInfoLists;
@@ -75,20 +77,25 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
         String add = _toAddress(clientList.getAddress());
         holder.tv_name.setText(clientList.getName());
         holder.tv_address.setText(add);
+        clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
 
         /*電話號碼呈現*/
-        ArrayList<String> phone_list;
-        phone_list = clientList.getPhone();
-        for (String ph : clientList.getPhone()) {
-            Log.e("client", "arrayList 呈現的 phone num:" + ph);
-        }
 
-        clientPhones = (Spinner) convertView.findViewById(R.id.spi_phone_number);
-        //屏蔽子控鍵焦點
-        clientPhones.setFocusable(false);
-        ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phone_list);
-        apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clientPhones.setAdapter(apt);
+        phone_list = clientList.getPhone();
+        if (phone_list == null) {
+            clientPhones.setVisibility(View.GONE);
+
+        } else {
+            clientPhones.setVisibility(View.VISIBLE);
+            for (String ph : clientList.getPhone()) {
+                Log.e("client", "arrayList 呈現的 phone num:" + ph);
+            }
+            //屏蔽子控鍵焦點
+            clientPhones.setFocusable(false);
+            ArrayAdapter<String> apt = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, phone_list);
+            apt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            clientPhones.setAdapter(apt);
+        }
         //電話撥號
         /*clientPhones.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -163,12 +170,18 @@ public class ClientInfoAdapter extends BaseAdapter implements Filterable {
                 ArrayList<ClientInfoList> filteredItems = new ArrayList<>();
                 for (int i = 0, l = mOriginalValues.size(); i < l; i++) {
                     ClientInfoList m = mOriginalValues.get(i);
-                    Log.e("tag", "i:" + i);
-                    Log.e("tag", "m = " + mOriginalValues.get(i).toString());
-                    for (int j = 1; j < m.getPhone().size(); j++) {
-                        if (m.getName().contains(constraint) || m.getPhone().get(j).contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
-                            filteredItems.add(m);
-                            break;
+//                    Log.e("tag", "i:" + i);
+//                    Log.e("tag", "m = " + mOriginalValues.get(i).toString());
+                    if (m.getName().contains(constraint) || _toAddress(m.getAddress()).contains(constraint)) {
+                        filteredItems.add(m);
+                        continue;
+                    }
+                    if (m.getPhone() != null) {
+                        for (int j = 1; j < m.getPhone().size(); j++) {
+                            if (m.getPhone().get(j).contains(constraint)) {
+                                filteredItems.add(m);
+                                break;
+                            }
                         }
                     }
                 }

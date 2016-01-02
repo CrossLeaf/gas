@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class NewClientInfoActivity extends Activity {
     protected Toolbar toolbar;
-    String url = "http://198.245.55.221:8089/ProjectGAPP/php/db_join.php?tbname1=customer&tbname2=phone&tbID1=customer_id&tbID2=customer_id";
+    String url0 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=phone";
     String url1 = "http://198.245.55.221:8089/ProjectGAPP/php/show.php?tbname=customer";
     //TODO 新增一客戶url
     private EditText edt_client;
@@ -48,11 +48,12 @@ public class NewClientInfoActivity extends Activity {
     private List<ClientInfoList> clientList = new ArrayList<>();
     private List<ClientInfoList> newClientList;
     Toast showToastMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        new AsyncClientDownLoad().execute(url,url1);
+        new AsyncClientDownLoad().execute(url0, url1);
         setContentView(R.layout.activity_client_info);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -118,191 +119,61 @@ public class NewClientInfoActivity extends Activity {
         String customer_name;
         String customer_address;
         String phone;
-        String[] customer_phone = new String[5];
-        ArrayList<String > phone_arrayList;
-        String old_id;
-        int count = 1;
+        ArrayList<String> phone_arrayList;
 
         @Override
         protected List<ClientInfoList> doInBackground(String... urls) {
             try {
-                JSONArray jsonArrayCustomerAndPhone = new JSONArray(getJSONData(urls[0]));
+                JSONArray jsonArrayPhone = new JSONArray(getJSONData(urls[0]));
                 JSONArray jsonArrayCustomer = new JSONArray(getJSONData(urls[1]));
-                JSONArray customer;
-                JSONArray oldCustomer;
+                JSONArray all_phone_jsonArray;
+                JSONArray all_cus_jsonArray;
+
                 Log.e("client", "array執行成功");
 
                 HashMap<String, ArrayList<String>> hashMap = new HashMap<>();
-                int count_clientList = 1;
-                for (int i =0; i<jsonArrayCustomerAndPhone.length(); i++){
-                    customer = jsonArrayCustomerAndPhone.getJSONArray(i);
-                    customer_id = customer.getString(Constant.CUSTOMER_ID);
-                    String phone = customer.getString(24);
-                    if (hashMap.isEmpty() || !hashMap.containsKey(customer_id)){
+
+                /*phone 儲存*/
+                for (int i=0; i<jsonArrayPhone.length(); i++){
+                    all_phone_jsonArray = jsonArrayPhone.getJSONArray(i);
+                    phone = all_phone_jsonArray.getString(Constant.PHONE_NUMBER);
+                    customer_id = all_phone_jsonArray.getString(Constant.PHONE_CUSTOMER_ID);
+                    Log.e("newClient", "customer_id:"+customer_id);
+                    if (hashMap.get(customer_id) == null || !hashMap.containsKey(customer_id)) {
                         phone_arrayList = new ArrayList<>();
                         phone_arrayList.add("請選擇號碼");
                         phone_arrayList.add(phone);
                         hashMap.put(customer_id, phone_arrayList);
                         Log.e("client", "Initial phone:" + phone);
-                    }else {
+                    } else {
+                        phone_arrayList = hashMap.get(customer_id);
                         phone_arrayList.add(phone);
                         hashMap.put(customer_id, phone_arrayList);
-                        Log.e("client", "Phone:"+phone);
-                    }
-                    /*假如前一筆ID不等於現在ID，則儲存前一筆ID*/
-                    if (i != 0 && !customer_id.equals((jsonArrayCustomerAndPhone.getJSONArray(i-1)).getString(Constant.CUSTOMER_ID))) {
-                        oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i-1);
-                        //此兩筆為前一筆資料
-                        customer_id = oldCustomer.getString(Constant.CUSTOMER_ID);
-                        customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
-                        customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-
-                        ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, hashMap.get(customer_id));
-                        clientList.add(clientInfoList);
-                        Log.e("client", "客戶List儲存筆數:" + count_clientList);
-                        count_clientList++;
-//                      customer_phone = new String[5];
+                        Log.e("client", "Phone:" + phone);
                     }
                 }
 
-                 /*可以將最後一筆拿出FOR迴圈儲存*/
-                customer = jsonArrayCustomerAndPhone.getJSONArray(jsonArrayCustomerAndPhone.length()-1);
-                customer_id = customer.getString(Constant.CUSTOMER_ID);
-                customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, hashMap.get(customer_id));
-                clientList.add(clientInfoList);
-
-                /*爛寫法XD*/
-                /*for (int i = 0; i < jsonArrayCustomerAndPhone.length(); i++) {
-                    //下一筆資料
-                    customer = jsonArrayCustomerAndPhone.getJSONArray(i+1);
-                    //現在資料
-                    oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i);
-                    Log.e("client", "i:" + i);
-
-                    old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
-                    Log.e("client", "old_id:" + old_id);
-                    customer_id = customer.getString(Constant.CUSTOMER_ID);
-                    Log.e("client", "new_id:" + customer_id);
-
-                    //假如現在id等於下一筆id 為了將電話存在陣列上 繼續迴圈
-                    if (old_id.equals(customer_id)) {
-                        phone = oldCustomer.getString(22);
-                        Log.e("client", "if count:" + count);
-                        Log.e("client", "id:" + customer_id + "phone:" + phone);
-                        customer_phone[count] = phone;
-                        count++;
-                        if (i+1 == jsonArrayCustomerAndPhone.length()){
-                            phone = customer.getString(22);
-                            customer_phone[count] = phone;
-                            customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                            customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                            store();
-                        }else {
-                            continue;
-                        }
-                        //假如現在id不等於下一筆id 儲存此筆資料
-                    } else {
-                        if (i + 1 == jsonArrayCustomerAndPhone.length()) {
-                            phone = customer.getString(22);
-                            customer_phone[count] = phone;
-                            customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                            customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                        } else {
-                            phone = oldCustomer.getString(22);
-                            Log.e("client", "else count:" + count);
-                            Log.e("client", "id:" + old_id + "phone:" + phone);
-                            customer_phone[count] = phone;
-                            customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
-                            Log.e("client", "name:" + customer_name);
-                            customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                            Log.e("client", "address:" + customer_address);
-                        }
+                /*沒有電話的客戶*/
+                for (int j = 0; j < jsonArrayCustomer.length(); j++) {
+                    all_cus_jsonArray = jsonArrayCustomer.getJSONArray(j);
+                    String cus_id = all_cus_jsonArray.getString(Constant.CUSTOMER_ID);
+                    customer_name = all_cus_jsonArray.getString(Constant.CUSTOMER_NAME);
+                    customer_address = all_cus_jsonArray.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
+                    if (hashMap.get(cus_id) == null){
+                        Log.e("newClient", "cus_id:"+cus_id);
+                        Log.e("newClient", "customer_name:" + customer_name);
+                        ClientInfoList clientObj = new ClientInfoList(cus_id, customer_name, customer_address,null);
+                        clientList.add(clientObj);
+                    }else {
+                        ClientInfoList clientObj = new ClientInfoList(cus_id, customer_name, customer_address,hashMap.get(cus_id));
+                        clientList.add(clientObj);
                     }
-                    store();
-                    Log.e("client", "--forLoop end--");
-                }*/
-
-
-
-                /*舊方法*/
-                /*for (int i = 1; i < jsonArrayCustomerAndPhone.length(); i++) {
-                    customer_phone[0] = "請選擇號碼";
-                    //下一筆資料
-                    customer = jsonArrayCustomerAndPhone.getJSONArray(i);
-                    //現在資料
-                    oldCustomer = jsonArrayCustomerAndPhone.getJSONArray(i - 1);
-                    Log.e("client", "i:" + i);
-
-                    //假如整筆資料是最後一筆 直接存
-                    if (i == jsonArrayCustomerAndPhone.length() + 1) {
-//                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
-//                        Log.e("client", "old_id:" + old_id);
-                        customer_id = customer.getString(Constant.CUSTOMER_ID);
-                        Log.e("client", "customer_id:" + customer_id);
-                        phone = customer.getString(22);
-//                        Log.e("client", "phone:" + phone);
-                        customer_phone[count] = phone;
-                        customer_address = customer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                        customer_name = customer.getString(Constant.CUSTOMER_NAME);
-                    } else {    //如果不是整筆資料的最後一筆
-                        old_id = oldCustomer.getString(Constant.CUSTOMER_ID);
-                        Log.e("client", "old_id:" + old_id);
-                        customer_id = customer.getString(Constant.CUSTOMER_ID);
-                        Log.e("client", "new_id:" + customer_id);
-
-                        //假如現在id等於下一筆id 為了將電話存在陣列上 繼續迴圈
-                        if (old_id.equals(customer_id)) {
-                            phone = oldCustomer.getString(22);
-                            Log.e("client", "if count:" + count);
-                            Log.e("client", "id:" + customer_id + "phone:" + phone);
-                            customer_phone[count] = phone;
-                            count++;
-                            continue;
-                            //假如現在id不等於下一筆id 儲存此筆資料
-                        } else {
-                            phone = oldCustomer.getString(22);
-                            Log.e("client", "else count:" + count);
-                            Log.e("client", "id:" + old_id + "phone:" + phone);
-                            customer_phone[count] = phone;
-                            customer_name = oldCustomer.getString(Constant.CUSTOMER_NAME);
-                            Log.e("client", "name:" + customer_name);
-                            customer_address = oldCustomer.getString(Constant.CUSTOMER_CONTACT_ADDRESS);
-                            Log.e("client", "address:" + customer_address);
-                        }
-                    }
-                    count = 1;
-                    int a = 0;
-                    int j = 0;
-                    for (String str : customer_phone) {
-                        Log.e("client", "a：" + a);
-                        if (customer_phone[a] == null) {
-                            customer_phone[a] = "";
-                            Log.e("client", "customer_phone[" + a + "]=null");
-                            break;
-                        } else {
-                            j++;
-                        }
-                        a++;
-                        Log.e("client", "phone：" + str);
-                    }
-                    String phone[] = new String[j];
-
-                    for (int k = 0; k < j; k++) {
-                        phone[k] = customer_phone[k];
-                    }
-
-                    ClientInfoList clientInfoList = new ClientInfoList(customer_id, customer_name, customer_address, phone);
-                    clientList.add(clientInfoList);
-                    customer_phone = new String[5];
-                    Log.e("client", "--forLoop end--");
-                }*/
-
+                }
                 return clientList;
             } catch (Exception e) {
                 Log.e("client", "資料抓取有誤");
             }
+
             return null;
         }
 

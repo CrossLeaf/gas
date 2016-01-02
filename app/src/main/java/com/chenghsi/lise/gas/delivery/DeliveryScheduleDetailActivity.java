@@ -31,6 +31,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class DeliveryScheduleDetailActivity extends Activity {
     protected Toolbar toolbar;
     Spinner spinner_month;
@@ -218,13 +221,22 @@ public class DeliveryScheduleDetailActivity extends Activity {
     public  OnClickListener okListener = new OnClickListener(){
         @Override
         public void onClick(View view) {
-            ms1_addr = edt_add.getText().toString();
-            cly_PS = edt_remark.getText().toString();
+            ms1_addr = edt_add.getText().toString().trim();
+            cly_PS = edt_remark.getText().toString().trim();
             cly_50 = cylinder_list[0];
             cly_20 = cylinder_list[1];
             cly_16 = cylinder_list[2];
             cly_4 = cylinder_list[3];
             cly_time = hr + ":" + min;
+            try {
+//                cly_name = URLEncoder.encode(cly_name, "utf-8");
+                ms1_addr = URLEncoder.encode(ms1_addr, "utf-8");
+                cly_PS = URLEncoder.encode(cly_PS, "utf-8");
+                cly_time = URLEncoder.encode(cly_time, "utf-8");
+                cly_day = URLEncoder.encode(cly_day, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             Log.e("btn", cus_id);
             Log.e("btn", cly_name);
             Log.e("btn", cly_time);
@@ -264,19 +276,20 @@ public class DeliveryScheduleDetailActivity extends Activity {
                     "&cly_4=" + cly_4 + "&ms1_addr=" + ms1_addr + "&cly_PS=" + cly_PS + "&cly_day=" + cly_day;
             HttpGet httpget = new HttpGet(url);
             HttpClient httpclient = new DefaultHttpClient();
-            Log.e("retSrc", "讀取 JSON-1...");
+            Log.e("retSrc", "傳送 JSON-1...");
             try {
                 HttpResponse response = httpclient.execute(httpget);
-                Log.e("retSrc", "讀取 JSON-2...");
+                Log.e("retSrc", "傳送 JSON-2...");
                 HttpEntity resEntity = response.getEntity();
-
                 if (resEntity != null) {
                     String retSrc = EntityUtils.toString(resEntity);
-                    Toast.makeText(DeliveryScheduleDetailActivity.this, "新增成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DeliveryScheduleDetailActivity.this, "新增成功", Toast.LENGTH_SHORT).show();
                     Log.e("retSrc", retSrc);
                 }
+
             } catch (Exception e) {
-                Log.e("retSrc", "讀取JSON Error...");
+                Log.e("retSrc", e.getMessage());
+                Log.e("retSrc", "傳送 Error...");
             } finally {
 
                 httpclient.getConnectionManager().shutdown();

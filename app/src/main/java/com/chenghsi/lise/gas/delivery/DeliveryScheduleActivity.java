@@ -38,7 +38,6 @@ public class DeliveryScheduleActivity extends Activity {
         calendarView = (CalendarView) findViewById(R.id.calendarView);
 
         Log.e("calendar", "MaxDate:" + calendarView.getMaxDate());
-
 //        Date d = new Date(prevYear, prevMonth, prevDay);
 //        c.setTime(d);
         Myear = prevYear;

@@ -208,7 +208,7 @@ public class NewTaskActivity extends Activity {
         private String staff_name;
 
         //        private String car_id ;
-        private String carcyln_content;
+        private  String carcyln_content;
 
         @Override
         protected ArrayList<TaskLists> doInBackground(String... urls) {

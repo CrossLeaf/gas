@@ -1,5 +1,7 @@
 package com.chenghsi.lise.gas;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -213,7 +215,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.kindOfTask.setText(taskLists.getOrder_task());
         groupViewHolder.clientName.setText(taskLists.getCustomer_name());
         groupViewHolder.address.setText(add);
-        if (callPhone.equals("") ){
+        if (callPhone.equals("")) {
             groupViewHolder.img_btn_call.setVisibility(View.GONE);
         }
         groupViewHolder.phones.setText(callPhone);
@@ -256,16 +258,55 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 if (!taskLists.getOrder_task().equals("抄錶")) {  //訂單承接動作
                     flag = 0;
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
-                        finalGroupView.btn_accept.setText(userName);
-                        taskLists.setOrder_doddle_accept(userId);
-                        taskLists.setOrder_doddle_status("1");
-                        //展開expandable listView
-                        isCollapse = expListView.expandGroup(groupPosition);
-                        up_order_id = taskLists.getOrder_doddle_id();
-                        up_order_accept = taskLists.getOrder_doddle_accept();
-                        up_order_status = taskLists.getOrder_doddle_status();
-                        Log.e("exTask", "承接：" + taskLists.getOrder_doddle_status());
-                        new Update().start();
+                        //TODO dialog 判斷車上數量是否夠提供給此任務
+                        //車上的鋼瓶數：taskLists.getCarcyln_content()
+                        //此任務所需的鋼瓶數：taskLists.getOrder_cylinders_list()
+                        final boolean[] wantTodo = {true};
+                        if (!enoughCyln()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(taskActivity);
+                            builder.setTitle("警告")
+                                    .setMessage("車上鋼瓶數不夠，是否繼續承接此任務")
+                                    .setIcon(R.drawable.alerts)
+                                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            if (wantTodo[0]) {
+                                                finalGroupView.btn_accept.setText(userName);
+                                                taskLists.setOrder_doddle_accept(userId);
+                                                taskLists.setOrder_doddle_status("1");
+                                                //展開expandable listView
+                                                isCollapse = expListView.expandGroup(groupPosition);
+                                                up_order_id = taskLists.getOrder_doddle_id();
+                                                up_order_accept = taskLists.getOrder_doddle_accept();
+                                                up_order_status = taskLists.getOrder_doddle_status();
+                                                Log.e("exTask", "承接：" + taskLists.getOrder_doddle_status());
+                                                new Update().start();
+                                            }
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+//                                            wantTodo[0] = false;
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .create().show();
+                        }
+                        //TODO 假如wantTodo false 要讓他不能做
+                        /*if (wantTodo[0]) {
+                            finalGroupView.btn_accept.setText(userName);
+                            taskLists.setOrder_doddle_accept(userId);
+                            taskLists.setOrder_doddle_status("1");
+                            //展開expandable listView
+                            isCollapse = expListView.expandGroup(groupPosition);
+                            up_order_id = taskLists.getOrder_doddle_id();
+                            up_order_accept = taskLists.getOrder_doddle_accept();
+                            up_order_status = taskLists.getOrder_doddle_status();
+                            Log.e("exTask", "承接：" + taskLists.getOrder_doddle_status());
+                            new Update().start();
+                        }*/
                     } else if (taskLists.getOrder_doddle_status().equals("1") &&
                             taskLists.getOrder_doddle_accept().equals(userId)) {
                         taskLists.setOrder_doddle_status("");
@@ -317,6 +358,22 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                     }
                 }
             }
+
+            /*是否車上有足夠的鋼瓶數承接此任務*/
+            private boolean enoughCyln() {
+                String[] cylinder_list = taskLists.getOrder_cylinders_list().split(",");
+                String[] car_list = taskLists.getCarcyln_content().split(",");
+                int[] int_car_list = new int[4];
+                int[] int_cylinders_list = new int[4];
+                for (int i = 0; i < cylinder_list.length; i++) {
+                    int_car_list[i] = Integer.parseInt(car_list[i]);
+                    int_cylinders_list[i] = Integer.parseInt(cylinder_list[i]);
+                    if ((int_car_list[i] - int_cylinders_list[i]) < 0) {
+                        return false;
+                    }
+                }
+                return true;
+            }
         });
 
 
@@ -333,8 +390,11 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+
+
         return convertView;
     }
+
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild,
@@ -556,9 +616,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             } else {
                 carcyln_content += "," + count[i];
             }
-
         }
-
         return carcyln_content;
     }
 

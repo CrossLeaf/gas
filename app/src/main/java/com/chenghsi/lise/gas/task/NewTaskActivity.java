@@ -131,7 +131,8 @@ public class NewTaskActivity extends Activity {
         super.onPause();
         showToastMessage.cancel();
         if (httpclient != null) {
-            httpclient.getConnectionManager().shutdown();
+            //版本低會有問題
+//            httpclient.getConnectionManager().shutdown();
         }
         swipeRefreshLayout.setEnabled(false);
         Log.e("task", "----onPause----");

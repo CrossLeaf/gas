@@ -249,7 +249,6 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             expListView.collapseGroup(groupPosition);
         }
 
-
         /*承接按鈕動作*/
         final GroupViewHolder finalGroupView = groupViewHolder;
         groupViewHolder.btn_accept.setOnClickListener(new View.OnClickListener() {
@@ -257,6 +256,7 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 if (!taskLists.getOrder_task().equals("抄錶")) {  //訂單承接動作
                     flag = 0;
+                    Log.e("extask", "承接任務");
                     if (taskLists.getOrder_doddle_status().equals("")) { //使用者承接
                         //TODO dialog 判斷車上數量是否夠提供給此任務
                         //車上的鋼瓶數：taskLists.getCarcyln_content()
@@ -293,6 +293,17 @@ public class ExTaskListAdapter extends BaseExpandableListAdapter {
                                         }
                                     })
                                     .create().show();
+                        }else {
+                            finalGroupView.btn_accept.setText(userName);
+                            taskLists.setOrder_doddle_accept(userId);
+                            taskLists.setOrder_doddle_status("1");
+                            //展開expandable listView
+                            isCollapse = expListView.expandGroup(groupPosition);
+                            up_order_id = taskLists.getOrder_doddle_id();
+                            up_order_accept = taskLists.getOrder_doddle_accept();
+                            up_order_status = taskLists.getOrder_doddle_status();
+                            Log.e("exTask", "承接：" + taskLists.getOrder_doddle_status());
+                            new Update().start();
                         }
                         //TODO 假如wantTodo false 要讓他不能做
                         /*if (wantTodo[0]) {

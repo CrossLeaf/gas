@@ -80,13 +80,13 @@ public class HistoryActivity extends ListActivity
         ArrayAdapter<String> apt = new ArrayAdapter<>(this,android.R.layout.simple_list_item_2,values);
         setListAdapter(apt);*/
 
-        ArrayList<HashMap<String,String>> values = new ArrayList<>();
+        ArrayList<HashMap<String,String>> values = new ArrayList<HashMap<String,String>>();
         Cursor cursor = historyManager.read();
 
         cursor.moveToFirst();
         for(int i=0; i<cursor.getCount(); i++)
         {
-            HashMap<String,String> item = new HashMap<>();
+            HashMap<String,String> item = new HashMap<String,String>();
 
             item.put("barcode",cursor.getString(1));
             item.put("location", cursor.getString(2));

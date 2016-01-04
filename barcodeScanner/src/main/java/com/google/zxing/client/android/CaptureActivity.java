@@ -190,7 +190,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         //LISE
 //    listView_barcode = (ListView)findViewById(R.id.listView_barcode);
-        arrayAdapter_barcode = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        arrayAdapter_barcode = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 //    listView_barcode.setAdapter(arrayAdapter_barcode);
     }
 
@@ -1085,7 +1085,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         @Override
         protected ArrayList<String> doInBackground(String... urls) {
             try {
-                cylinders_list = new ArrayList<>();
+                cylinders_list = new ArrayList<String>();
                 String cylinder;
                 JSONArray jsonArrayCylinder = new JSONArray(getJSONData(urls[0]));
                 for (int i = 0; i<jsonArrayCylinder.length(); i++) {

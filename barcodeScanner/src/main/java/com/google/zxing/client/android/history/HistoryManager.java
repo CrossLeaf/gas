@@ -83,7 +83,7 @@ public class HistoryManager
 
     public Iterator<HistoryItem> getAllItem()
     {
-        ArrayList<HistoryItem> allItem = new ArrayList<>();
+        ArrayList<HistoryItem> allItem = new ArrayList<HistoryItem>();
         HistoryItem item;
         Cursor cursor = this.read();
 
